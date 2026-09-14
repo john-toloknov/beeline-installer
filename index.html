@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beeline Installer</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --card-border: #333333;
+            --beeline-yellow: #FFCC00;
+            --beeline-yellow-hover: #e6b800;
+            --beeline-dark: #111111;
+            --text-main: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-muted: #888888;
+            --danger: #ff4d4d;
+            --success: #2ecc71;
+            
+            /* Статусы графика */
+            --status-v: #2ecc71; /* Выходной - зеленый */
+            --status-p: #ffffff; /* Рабочий день - белый */
+            --status-pr: #ff4d4d; /* Прогул - красный */
+            --status-o: #FFCC00; /* Отпуск - желтый */
+            --status-b: #00bcd4; /* Больничный - голубой */
+            --status-u: #9c27b0; /* Учеба - фиолетовый */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        h2, h3 {
+            color: var(--beeline-yellow);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            margin-top: 10px;
+            padding-left: 8px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea, .text-input {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--beeline-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, .text-input:focus {
+            border-color: var(--beeline-yellow);
+            box-shadow: 0 0 0 1px var(--beeline-yellow);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            margin-bottom: 5px;
+            padding-left: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            background-color: var(--beeline-dark);
+            border: 1px solid var(--beeline-yellow);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, border-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox::after {
+            content: "";
+            width: 5px;
+            height: 10px;
+            border: solid #000000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) scale(0);
+            transition: transform 0.15s ease-in-out;
+            margin-bottom: 2px;
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .custom-checkbox {
+            background-color: var(--beeline-yellow);
+            border-color: var(--beeline-yellow);
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .custom-checkbox::after {
+            transform: rotate(45deg) scale(1);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-main);
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: normal;
+            margin: 0;
+            padding: 0;
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .password-wrapper input {
+            padding-right: 42px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .toggle-password:hover {
+            opacity: 1;
+        }
+        .toggle-password svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: var(--beeline-yellow);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .input-error {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 1px var(--danger) !important;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            transition: transform 0.1s ease, background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-sizing: border-box;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .main-btn { 
+            background-color: var(--beeline-yellow); 
+            color: #000000; 
+            box-shadow: 0 4px 14px rgba(255, 204, 0, 0.2);
+        }
+        .main-btn:hover { background-color: var(--beeline-yellow-hover); }
+
+        .secondary-btn {
+            background-color: rgba(255, 204, 0, 0.15);
+            color: var(--beeline-yellow);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            font-size: 14px;
+            padding: 12px;
+        }
+
+        .action-btn {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .action-btn:hover { border-color: var(--beeline-yellow); color: var(--beeline-yellow); }
+
+        .danger-btn {
+            background-color: rgba(255, 77, 77, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(255, 77, 77, 0.3);
+        }
+
+        .app-screen { display: none; }
+        .app-screen.active { display: block; }
+
+        .custom-dropdown { position: relative; width: 100%; }
+        .dropdown-trigger, .dropdown-select-btn {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--beeline-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 14px;
+            box-sizing: border-box;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+        .dropdown-trigger:hover, .dropdown-select-btn:hover, .custom-dropdown.open .dropdown-trigger, .custom-dropdown.open .dropdown-select-btn {
+            border-color: var(--beeline-yellow);
+        }
+        .dropdown-arrow {
+            color: var(--beeline-yellow);
+            font-size: 12px;
+            transition: transform 0.2s;
+            pointer-events: none;
+        }
+        .custom-dropdown.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+        .dropdown-list {
+            position: absolute; 
+            top: calc(100% + 4px); 
+            left: 0; 
+            width: 100%;
+            background: var(--beeline-dark); 
+            border: 1px solid var(--beeline-yellow); 
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9); 
+            max-height: 220px; 
+            overflow-y: auto;
+            z-index: 99999; 
+            display: none; 
+            box-sizing: border-box;
+        }
+        .custom-dropdown.open .dropdown-list, .dropdown-list.open { display: block; }
+        .dropdown-item {
+            padding: 12px 14px; 
+            font-size: 14px; 
+            color: var(--text-main);
+            cursor: pointer; 
+            border-bottom: 1px solid #222;
+        }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { 
+            background: rgba(255, 204, 0, 0.15); 
+            color: var(--beeline-yellow); 
+        }
+
+        .dropdown-search-input {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: #181818;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .dropdown-search-input:focus {
+            border-color: var(--beeline-yellow);
+        }
+
+        /* Стили сканера и режима сканирования */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .mode-btn {
+            padding: 12px 4px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .mode-btn.active {
+            background: var(--beeline-yellow);
+            color: #000000;
+            border-color: var(--beeline-yellow);
+            box-shadow: 0 4px 12px rgba(255, 204, 0, 0.2);
+        }
+        #reader { 
+            width: 100%; 
+            height: 220px !important; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            background: #000;
+            border: 2px solid var(--card-border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        }
+        #reader video {
+            object-fit: cover !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .last-scanned-card {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-sizing: border-box;
+        }
+        .last-scanned-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .last-scanned-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--success);
+            letter-spacing: 0.5px;
+        }
+        .rescan-icon-btn {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: var(--text-main);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            padding: 0;
+            line-height: 1;
+        }
+        .last-scanned-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .code-display-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .code-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            background: #0a0a0a;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+        .code-item-row span.badge-type {
+            font-family: monospace;
+            color: var(--beeline-yellow);
+            font-size: 12px;
+        }
+        .delete-item-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+
+        .breakdown-counter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 2px;
+        }
+        .counter-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #111111;
+            border: 1px solid var(--card-border);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .counter-badge span {
+            color: var(--beeline-yellow);
+            font-weight: 700;
+        }
+
+        .manual-input-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .manual-input-box.active {
+            display: flex;
+        }
+
+        .user-row, .access-item-card {
+            background: var(--beeline-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .user-info, .access-info { font-size: 13px; color: var(--text-secondary); }
+        .user-info span, .access-info span { color: var(--text-main); font-weight: 600; }
+        .user-actions { display: flex; gap: 6px; margin-top: 6px; }
+        .user-actions button { padding: 8px 12px; font-size: 12px; margin-top: 0; }
+        
+        .link-text {
+            color: var(--beeline-yellow);
+            text-align: center;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 12px;
+            display: block;
+            text-decoration: underline;
+        }
+
+        .salary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 13px;
+        }
+        .salary-row:last-child {
+            border-bottom: none;
+        }
+        .salary-label {
+            color: var(--text-secondary);
+        }
+        .salary-val {
+            color: var(--text-main);
+            font-weight: 600;
+            text-align: right;
+        }
+        .salary-total {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--beeline-yellow);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* КАЛЕНДАРЬ ГРАФИКА */
+        .calendar-header-title {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--beeline-yellow);
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .calendar-weekday {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            padding-bottom: 4px;
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            background: var(--beeline-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .calendar-day.empty {
+            background: transparent;
+            border: none;
+        }
+        .day-number {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .day-badge {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        
+        .badge-v { background-color: var(--status-v); color: #000; }
+        .badge-p { background-color: var(--status-p); color: #000; }
+        .badge-pr { background-color: var(--status-pr); color: #fff; }
+        .badge-o { background-color: var(--status-o); color: #000; }
+        .badge-b { background-color: var(--status-b); color: #000; }
+        .badge-u { background-color: var(--status-u); color: #fff; }
+        .badge-none { background-color: #333; color: #888; }
+
+        .schedule-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            background: var(--beeline-dark);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* МОДАЛЬНЫЕ ОКНА И АНИМАЦИЯ ЭМОДЗИ */
+        .beeline-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.2s ease;
+        }
+        .beeline-modal-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--beeline-yellow);
+            border-radius: 14px;
+            padding: 28px 24px 24px 24px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        @keyframes bounceSpinDrop {
+            0% { transform: translateY(0) rotate(0deg) scale(1); animation-timing-function: ease-out; }
+            30% { transform: translateY(-10px) rotate(180deg) scale(1.05); animation-timing-function: ease-in; }
+            60% { transform: translateY(0) rotate(360deg) scale(0.98); animation-timing-function: ease-out; }
+            75% { transform: translateY(-3px) rotate(360deg) scale(1.01); animation-timing-function: ease-in; }
+            100% { transform: translateY(0) rotate(360deg) scale(1); }
+        }
+
+        .beeline-modal-icon {
+            font-size: 38px;
+            margin-bottom: 14px;
+            display: inline-block;
+            animation: bounceSpinDrop 1.6s infinite ease-in-out;
+        }
+
+        .beeline-modal-title {
+            color: var(--beeline-yellow);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .beeline-modal-text {
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ФУТЕР И АНИМАЦИИ КНОПОК */
+        .author-footer {
+            margin-top: 12px;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .author-text {
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .pulse-tg-btn {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            background-color: var(--beeline-yellow);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: pulse-animation 2s infinite;
+        }
+        .pulse-tg-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #000000;
+        }
+        @keyframes pulse-animation {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 204, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+        }
+
+        /* Круглая кнопка прокрутки со стрелочкой */
+        .scroll-quick-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: var(--beeline-yellow, #ffcc00);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none; /* По умолчанию скрыта, JS включает при скролле */
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .scroll-quick-btn:active {
+            transform: scale(0.90);
+        }
+        .scroll-quick-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: #000000;
+            transition: transform 0.3s ease;
+        }
+
+        #file-input { display: none; }
+        .step { display: none; }
+        .step.active { display: flex; flex-direction: column; gap: 16px; }
+
+        #success-screen {
+            text-align: center;
+            padding: 40px 10px;
+            display: none;
+        }
+        #success-screen.active {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .loader {
+            font-size: 14px;
+            color: var(--beeline-yellow);
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<!-- Библиотеки для сканирования -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
+<body>
+
+    <!-- МОДАЛЬНОЕ ОКНО УВЕДОМЛЕНИЙ -->
+    <div id="beelineModal" class="beeline-modal-overlay">
+        <div class="beeline-modal-card">
+            <div class="beeline-modal-icon" id="beelineModalIcon">⚠️</div>
+            <div class="beeline-modal-title" id="beelineModalTitle">Уведомление</div>
+            <div class="beeline-modal-text" id="beelineModalText">Текст сообщения</div>
+            <div id="beelineModalButtons">
+                <button class="btn main-btn" onclick="closeBeelineModal()" style="margin-top:0;">Понятно</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showBeelineModal(title, text, iconEmoji = '⚠️') {
+            document.getElementById('beelineModalTitle').innerText = title;
+            document.getElementById('beelineModalText').innerText = text;
+            document.getElementById('beelineModalIcon').innerText = iconEmoji;
+            document.getElementById('beelineModal').style.display = 'flex';
+        }
+
+        function closeBeelineModal() {
+            document.getElementById('beelineModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
+<div class="container">
+
+    <!-- 1. ЭКРАН АВТОРИЗАЦИИ -->
+    <div id="screen-login" class="app-screen active">
+        <h2>Авторизация в систему</h2>
+        <div class="card">
+            <form onsubmit="handleLogin(event)">
+                <label>Логин</label>
+                <input type="text" id="loginUser" required placeholder="YToloknov@beeline.kz">
+
+                <label>Пароль</label>
+                <div class="password-wrapper">
+                    <input type="password" id="loginPass" required placeholder="Введите пароль">
+                    <span class="toggle-password" onclick="togglePasswordVisibility('loginPass', this)">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </span>
+                </div>
+
+                <label class="checkbox-container">
+                    <input type="checkbox" id="rememberMe">
+                    <span class="custom-checkbox"></span>
+                    <span class="checkbox-label">Запомнить меня</span>
+                </label>
+
+                <button type="submit" class="btn main-btn">🚀 Войти</button>
+            </form>
+            <span class="link-text" onclick="switchScreen('screen-forgot')">Забыли пароль?</span>
+            <span class="link-text" onclick="switchScreen('screen-register')">Регистрация нового пользователя</span>
+        </div>
+    </div>
+
+    <!-- 2. ВОССТАНОВЛЕНИЕ ПАРОЛЯ (Шаг 1) -->
+    <div id="screen-forgot" class="app-screen">
+        <h2>Восстановление пароля</h2>
+        <div class="card">
+            <label>Логин в Digital Window</label>
+            <input type="text" id="forgotLogin" placeholder="YToloknov@beeline.kz">
+
+            <label>Рабочая почта</label>
+            <input type="email" id="forgotEmail" placeholder="example@gmail.com">
+
+            <button type="button" class="btn main-btn" onclick="sendRecoveryCode()">Отправить код на почту 📨</button>
+            <span class="link-text" onclick="switchScreen('screen-login')">Назад к авторизации</span>
+        </div>
+    </div>
+
+    <!-- 2.1. ВОССТАНОВЛЕНИЕ ПАРОЛЯ (Шаг 2) -->
+    <div id="screen-reset" class="app-screen">
+        <h2>Новый пароль</h2>
+        <div class="card">
+            <label>Одноразовый код из письма</label>
+            <input type="text" id="resetCode" placeholder="123456">
+
+            <label>Новый пароль</label>
+            <div class="password-wrapper">
+                <input type="password" id="newPass1" placeholder="Минимум 6 символов" oninput="validateResetPasswordsMatch()">
+                <span class="toggle-password" onclick="togglePasswordVisibility('newPass1', this)">
+                    <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </span>
+            </div>
+
+            <label>Подтверждение пароля</label>
+            <div class="password-wrapper">
+                <input type="password" id="newPass2" placeholder="Повторите пароль" oninput="validateResetPasswordsMatch()">
+                <span class="toggle-password" onclick="togglePasswordVisibility('newPass2', this)">
+                    <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </span>
+            </div>
+
+            <button type="button" class="btn main-btn" onclick="confirmPasswordReset()">✅ Изменить пароль</button>
+            <span class="btn danger-btn" onclick="switchScreen('screen-login')">🔚 Отмена</span>
+        </div>
+    </div>
+
+    <!-- 3. РЕГИСТРАЦИЯ -->
+    <div id="screen-register" class="app-screen">
+        <h2>Регистрация</h2>
+        <div class="card">
+            <form onsubmit="handleRegister(event)">
+                <label>Город</label>
+                <div class="custom-dropdown" id="regCityDropdown">
+                    <div class="dropdown-trigger" onclick="toggleDropdown('regCityDropdown')">
+                        <span id="regCityLabel" style="color: var(--text-secondary);">Выберите город...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-list">
+                        <div style="padding: 8px; background: var(--beeline-dark); position: sticky; top: 0; z-index: 2;">
+                            <input type="text" class="dropdown-search-input" id="citySearchInput" placeholder="🔍 Поиск города..." oninput="filterCities(this.value, 'regCityDropdown', 'regCity', 'regCityLabel')" onclick="event.stopPropagation()">
+                        </div>
+                        <div id="city-items-container"></div>
+                    </div>
+                </div>
+                <input type="hidden" id="regCity" required>
+
+                <label>Фамилия Имя Отчество</label>
+                <input type="text" id="regFullName" required placeholder="Толокнов Евгений Алексеевич">
+
+                <label>Номер склада</label>
+                <input type="text" id="regWarehouse" required placeholder="Бригада №1">
+
+                <label>Роль</label>
+                <div class="custom-dropdown" id="regRoleDropdown">
+                    <div class="dropdown-trigger" onclick="toggleDropdown('regRoleDropdown')">
+                        <span id="regRoleLabel">Техник-Универсал</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-list">
+                        <div class="dropdown-item" onclick="selectDropdownOption('regRoleDropdown', 'regRole', 'regRoleLabel', 'Техник-Универсал', 'Техник-Универсал')">Техник-Универсал</div>
+                        <div class="dropdown-item" onclick="selectDropdownOption('regRoleDropdown', 'regRole', 'regRoleLabel', 'Бригадир', 'Бригадир')">Бригадир</div>
+                        <div class="dropdown-item" onclick="selectDropdownOption('regRoleDropdown', 'regRole', 'regRoleLabel', 'Старший Техник', 'Старший Техник')">Старший Техник</div>
+                    </div>
+                </div>
+                <input type="hidden" id="regRole" value="Техник-Универсал" required>
+
+                <label>Рабочий номер телефона</label>
+                <input type="text" id="regWorkPhone" required placeholder="+7 (700)-000-00-00" oninput="applyPhoneMask(this)" onkeydown="handlePhoneKeydown(event)" onpaste="setTimeout(() => applyPhoneMask(this), 0)">
+
+                <label>Логин в Digital Window</label>
+                <input type="text" id="regDwLogin" required placeholder="YToloknov@beeline.kz">
+
+                <label>Пароль</label>
+                <div class="password-wrapper">
+                    <input type="password" id="regPassword" required placeholder="Пароль" oninput="validateRegPasswordsMatch()">
+                    <span class="toggle-password" onclick="togglePasswordVisibility('regPassword', this)">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </span>
+                </div>
+
+                <label>Подтверждение пароля</label>
+                <div class="password-wrapper">
+                    <input type="password" id="regPasswordConfirm" required placeholder="Повторите пароль" oninput="validateRegPasswordsMatch()">
+                    <span class="toggle-password" onclick="togglePasswordVisibility('regPasswordConfirm', this)">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </span>
+                </div>
+
+                <label>Ваш ID в Telegram</label>
+                <input type="text" id="regTgId" required placeholder="1160882045">
+
+                <label>Рабочей группы ID в Telegram</label>
+                <input type="text" id="regTgGroup" required placeholder="-100xxxxxxx">
+
+                <label>Рабочая почта (для восстановления пароля)</label>
+                <input type="email" id="regEmail" required placeholder="example@gmail.com">
+
+                <button type="submit" class="btn main-btn">📝 Завершить регистрацию</button>
+                <button type="button" class="btn danger-btn" onclick="switchScreen('screen-login')">🔚 Отмена</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. ГЛАВНОЕ МЕНЮ ПОЛЬЗОВАТЕЛЯ -->
+    <div id="screen-main" class="app-screen">
+        <h2>Главное меню</h2>
+        <div class="card" style="display: flex; flex-direction: column; gap: 4px;">
+            <div id="userInfoHeader" style="font-size: 13px; color: var(--beeline-yellow); margin-bottom: 5px;"></div>
+            
+            <a href="#" id="reportsLinkBtn" target="_blank" class="btn main-btn">📝 Отчеты по заявкам</a>
+            
+            <!-- Меню монтажника -->
+            <button class="btn main-btn" id="installerMenuBtn" style="display: none;" onclick="switchScreen('screen-installer-menu')">👷 Меню монтажника</button>
+            
+            <!-- Доступ к оборудованию -->
+            <button class="btn main-btn" id="equipmentAccessBtn" style="display: none;" onclick="switchScreen('screen-equipment-access')">🔑 Доступ к оборудованию</button>
+            
+            <a href="https://john-toloknov.github.io/proshivok.net/" target="_blank" class="btn main-btn">🛠️ Программное обеспечение</a>
+            
+            <!-- Кнопки ТМЦ и Админ-панель -->
+            <button class="btn main-btn" id="scannerAppBtn" style="display: none;" onclick="openScannerScreen()">📦 Записать ТМЦ</button>
+            <button class="btn main-btn" id="adminPanelBtn" style="display: none;" onclick="openAdminPanel()">⚙️ Админ-панель</button>
+            
+            <button class="btn danger-btn" onclick="logout()" style="margin-top: 20px;">🔚 Выйти</button>
+        </div>
+    </div>
+
+    <!-- 4.1. МЕНЮ МОНТАЖНИКА -->
+    <div id="screen-installer-menu" class="app-screen">
+        <h2>Меню монтажника</h2>
+        <div class="card">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+                <button class="btn action-btn" onclick="openMySchedule()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📅 Рабочий график</button>
+                <button class="btn action-btn" onclick="alert('Планы по ППР')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📈 Планы по ППР</button>
+                
+                <button class="btn action-btn" onclick="alert('Долги по Актам')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📑 Долги по Актам</button>
+                <button class="btn action-btn" onclick="alert('Моё оборудование и кабель')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">🔌 Оборудование и кабель</button>
+                
+                <button class="btn action-btn" onclick="openMySalary()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">💰 Моя Зарплата</button>
+                <button class="btn action-btn" onclick="alert('Мои часы и дни')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">⏱ Часы и дни</button>
+                
+                <button class="btn action-btn" onclick="alert('Возврат оборудования')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">🔄 Возврат</button>
+                <button class="btn action-btn" onclick="alert('Проверить возврат оборудования')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">🔍 Проверить возврат</button>
+            </div>
+            
+            <button class="btn danger-btn" onclick="switchScreen('screen-main')" style="margin-top: 10px;">⬅️ Назад в главное меню</button>
+        </div>
+    </div>
+
+    <!-- 4.1.1. ЭКРАН ВЫГРУЗКИ ЗАРПЛАТЫ -->
+    <div id="screen-salary" class="app-screen">
+        <h2>Расчет зарплаты</h2>
+        <div class="card">
+            <div id="salaryContentContainer">
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загрузка данных о зарплате... 🔄</div>
+            </div>
+            <button class="btn danger-btn" onclick="switchScreen('screen-installer-menu')" style="margin-top: 15px;">⬅️ Назад в меню монтажника</button>
+        </div>
+    </div>
+
+    <!-- 4.1.2. ЭКРАН ВЫГРУЗКИ ГРАФИКА (КРАСИВЫЙ КАЛЕНДАРЬ) -->
+    <div id="screen-schedule" class="app-screen">
+        <h2>Рабочий график</h2>
+        <div class="card">
+            <div id="scheduleContentContainer">
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загрузка графика смен... 🔄</div>
+            </div>
+            <button class="btn danger-btn" onclick="switchScreen('screen-installer-menu')" style="margin-top: 15px;">⬅️ Назад в меню монтажника</button>
+        </div>
+    </div>
+
+    <!-- 4.2. ДОСТУП К ОБОРУДОВАНИЮ -->
+    <div id="screen-equipment-access" class="app-screen">
+        <h2>Доступ к оборудованию</h2>
+        <div class="card" style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn main-btn" onclick="switchScreen('screen-access-search')" style="margin-top: 0;">🔍 Поиск Доступа</button>
+            <button class="btn action-btn" onclick="switchScreen('screen-access-record')" style="margin-top: 0;">📝 Записать Доступ</button>
+            
+            <button class="btn danger-btn" onclick="switchScreen('screen-main')" style="margin-top: 15px;">⬅️ Назад в главное меню</button>
+        </div>
+    </div>
+
+    <!-- 4.2.1. ПОИСК ДОСТУПА -->
+    <div id="screen-access-search" class="app-screen">
+        <h2>Поиск доступа</h2>
+        <div class="card">
+            <label>Адрес (улица/мкр, дом, квартира)</label>
+            <input type="text" id="searchAddressInput" placeholder="🔍 Введите адрес для поиска..." oninput="handleSearchAccess()">
+
+            <div style="margin-top: 15px;" id="accessSearchResultsContainer"></div>
+
+            <button id="scrollQuickBtn" class="scroll-quick-btn" onclick="toggleScrollPage()" title="Прокрутка">
+                <svg id="scrollIcon" viewBox="0 0 24 24">
+                    <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+                </svg>
+            </button>
+
+            <button class="btn danger-btn" onclick="switchScreen('screen-equipment-access')" style="margin-top: 15px;">⬅️ Назад</button>
+        </div>
+    </div>
+
+    <!-- 4.2.2. ЗАПИСАТЬ ДОСТУП -->
+    <div id="screen-access-record" class="app-screen">
+        <h2>Записать доступ</h2>
+        <div class="card">
+            <form onsubmit="handleSaveAccess(event)">
+                <label>1. Адрес (Улица / микрорайон, дом, квартира)</label>
+                <input type="text" id="accAddress" required placeholder="ул. Ленина, д. 10, кв. 25">
+
+                <label>2. Контактный номер 1</label>
+                <input type="text" id="accPhone1" required placeholder="+7 (700)-000-00-00" oninput="applyPhoneMask(this)" onkeydown="handlePhoneKeydown(event)" onpaste="setTimeout(() => applyPhoneMask(this), 0)">
+
+                <label>3. Контактный номер 2 (необязательно)</label>
+                <input type="text" id="accPhone2" placeholder="+7 (700)-000-00-00" oninput="applyPhoneMask(this)" onkeydown="handlePhoneKeydown(event)" onpaste="setTimeout(() => applyPhoneMask(this), 0)">
+
+                <label>4. Адрес КСК (где могут храниться ключи)</label>
+                <input type="text" id="accKsk" placeholder="КСК «Наш дом», ул. Мира 5">
+
+                <label>5. Если крыша открыта, в каком подъезде</label>
+                <input type="text" id="accRoof" placeholder="Например: 2 подъезд">
+
+                <label>6. Код домофона для входа</label>
+                <input type="text" id="accIntercom" placeholder="Например: К1234">
+
+                <button type="submit" class="btn main-btn">Сохранить доступ 💾</button>
+                <button type="button" class="btn danger-btn" onclick="switchScreen('screen-equipment-access')">🔚 Отмена</button>
+            </form>
+        </div>
+    </div>
+
+<!-- ЭКРАН 4.2.3: СКАНЕР ТМЦ -->
+<div id="screen-scanner" class="app-screen" style="display: none;">
+    <div class="container" style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; padding-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0;">📦 Сканер ТМЦ</h2>
+        </div>
+
+        <!-- Переключатель режимов (Роутер выбран по умолчанию) -->
+        <div class="mode-selector" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+            <button type="button" class="mode-btn active" id="mode-router-btn" onclick="setEquipmentMode('router')">🛜 Роутер</button>
+            <button type="button" class="mode-btn" id="mode-stb-btn" onclick="setEquipmentMode('stb')">📺 Приставка</button>
+            <button type="button" class="mode-btn" id="mode-cable-btn" onclick="setCableMode()">🔌 Кабель</button>
+        </div>
+
+        <!-- Выпадающий список для кабеля -->
+        <div class="card" id="cable-name-card" style="display: none; background: var(--card-bg); padding: 14px; border-radius: 16px; border: 1px solid var(--card-border);">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Марка кабеля</label>
+            <div class="custom-dropdown" style="position: relative; width: 100%; margin-top: 6px;">
+                <button type="button" class="dropdown-select-btn" id="cable-btn" onclick="toggleDropdown('cable-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
+                    <span id="cable-selected">Кабель U/UTP 2х2 (500 м)</span>
+                    <span>▼</span>
+                </button>
+                <div class="dropdown-list" id="cable-list" style="position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #1c1c1c; border: 1px solid var(--card-border); border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 100; display: none;">
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectCableOption('Кабель U/UTP 2х2хAWG 24/1 PVC Cat.5e (0,503)', 'Кабель U/UTP 2х2 (500 м)', 500)">Кабель U/UTP 2х2 (500 м)</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectCableOption('Кабель F/UTP 2х2Хawg24/1 PE1 Cat. 5e', 'Кабель F/UTP 2х2 (305 м)', 305)">Кабель F/UTP 2х2 (305 м)</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectCableOption('Кабель U/UTP 4x2xAWG24/1 PVC Cat.5e (0.523)', 'Кабель U/UTP 4x2 (305 м)', 305)">Кабель U/UTP 4x2 (305 м)</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer;" onclick="selectCableOption('Кабель FTP 10х2х0,52 (Серийный кабель)', 'Кабель FTP 10х2 (305 м)', 305)">Кабель FTP 10х2 (305 м)</div>
+                </div>
+            </div>
+            <input type="hidden" id="cable-name" value="Кабель U/UTP 2х2хAWG 24/1 PVC Cat.5e (0,503)">
+        </div>
+
+        <!-- Успешно добавленный элемент -->
+        <div class="last-scanned-card" id="last-scanned-box" style="display: none; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 10px 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--success);">✅ Успешно добавлено:</span>
+                <button type="button" class="rescan-icon-btn" onclick="rescanLastItem()" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #fff; cursor: pointer; width: 32px; height: 32px; border-radius: 8px;">🔄</button>
+            </div>
+            <span class="last-scanned-value" id="last-scanned-text" style="font-size: 15px; font-weight: 700; word-break: break-all; font-family: monospace;">—</span>
+        </div>
+
+        <!-- Блок ручного ввода -->
+        <div class="card manual-input-box" id="manual-box" style="display: none; flex-direction: column; gap: 10px; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border);">
+            <label id="manual-label" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Введите серийный номер вручную</label>
+            <input type="text" id="manual-serial-input" class="text-input" placeholder="Серийный номер" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--card-border); background: #0a0a0a; color: #fff; box-sizing: border-box;">
+            <button class="btn main-btn" onclick="submitManualCode()">Добавить в список ➕</button>
+        </div>
+
+        <!-- Секция камеры -->
+        <div id="camera-section" style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 13px; font-weight: 600; text-align: center; color: var(--text-muted);" id="scan-hint">Наведите камеру на штрих-код (В списке: <span id="scan-count-text">0</span> шт.)</div>
+            <div id="reader" style="width: 100%; height: 220px !important; border-radius: 16px; overflow: hidden; background: #000; border: 2px solid var(--card-border);"></div>
+        </div>
+        
+        <!-- Кнопки управления -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn action-btn" id="toggle-camera-btn" onclick="toggleManualInputMode()">Ввести вручную ⌨️</button>
+            <button class="btn action-btn" id="gallery-btn" onclick="document.getElementById('file-input').click()">Загрузить фото из галереи 📁</button>
+            <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)" style="display: none;">
+
+            <button class="btn main-btn" id="proceed-to-form-btn" style="display: none;" onclick="showFormStep()">📝 Перейти к оформлению (<span id="batch-count-badge">0</span> шт.) 🚀</button>
+            
+            <!-- Красная кнопка возврата в главное меню внизу -->
+            <button class="btn danger-btn" onclick="switchScreen('screen-main'); stopScanner();">⬅️ Назад в главное меню</button>
+        </div>
+    </div>
+</div>
+
+<!-- ЭКРАН 4.2.4: ФОРМА ОТПРАВКИ ТМЦ -->
+<div id="screen-form" class="app-screen" style="display: none;">
+    <div class="container" style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h3 style="margin: 0; color: var(--success);">Оформление ТМЦ</h3>
+        </div>
+        
+        <div class="card" style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border);">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">СОДЕРЖИМОЕ СПИСКА</label>
+            <!-- Возвращенные счетчики роутеров, приставок и кабелей -->
+            <div class="breakdown-counter-container" id="breakdown-counter" style="display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0;"></div>
+            <div class="code-display-list" id="scanned-codes-list-container" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto;"></div>
+        </div>
+
+        <button class="btn secondary-btn" onclick="backToScanner()">+ Добавить еще позиции 📱</button>
+
+        <div class="card" style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border);">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">КЕМ ВЫДАН 👤</label>
+            <div class="custom-dropdown" style="position: relative; width: 100%; margin-top: 6px;">
+                <button type="button" class="dropdown-select-btn" id="author-btn" onclick="toggleDropdown('author-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
+                    <span id="author-selected">Толокнов Евгений</span>
+                    <span>▼</span>
+                </button>
+                <div class="dropdown-list" id="author-list" style="position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #1c1c1c; border: 1px solid var(--card-border); border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 100; display: none;">
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('author', 'Толокнов Евгений', 'author-btn', 'Толокнов Евгений', 'author-list')">Толокнов Евгений</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('author', 'Лоос Виктор', 'author-btn', 'Лоос Виктор', 'author-list')">Лоос Виктор</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('author', 'Стрижко Дмитрий', 'author-btn', 'Стрижко Дмитрий', 'author-list')">Стрижко Дмитрий</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer;" onclick="selectOptionValue('author', 'Какалова Мария', 'author-btn', 'Какалова Мария', 'author-list')">Какалова Мария</div>
+                </div>
+            </div>
+            <input type="hidden" id="author" value="Толокнов Евгений">
+        </div>
+
+        <div class="card" style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border);">
+            <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">КОМУ ВЫДАН 👤</label>
+            <div class="custom-dropdown" style="position: relative; width: 100%; margin-top: 6px;">
+                <button type="button" class="dropdown-select-btn" id="installer-btn" onclick="toggleDropdown('installer-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
+                    <span id="installer-selected">Курмангалиев Тимур</span>
+                    <span>▼</span>
+                </button>
+                <div class="dropdown-list" id="installer-list" style="position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #1c1c1c; border: 1px solid var(--card-border); border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 100; display: none;">
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Курмангалиев Тимур Берикович,Бригада №1 (Темиртау)', 'installer-btn', 'Курмангалиев Тимур', 'installer-list')">Курмангалиев Тимур</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Стрижко Дмитрий Юрьевич,Бригада №3 (Темиртау)', 'installer-btn', 'Стрижко Дмитрий', 'installer-list')">Стрижко Дмитрий</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Новиков Иван Викторович,Бригада №4 (Темиртау)', 'installer-btn', 'Новиков Иван', 'installer-list')">Новиков Иван</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Лоос Виктор Геннадьевич,Бригада №5 (Темиртау)', 'installer-btn', 'Лоос Виктор', 'installer-list')">Лоос Виктор</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Марчуков Андрей Артемович,Бригада №6 (Темиртау)', 'installer-btn', 'Марчуков Андрей', 'installer-list')">Марчуков Андрей</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Иванусь Аркадий Александрович,Бригада №7 (Темиртау)', 'installer-btn', 'Иванусь Аркадий', 'installer-list')">Иванусь Аркадий</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Павленко Николай Александрович,Бригада №8 (Темиртау)', 'installer-btn', 'Павленко Николай', 'installer-list')">Павленко Николай</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Седухин Владимир Игоревич,Бригада №9 (Темиртау)', 'installer-btn', 'Седухин Владимир', 'installer-list')">Седухин Владимир</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Янковицкий Сергей Валерьевич,Бригада №10 (Темиртау)', 'installer-btn', 'Янковицкий Сергей', 'installer-list')">Янковицкий Сергей</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Тарыца Захар Васильевич,Бригада №11 (Темиртау)', 'installer-btn', 'Тарыца Захар', 'installer-list')">Тарыца Захар</div>
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer;" onclick="selectOptionValue('installer', 'Кайзер Павел Иванович,Бригада №12 (Темиртау)', 'installer-btn', 'Кайзер Павел', 'installer-list')">Кайзер Павел</div>
+                </div>
+            </div>
+            <input type="hidden" id="installer" value="Курмангалиев Тимур Берикович,Бригада №1 (Темиртау)">
+        </div>
+
+        <button class="btn main-btn" id="submit-btn" onclick="sendDataToGoogleSheet()">Записать весь список в таблицу 🚀</button>
+        
+        <!-- Кнопка «Назад в Главное меню» красного цвета вместо «Назад к сканеру» -->
+        <button class="btn danger-btn" onclick="switchScreen('screen-main'); stopScanner();">⬅️ Назад в главное меню</button>
+
+        <div class="loader" id="loader-text" style="display: none; text-align: center; color: var(--beeline-yellow); font-weight: 600;">Запись данных в таблицу...⏳</div>
+    </div>
+</div>
+
+<!-- ЭКРАН 4.2.5: УСПЕШНО -->
+    <div id="screen-success" class="app-screen" style="display: none;">
+        <div class="container" style="width: 100%; max-width: 400px; margin: 0 auto; text-align: center; padding: 40px 10px; display: flex; flex-direction: column; gap: 16px; align-items: center;">
+            <div class="success-icon" style="width: 60px; height: 60px; background: rgba(34, 197, 94, 0.15); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; border: 1px solid rgba(34, 197, 94, 0.3);">✓</div>
+            <h2 style="color: var(--text-main); margin: 0; font-size: 20px;">Успешно записано!</h2>
+            <p style="color: var(--text-muted); margin: 0; font-size: 13px;">Все позиции распределены по листам.</p>
+            
+            <!-- Кнопки управления на экране успеха -->
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px;">
+                <button class="btn main-btn" onclick="resetAllApp()">Новая выдача 📲</button>
+                <button class="btn danger-btn" onclick="switchScreen('screen-main')">⬅️ Назад в главное меню</button>
+            </div>
+        </div>
+    </div>
+
+<!-- 5. АДМИН-ПАНЕЛЬ -->
+    <div id="screen-admin" class="app-screen">
+        <h2>Панель администратора</h2>
+        <div class="card" style="position: relative;">
+            <label>Поиск сотрудников</label>
+            <input type="text" id="adminSearch" placeholder="🔍 Введите ФИО, город или логин..." oninput="renderUsersList()">
+
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <label style="margin:0;">Список пользователей (<span id="usersCount">0</span>)</label>
+            </div>
+            
+            <div id="usersListContainer" style="margin-top: 10px;"></div>
+            
+            <button id="scrollQuickBtn" class="scroll-quick-btn" onclick="handleScrollClick()" title="Прокрутка">
+               <svg id="scrollIcon" viewBox="0 0 24 24">
+                   <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+               </svg>
+            </button>
+
+            <button class="btn danger-btn" onclick="switchScreen('screen-main')" style="margin-top: 15px; clear: both;">⬅️ Назад в главное меню</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ -->
+<div id="editUserModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
+    <div class="card" style="width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto;">
+        <h3>Редактирование учетной записи</h3>
+        <input type="hidden" id="editUserId">
+        
+        <label>ФИО</label>
+        <input type="text" id="editFullName">
+
+        <label>Город (Недоступно для изменения)</label>
+        <input type="text" id="editCityDisplay" disabled style="color: var(--text-secondary); background: #0c0c0c;">
+        <input type="hidden" id="editCity">
+
+        <label>Номер склада</label>
+        <input type="text" id="editWarehouse">
+
+        <label>Роль</label>
+        <div class="custom-dropdown" id="editRoleDropdown">
+            <div class="dropdown-trigger" onclick="toggleDropdown('editRoleDropdown')">
+                <span id="editRoleLabel">Техник-Универсал</span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-list" id="editRoleDropdownList">
+                <div class="dropdown-item" onclick="selectDropdownOption('editRoleDropdown', 'editRole', 'editRoleLabel', 'Техник-Универсал', 'Техник-Универсал')">Техник-Универсал</div>
+                <div class="dropdown-item" onclick="selectDropdownOption('editRoleDropdown', 'editRole', 'editRoleLabel', 'Бригадир', 'Бригадир')">Бригадир</div>
+                <div class="dropdown-item" id="optSenior" onclick="selectDropdownOption('editRoleDropdown', 'editRole', 'editRoleLabel', 'Старший Техник', 'Старший Техник')">Старший Техник</div>
+                <div class="dropdown-item" id="optAdmin" onclick="selectDropdownOption('editRoleDropdown', 'editRole', 'editRoleLabel', 'Администратор', 'Администратор')">Администратор</div>
+                <div class="dropdown-item" id="optOwner" style="display:none; color: var(--text-secondary); pointer-events: none;" onclick="selectDropdownOption('editRoleDropdown', 'editRole', 'editRoleLabel', 'Владелец', 'Владелец')">Владелец</div>
+            </div>
+        </div>
+        <input type="hidden" id="editRole" value="Техник-Универсал">
+
+        <label>Рабочий номер телефона</label>
+        <input type="text" id="editWorkPhone" placeholder="+7 (700)-000-00-00" oninput="applyPhoneMask(this)" onkeydown="handlePhoneKeydown(event)" onpaste="setTimeout(() => applyPhoneMask(this), 0)">
+
+        <label>Пароль</label>
+        <div class="password-wrapper">
+            <input type="password" id="editPassword">
+            <span class="toggle-password" onclick="togglePasswordVisibility('editPassword', this)">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </span>
+        </div>
+
+        <label>Ваш ID в Telegram</label>
+        <input type="text" id="editTgId">
+
+        <label>Рабочей группы ID в Telegram</label>
+        <input type="text" id="editTgGroup">
+
+        <label>Рабочая почта (для восстановления)</label>
+        <input type="email" id="editEmail">
+
+        <button class="btn main-btn" onclick="saveEditedUser()">💾 Сохранить изменения</button>
+        <button class="btn danger-btn" onclick="closeEditModal()">🔚 Отмена</button>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО УВЕДОМЛЕНИЙ -->
+<div id="beelineModal" class="beeline-modal-overlay">
+    <div class="beeline-modal-card">
+        <div class="beeline-modal-icon" id="beelineModalIcon">⚠️</div>
+        <div class="beeline-modal-title" id="beelineModalTitle">Уведомление</div>
+        <div class="beeline-modal-text" id="beelineModalText">Текст сообщения</div>
+        <div id="beelineModalButtons">
+            <button class="btn main-btn" onclick="closeBeelineModal()" style="margin-top:0;">Понятно</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* =========================================================================
+        КОНФИГУРАЦИЯ ГОРОДОВ И URL СКРИПТОВ (РАЗДЕЛЬНЫЕ ДЛЯ КАЖДОГО ГОРОДА)
+        ========================================================================= */
+    
+    // Общий скрипт для авторизации и зарплаты (единый на всю систему)
+    const GLOBAL_AUTH_SALARY_URL = "https://script.google.com/macros/s/AKfycbyFcYBp90UUg7koztArk61GASabeelnRSoRvVF2-crsXdToB4Y-3bfmoRzGohrXfYMiFw/exec";
+
+    const CITIES_CONFIG = {
+        "Темиртау": {
+            // Скрипт графика для Темиртау
+            scriptUrl: "https://script.google.com/macros/s/AKfycbwzA78v4H4SChuoTic5A9KTT_x918bEDaOZNMwXwQgOOezxpg0nXPEfPJ2pa1NXzuzwgw/exec",
+            // Скрипт отчетов для ЕЖЕДНЕВНЫЙ Темиртау
+            reportsScriptUrl: "https://script.google.com/macros/s/AKfycbw_yI2oF5zXSY4KJNJTcolrrVj9-b-CzUauQR_W9N6oLotyV6Nv5m3m7V1F-6RM0lQsgQ/exec",
+            // Прямая ссылка на таблицу графиков (для кнопки просмотра)
+            scheduleSheetUrl: "https://docs.google.com/spreadsheets/d/15iggvcMnhwA10w7ei3ahmhpkoV-ZRLLVkKeLdN_QB5k/edit?gid=636535801#gid=636535801",
+            
+            reportsUrl: "https://john-toloknov.github.io/scaner-beeline/", 
+            tmcUrl: "https://john-toloknov.github.io/qr-cod-html/",        
+            tgGroupId: "-1001383444721"                         
+        },
+        "Алматы": {
+            scriptUrl: "ТУТ_URL_СКРИПТА_ГРАФИКА_АЛМАТЫ",
+            reportsScriptUrl: "ТУТ_URL_СКРИПТА_ОТЧЕТОВ_АЛМАТЫ",
+            scheduleSheetUrl: "https://docs.google.com/spreadsheets/d/almaty_sheet_id_here/edit",
+            reportsUrl: "https://john-toloknov.github.io/scaner-beeline/",
+            tmcUrl: "https://john-toloknov.github.io/qr-cod-html/",
+            tgGroupId: "-1000000000001"
+        },
+        "Астана": {
+            scriptUrl: "ТУТ_URL_СКРИПТА_ГРАФИКА_АСТАНА",
+            reportsScriptUrl: "ТУТ_URL_СКРИПТА_ОТЧЕТОВ_АСТАНА",
+            scheduleSheetUrl: "https://docs.google.com/spreadsheets/d/astana_sheet_id_here/edit",
+            reportsUrl: "https://john-toloknov.github.io/scaner-beeline/",
+            tmcUrl: "https://john-toloknov.github.io/qr-cod-html/",
+            tgGroupId: "-1000000000002"
+        },
+        "Караганда": {
+            scriptUrl: "ТУТ_URL_СКРИПТА_ГРАФИКА_КАРАГАНДА",
+            reportsScriptUrl: "ТУТ_URL_СКРИПТА_ОТЧЕТОВ_КАРАГАНДА",
+            scheduleSheetUrl: "https://docs.google.com/spreadsheets/d/karaganda_sheet_id_here/edit",
+            reportsUrl: "https://john-toloknov.github.io/scaner-beeline/",
+            tmcUrl: "https://john-toloknov.github.io/qr-cod-html/",
+            tgGroupId: "-1000000000003"
+        },
+        "Шымкент": {
+            scriptUrl: "ТУТ_URL_СКРИПТА_ГРАФИКА_ШЫМКЕНТ",
+            reportsScriptUrl: "ТУТ_URL_СКРИПТА_ОТЧЕТОВ_ШЫМКЕНТ",
+            scheduleSheetUrl: "https://docs.google.com/spreadsheets/d/shymkent_sheet_id_here/edit",
+            reportsUrl: "https://john-toloknov.github.io/scaner-beeline/",
+            tmcUrl: "https://john-toloknov.github.io/qr-cod-html/",
+            tgGroupId: "-1000000000004"
+        }
+    };
+
+    const CITIES_LIST = [
+        "Сатпаев", "Щучинск", "Хромтау", "Кызылорда", "Рудный", "Балхаш", "Абай", 
+        "Лисаковск", "Алматы", "Караганда", "Астана", "Жезказган", "Кокшетау", "Тараз", 
+        "Петропавловск", "Шымкент", "Усть-Каменогорск", "Семей", "Актобе", "Павлодар", 
+        "Уральск", "Талдыкорган", "Атырау", "Актау", "Темиртау", "Экибастуз", 
+        "Костанай", "Конаев", "Жанаозен", "Риддер", "Житикара", "Шахтинск", "Кандыагаш"
+    ].sort((a, b) => a.localeCompare(b));
+
+    let usersDb = JSON.parse(localStorage.getItem('beeline_central_user')) || [
+       {
+            id: 'owner_1',
+            fullName: 'J.T.',
+            city: 'Темиртау',
+            warehouse: 'Главный склад',
+            role: 'Владелец',
+            workPhone: '+7 (776)-533-98-88',
+            dwLogin: 'J.T.@beeline.kz',
+            email: 'johntoloknov@gmail.com',
+            password: 'Fuckoff932784!',
+            tgId: '1160882045',
+            tgGroup: '-1001383444721'
+        },
+        {
+            id: 'user_4',
+            fullName: 'Толокнов Евгений Алексеевич',
+            city: 'Темиртау',
+            warehouse: 'Бригада №15',
+            role: 'Старший Техник',
+            workPhone: '+7 (705)-840-89-99',
+            dwLogin: 'YToloknov@beeline.kz',
+            email: 'john-most-wanted@list.ru',
+            password: '11233',
+            tgId: '1160882045',
+            tgGroup: '-1001383444721'
+        }
+    ];
+
+    let accessDb = JSON.parse(localStorage.getItem('beeline_access_db')) || [
+        {
+            id: 'acc_1',
+            city: 'Темиртау',
+            address: 'ул. Мира, д. 25, кв. 42',
+            phone1: '+7 (700)-111-22-33',
+            phone2: '+7 (700)-444-55-66',
+            ksk: 'КСК «Восход», ул. Строителей 12',
+            roof: '1 подъезд',
+            intercom: 'К1234'
+        }
+    ];
+
+    let currentUser = JSON.parse(localStorage.getItem('beeline_current_user')) || null;
+    let recoveryEmailTarget = '';
+    let generatedRecoveryCode = '';
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        initCitiesDropdowns();
+        
+        // Автоматически синхронизируем пользователей из гугл таблицы при загрузке
+        await loadUsersFromSheet();
+
+        const rememberedLogin = localStorage.getItem('beeline_remembered_login');
+        const rememberedPass = localStorage.getItem('beeline_remembered_pass');
+        if (rememberedLogin) {
+            document.getElementById('loginUser').value = rememberedLogin;
+            document.getElementById('rememberMe').checked = true;
+        }
+        if (rememberedPass) {
+            document.getElementById('loginPass').value = rememberedPass;
+        }
+
+        checkAuthSession();
+        handleSearchAccess();
+    });
+
+    // Функция загрузки пользователей из Google Таблицы через doGet
+    async function loadUsersFromSheet() {
+        try {
+            const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=getUsers`);
+            const res = await response.json();
+            if (res.status === 'ok' && res.users && res.users.length > 0) {
+                const owner = usersDb.find(u => u.role === 'Владелец');
+                let sheetUsers = res.users.map((u, index) => ({
+                    id: u.id || ('user_' + index),
+                    city: u.city,
+                    fullName: u.fullName,
+                    warehouse: u.warehouse,
+                    role: u.role || 'Техник-Универсал',
+                    workPhone: u.workPhone,
+                    dwLogin: u.dwLogin,
+                    password: u.password,
+                    tgId: u.tgId,
+                    tgGroup: u.tgGroup,
+                    email: u.email
+                }));
+                if (owner && !sheetUsers.some(u => u.email === owner.email || u.dwLogin === owner.dwLogin)) {
+                    sheetUsers.unshift(owner);
+                }
+                usersDb = sheetUsers;
+                localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+            }
+        } catch (e) {
+            console.error("Ошибка загрузки пользователей из таблицы:", e);
+        }
+    }
+
+    function applyPhoneMask(input) {
+        if (!input) return;
+        let val = (input.value || '').replace(/\D/g, '');
+        if (val.startsWith('7') || val.startsWith('8')) {
+            val = val.substring(1);
+        }
+        if (val.length > 10) {
+            val = val.substring(0, 10);
+        }
+        
+        let result = '+7';
+        if (val.length > 0) {
+            result += ' (' + val.substring(0, 3);
+        }
+        if (val.length >= 3) {
+            result += ')-' + val.substring(3, 6);
+        }
+        if (val.length >= 6) {
+            result += '-' + val.substring(6, 8);
+        }
+        if (val.length >= 8) {
+            result += '-' + val.substring(8, 10);
+        }
+        
+        input.value = result;
+    }
+
+    function handlePhoneKeydown(e) {
+        if (e.key === 'Backspace') {
+            const input = e.target;
+            let pos = input.selectionStart;
+            if (pos > 2) {
+                let charBefore = input.value.charAt(pos - 1);
+                if (/\D/.test(charBefore)) {
+                    e.preventDefault();
+                    let val = input.value.replace(/\D/g, '');
+                    if (val.startsWith('7') || val.startsWith('8')) {
+                        val = val.substring(1);
+                    }
+                    if (val.length > 0) {
+                        val = val.substring(0, val.length - 1);
+                    }
+                    
+                    let result = '+7';
+                    if (val.length > 0) {
+                        result += ' (' + val.substring(0, 3);
+                    }
+                    if (val.length >= 3) {
+                        result += ')-' + val.substring(3, 6);
+                    }
+                    if (val.length >= 6) {
+                        result += '-' + val.substring(6, 8);
+                    }
+                    if (val.length >= 8) {
+                        result += '-' + val.substring(8, 10);
+                    }
+                    
+                    input.value = result;
+                    let newPos = result.length;
+                    input.setSelectionRange(newPos, newPos);
+                }
+            }
+        }
+    }
+
+    function showBeelineModal(title, text, icon = '🐝', buttonsHtml = null) {
+        document.getElementById('beelineModalTitle').textContent = title;
+        document.getElementById('beelineModalText').innerHTML = text;
+        document.getElementById('beelineModalIcon').textContent = icon;
+        
+        const btnContainer = document.getElementById('beelineModalButtons');
+        if (buttonsHtml) {
+            btnContainer.innerHTML = buttonsHtml;
+        } else {
+            btnContainer.innerHTML = `<button class="btn main-btn" onclick="closeBeelineModal()" style="margin-top:0;">Понятно</button>`;
+        }
+        
+        document.getElementById('beelineModal').style.display = 'flex';
+    }
+
+    function closeBeelineModal() {
+        document.getElementById('beelineModal').style.display = 'none';
+    }
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function checkAuthSession() {
+        if (currentUser) {
+            const freshUser = usersDb.find(u => u.id === currentUser.id);
+            if (freshUser) {
+                currentUser = freshUser;
+                localStorage.setItem('beeline_current_user', JSON.stringify(currentUser));
+            }
+
+            document.getElementById('userInfoHeader').innerHTML = `👤 <b>${currentUser.fullName}</b> (${currentUser.role}) | 🏢 ${currentUser.city}`;
+            
+            const cityConf = CITIES_CONFIG[currentUser.city] || { 
+                scriptUrl: GLOBAL_AUTH_SALARY_URL,
+                reportsUrl: "https://john-toloknov.github.io/scaner-beeline/", 
+                tmcUrl: "https://john-toloknov.github.io/qr-cod-html/" 
+            };
+            
+            document.getElementById('reportsLinkBtn').href = cityConf.reportsUrl;
+            document.getElementById('scannerAppBtn').href = cityConf.tmcUrl;
+
+            const adminBtn = document.getElementById('adminPanelBtn');
+            const scannerBtn = document.getElementById('scannerAppBtn');
+            const installerMenuBtn = document.getElementById('installerMenuBtn');
+            const equipmentAccessBtn = document.getElementById('equipmentAccessBtn');
+            
+            if (currentUser.role === 'Владелец' || currentUser.role === 'Администратор' || currentUser.role === 'Старший Техник') {
+                adminBtn.style.display = 'flex';
+                scannerBtn.style.display = 'flex';
+            } else {
+                adminBtn.style.display = 'none';
+                scannerBtn.style.display = 'none';
+            }
+
+            if (currentUser.role === 'Техник-Универсал' || currentUser.role === 'Бригадир' || currentUser.role === 'Старший Техник' || currentUser.role === 'Владелец') {
+                installerMenuBtn.style.display = 'flex';
+                equipmentAccessBtn.style.display = 'flex';
+            } else {
+                installerMenuBtn.style.display = 'none';
+                equipmentAccessBtn.style.display = 'none';
+            }
+
+            switchScreen('screen-main');
+        } else {
+            switchScreen('screen-login');
+        }
+    }
+
+    function togglePasswordVisibility(fieldId, iconEl) {
+        const field = document.getElementById(fieldId);
+        if (field.type === 'password') {
+            field.type = 'text';
+            iconEl.style.opacity = '1';
+        } else {
+            field.type = 'password';
+            iconEl.style.opacity = '0.7';
+        }
+    }
+
+    function validateRegPasswordsMatch() {
+        const p1 = document.getElementById('regPassword');
+        const p2 = document.getElementById('regPasswordConfirm');
+        if (p2.value.length > 0 && p1.value !== p2.value) {
+            p2.classList.add('input-error');
+        } else {
+            p2.classList.remove('input-error');
+        }
+    }
+
+    function validateResetPasswordsMatch() {
+        const p1 = document.getElementById('newPass1');
+        const p2 = document.getElementById('newPass2');
+        if (p2.value.length > 0 && p1.value !== p2.value) {
+            p2.classList.add('input-error');
+        } else {
+            p2.classList.remove('input-error');
+        }
+    }
+
+    function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        const isOpen = dropdown.classList.contains('open');
+        
+        document.querySelectorAll('.custom-dropdown').forEach(d => {
+            if (d.id !== dropdownId) d.classList.remove('open');
+        });
+
+        if (!isOpen) {
+            dropdown.classList.add('open');
+        } else {
+            dropdown.classList.remove('open');
+        }
+    }
+
+    function selectDropdownOption(dropdownId, hiddenInputId, labelId, value, text) {
+        document.getElementById(hiddenInputId).value = value;
+        const label = document.getElementById(labelId);
+        label.textContent = text;
+        label.style.color = 'var(--text-main)';
+        document.getElementById(dropdownId).classList.remove('open');
+    }
+
+    window.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-dropdown')) {
+            document.querySelectorAll('.custom-dropdown').forEach(list => list.classList.remove('open'));
+        }
+    });
+
+    function initCitiesDropdowns() {
+        renderCitiesItems('city-items-container', CITIES_LIST, 'regCityDropdown', 'regCity', 'regCityLabel');
+    }
+
+    function renderCitiesItems(containerId, list, dropdownId, hiddenInputId, labelId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        let html = '';
+        if (list.length === 0) {
+            html = `<div class="dropdown-item" style="color: var(--text-secondary); pointer-events: none;">Город не найден</div>`;
+        } else {
+            list.forEach(city => {
+                html += `<div class="dropdown-item" onclick="selectDropdownOption('${dropdownId}', '${hiddenInputId}', '${labelId}', '${city}', '${city}')">${city}</div>`;
+            });
+        }
+        container.innerHTML = html;
+    }
+
+    function filterCities(query, dropdownId, hiddenInputId, labelId) {
+        const filtered = CITIES_LIST.filter(c => c.toLowerCase().includes(query.toLowerCase()));
+        const containerId = 'city-items-container';
+        renderCitiesItems(containerId, filtered, dropdownId, hiddenInputId, labelId);
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const loginInput = document.getElementById('loginUser').value.trim();
+        const passInput = document.getElementById('loginPass').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+
+        const found = usersDb.find(u => (u.email === loginInput || u.dwLogin === loginInput) && u.password === passInput);
+        
+        if (found) {
+            currentUser = found;
+            localStorage.setItem('beeline_current_user', JSON.stringify(currentUser));
+
+            if (rememberMe) {
+                localStorage.setItem('beeline_remembered_login', loginInput);
+                localStorage.setItem('beeline_remembered_pass', passInput);
+            } else {
+                localStorage.removeItem('beeline_remembered_login');
+                localStorage.removeItem('beeline_remembered_pass');
+            }
+
+            checkAuthSession();
+        } else {
+            showBeelineModal("Ошибка входа", "Неверный логин или пароль!", "❌");
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('beeline_current_user');
+        document.getElementById('loginPass').value = '';
+        checkAuthSession();
+    }
+
+/* =========================================================================
+   ВОССТАНОВЛЕНИЕ ПАРОЛЯ ЧЕРЕЗ GOOGLE APPS SCRIPT (GET / POST)
+   ========================================================================= */
+async function sendRecoveryCode() {
+    const login = document.getElementById('forgotLogin').value.trim();
+    const email = document.getElementById('forgotEmail').value.trim();
+
+    if (!login || !email) {
+        showBeelineModal("Внимание", "Пожалуйста, заполните логин и рабочую почту!", "⚠️");
+        return;
+    }
+
+    showBeelineModal("Проверка", "Запрос на отправку кода восстановления...", "⏳");
+
+    try {
+        // Вызываем doGet в Google Apps Script для проверки пользователя и отправки почты
+        const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=sendRecoveryCode&login=${encodeURIComponent(login)}&email=${encodeURIComponent(email)}`);
+        const res = await response.json();
+
+        if (res.status !== 'ok') {
+            showBeelineModal("Ошибка", res.message || "Пользователь с такими данными не найден!", "❌");
+            return;
+        }
+
+        // Сохраняем полученные с сервера данные для сверки на втором шаге
+        generatedRecoveryCode = String(res.code);
+        recoveryEmailTarget = res.email;
+
+        showBeelineModal(
+            "Письмо отправлено", 
+            `Временный код подтверждения успешно отправлен на рабочую почту <b>${res.email}</b>.<br><br>Проверьте входящие (или спам).`, 
+            "📨"
+        );
+        switchScreen('screen-reset');
+
+    } catch (err) {
+        console.error("Ошибка при запросе восстановления:", err);
+        showBeelineModal("Ошибка", "Не удалось связаться с сервером.", "❌");
+    }
+}
+
+function validateResetPasswordsMatch() {
+    const p1 = document.getElementById('newPass1').value;
+    const p2 = document.getElementById('newPass2').value;
+    
+    if (p2 && p1 !== p2) {
+        document.getElementById('newPass2').classList.add('input-error');
+    } else {
+        document.getElementById('newPass2').classList.remove('input-error');
+    }
+}
+
+async function confirmPasswordReset() {
+    const code = document.getElementById('resetCode').value.trim();
+    const p1 = document.getElementById('newPass1').value;
+    const p2 = document.getElementById('newPass2').value;
+
+    if (code !== generatedRecoveryCode) {
+        showBeelineModal("Ошибка", "Неверный одноразовый код!", "❌");
+        return;
+    }
+    if (p1.length < 6) {
+        showBeelineModal("Ошибка", "Пароль должен содержать минимум 6 символов!", "❌");
+        return;
+    }
+    if (p1 !== p2) {
+        showBeelineModal("Ошибка", "Введенные пароли не совпадают!", "❌");
+        return;
+    }
+
+    try {
+        showBeelineModal("Сохранение", "Обновление пароля...", "⏳");
+        
+        // Отправляем POST запрос с действием resetPassword, которое ожидает твой Apps Script бэкенд
+        const response = await fetch(GLOBAL_AUTH_SALARY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'resetPassword',
+                email: recoveryEmailTarget,
+                password: p1
+            })
+        });
+        
+        const res = await response.json();
+        if (res.status !== 'ok') {
+            throw new Error(res.message || "Ошибка обновления на сервере");
+        }
+
+        // Обновляем локальную базу
+        const userIndex = usersDb.findIndex(u => u.email && u.email.toLowerCase() === recoveryEmailTarget.toLowerCase());
+        if (userIndex !== -1) {
+            usersDb[userIndex].password = p1;
+            localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+        }
+
+        recoveryEmailTarget = '';
+        generatedRecoveryCode = '';
+
+        showBeelineModal(
+            "Успешно", 
+            "Пароль успешно изменен и обновлен! Теперь вы можете войти в систему.", 
+            "✅", 
+            `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-login');" style="margin-top:0;">Перейти ко входу 🚀</button>`
+        );
+
+    } catch (err) {
+        console.error("Ошибка при перезаписи пароля в таблицу:", err);
+        showBeelineModal("Ошибка", "Не удалось сохранить новый пароль.", "❌");
+    }
+}
+
+/* =========================================================================
+        ФУНКЦИЯ ВЫГРУЗКИ ЗАРПЛАТЫ
+        ========================================================================= */
+    async function openMySalary() {
+        if (!currentUser) {
+            showBeelineModal("Ошибка", "Необходимо авторизоваться в системе!", "❌");
+            return;
+        }
+
+        switchScreen('screen-salary');
+        const container = document.getElementById('salaryContentContainer');
+        container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загружаем вашу зарплату... 🔄</div>`;
+
+        try {
+            const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=getSalary&fullName=${encodeURIComponent(currentUser.fullName)}&city=${encodeURIComponent(currentUser.city)}`, {
+                method: 'GET'
+            });
+            const res = await response.json();
+
+            if (res.status === 'ok' && res.data) {
+                renderSalaryTemplate(res.data);
+            } else {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--danger); padding: 15px;">
+                        ⚠️ ${res.message || 'Не удалось найти данные по зарплате для вашего аккаунта.'}
+                    </div>
+                `;
+            }
+        } catch (err) {
+            container.innerHTML = `
+                <div style="text-align: center; color: var(--danger); padding: 15px;">
+                    ⚠️ Ошибка соединения с сервером
+                </div>
+            `;
+        }
+    }
+
+    // Вспомогательная функция для красивого вывода процентов
+    function formatPct(val) {
+        if (val === null || val === undefined || val === '') return '-';
+        let str = String(val).replace(',', '.').replace('%', '').trim();
+        let num = Number(str);
+        if (isNaN(num)) return val;
+        
+        // Если это доля (например, 0.9937 или 0.47), умножаем на 100
+        if (num > 0 && num <= 2) {
+            return (num * 100).toFixed(0) + '%';
+        }
+        return num.toFixed(0) + '%';
+    }
+
+    function renderSalaryTemplate(d) {
+        const container = document.getElementById('salaryContentContainer');
+        const role = d.role || currentUser.role || 'Техник-Универсал';
+        
+        // Вспомогательный генератор строки
+        const row = (label, val, style = "") => val ? `
+            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px;">
+                <span style="color: var(--text-secondary);">${label}</span>
+                <span style="font-weight: 600; text-align: right; ${style}">${val}</span>
+            </div>
+        ` : '';
+
+        // Шапка профиля (ФИО может быть без отчества, обрабатываем корректно)
+        let html = `
+            <div style="background: rgba(255, 204, 0, 0.1); border: 1px solid var(--beeline-yellow); border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 15px; color: var(--beeline-yellow); font-weight: 800;">👤 ${d.fullName || currentUser.fullName}</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Роль: <b>${role}</b> | Город: <b>${d.city || currentUser.city}</b></div>
+            </div>
+        `;
+
+        // ==========================================
+        // 1. СТАРШИЙ ТЕХНИК
+        // ==========================================
+        if (role === "Старший Техник") {
+            html += `
+                <!-- АККОРДЕОН: ЦЕЛИ -->
+                <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;" open>
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--beeline-yellow); outline: none;">
+                        🎯 Цели и KPI (Старший техник)
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Норматив по дням (план 21 / факт):", d.days)}
+                        ${row("Оклад (фикс: " + (d.baseSalaryFixed || '-') + " / факт):", d.baseSalary)}
+                        ${row("Цель 1. Заявки без выезда (план 7%):", formatPct(d.goal1))}
+                        ${row("Цель 2. SL-24 (план 85%):", formatPct(d.goal2))}
+                        ${row("Цель 3. Результативность услуг (план 92%):", formatPct(d.goal3))}
+                        ${row("Цель 4. Эффективность ресурсов (план 90%):", formatPct(d.goal4))}
+                        ${row("Итоговый KPI:", formatPct (d.kpiTotal, "color: #4CAF50;"))}
+                        ${row("Бонус за выполнение KPI:", d.goal1Bonus)}
+                    </div>
+                </details>
+
+                <!-- АККОРДЕОН: ДОПЛАТЫ -->
+                <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-primary); outline: none;">
+                        💰 Доплаты и компенсации
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Наличие авто / ГСМ:", d.gsm || '')}
+                        ${row("Включения (Кол-во / Сумма):", (d.activationsCount ? d.activationsCount + " шт. — " : "") + (d.activationsSum || '-'))}
+                        ${row("День Х (" + (d.dayXRequests ? d.dayXRequests + " шт." : "") + "):", d.dayXSum)}
+                        ${row("Брендирование авто:", d.carBranding)}
+                        ${row("Приведи друга:", d.friendBonus)}
+                        ${row("Доплата:", d.supplements)}
+                    </div>
+                </details>
+
+                <!-- АККОРДЕОН: ШТРАФЫ -->
+                ${d.penalty && d.penalty !== "0" ? `
+                <details style="background: rgba(255, 77, 77, 0.05); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid rgba(255, 77, 77, 0.3);">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--danger); outline: none;">
+                        ⚠️ Штрафы
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Штраф Административный:", d.penalty, "color: var(--danger);")}
+                    </div>
+                </details>` : ''}
+            `;
+        } 
+        // ==========================================
+        // 2. БРИГАДИР
+        // ==========================================
+        else if (role === "Бригадир") {
+            html += `
+                <!-- АККОРДЕОН: ЦЕЛИ -->
+                <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;" open>
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--beeline-yellow); outline: none;">
+                        🎯 Цели и KPI (Бригадир)
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Норматив по дням (план 15 / факт):", d.days)}
+                        ${row("Оклад (фикс: " + (d.baseSalaryFixed || '-') + " / факт):", d.baseSalary)}
+                        ${row("Цель 1. Заявки без выезда (план 5%):", formatPct(d.goal1))}
+                        ${row("Цель 2. SL-12 (план 85%):", formatPct(d.goal2))}
+                        ${row("Цель 3. Конвертация (план 95%):", formatPct(d.goal3))}
+                        ${row("Цель 4. Претензии на опоздания (план 0%):", formatPct(d.goal4))}
+                        ${row("Цель 5. Продуктивность (план 100%):", formatPct(d.goal5))}
+                        ${row("Итоговый KPI:", formatPct (d.kpiTotal, "color: #4CAF50;"))}
+                    </div>
+                </details>
+
+                <!-- АККОРДЕОН: ДОПЛАТЫ -->
+                <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-primary); outline: none;">
+                        💰 Доплаты и компенсации
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Наличие авто / ГСМ:", d.gsm || '')}
+                        ${row("Брендирование авто:", d.carBranding)}
+                        ${row("День Х (" + (d.dayXRequests ? d.dayXRequests + " шт." : "") + "):", d.dayXSum)}
+                        ${row("Приведи друга:", d.friendBonus)}
+                        ${row("Bee buddy:", d.beeBuddy)}
+                        ${row("Общая доплата:", d.supplements)}
+                    </div>
+                </details>
+
+                <!-- АККОРДЕОН: ШТРАФЫ -->
+                ${d.penalties && d.penalties !== "0" ? `
+                <details style="background: rgba(255, 77, 77, 0.05); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid rgba(255, 77, 77, 0.3);">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--danger); outline: none;">
+                        ⚠️ Штрафы и удержания
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Штраф Административный:", d.penalty, "color: var(--danger);")}
+                        ${row("Касание до свап:", d.swapTouch, "color: var(--danger);")}
+                        ${row("Повторы 30 дней:", d.repeats30Days, "color: var(--danger);")}
+                        ${row("Общая сумма штрафа:", d.penalties, "color: var(--danger); font-weight: 700;")}
+                    </div>
+                </details>` : ''}
+            `;
+        } 
+        // ==========================================
+        // 3. ТЕХНИК-УНИВЕРСАЛ
+        // ==========================================
+        else {
+            html += `
+                <!-- АККОРДЕОН: ЦЕЛИ -->
+                <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;" open>
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--beeline-yellow); outline: none;">
+                        🎯 Цели и KPI (Техник-универсал)
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Норматив по дням (план 15 / факт):", d.days)}
+                        ${row("Оклад (фикс: " + (d.baseSalaryFixed || '-') + " / факт):", d.baseSalary)}    
+                        ${row("Цель 1. Заявки без выезда (план 5%):", formatPct(d.goal1))}
+                        ${row("Цель 2. SL12 (план 85%):", formatPct(d.goal2))}
+                        ${row("Цель 3. Конвертация (план 95%):", formatPct(d.goal3))}
+                        ${row("Цель 4. Претензии на опоздания (план 0%):", formatPct(d.goal4))}
+                        ${row("Цель 5. Продуктивность (план 100%):", formatPct(d.goal5))}
+                        ${row("Итоговый KPI:", d.kpiTotal, "color: #4CAF50;")}
+                    </div>
+                </details>
+
+                <!-- АККОРДЕОН: ДОПЛАТЫ -->
+                <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-primary); outline: none;">
+                        💰 Доплаты и компенсации
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Наличие авто / ГСМ:", d.gsm || '')}
+                        ${row("Брендирование авто:", d.carBranding)}
+                        ${row("Услуга менее 6ч (Субсидия / Сумма):", (d.serviceUnder6h ? d.serviceUnder6h + " — " : "") + (d.serviceUnder6hSum || '-'))}
+                        ${row("День Х (" + (d.dayXRequests ? d.dayXRequests + " шт." : "") + "):", d.dayXSum)}
+                        ${row("Приведи друга:", d.friendBonus)}
+                        ${row("Bee buddy:", d.beeBuddy)}
+                        ${row("Стажировка пред. месяц:", d.prevMonthInternship)}
+                    </div>
+                </details>
+
+                <!-- АККОРДЕОН: ШТРАФЫ -->
+                ${d.penalties && d.penalties !== "0" ? `
+                <details style="background: rgba(255, 77, 77, 0.05); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid rgba(255, 77, 77, 0.3);">
+                    <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--danger); outline: none;">
+                        ⚠️ Штрафы и удержания
+                    </summary>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        ${row("Штраф Административный:", d.penaltyAd, "color: var(--danger);")}
+                        ${row("Касание до Swap:", d.swapTouch, "color: var(--danger);")}
+                        ${row("Повторы 30 дней:", d.repeats30Days, "color: var(--danger);")}
+                        ${row("Общая сумма штрафа:", d.penalties, "color: var(--danger); font-weight: 700;")}
+                    </div>
+                </details>` : ''}
+            `;
+        }
+
+        // ==========================================
+        // СРАЗУ ВИДИМЫЕ ЗНАЧЕНИЯ (НАЛОГИ, АВР, НА РУКИ)
+        // ==========================================
+        html += `
+            <div style="background: var(--surface-card, #1e1e1e); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid #333;">
+                <div style="font-size: 12px; text-transform: uppercase; color: var(--beeline-yellow); font-weight: 700; margin-bottom: 8px;">📑 Налоги и Итоги АВР</div>
+                ${row("Сумма для АВР:", d.totalAvr, "color: var(--beeline-yellow); font-weight: 800;")}
+                ${row("ОПВ (10%):", d.opv)}
+                ${row("ВОСМС (2%):", d.vosms)}
+                ${row("ИПН (10%):", d.ipn)}
+                ${row("СО (5%):", d.so)}
+            </div>
+
+            <div style="background: linear-gradient(135deg, #2a2a2a, #1a1a1a); border: 2px solid var(--beeline-yellow); border-radius: 14px; padding: 16px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px;">Итого сумма на руки ❗️</div>
+                <div style="font-size: 24px; color: var(--beeline-yellow); font-weight: 900;">${d.netSalary || '-'}</div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    /* =========================================================================
+        ФУНКЦИЯ ВЫГРУЗКИ ГРАФИКА (ИСПРАВЛЕННАЯ)
+        ========================================================================= */
+    async function openMySchedule() {
+        if (!currentUser) {
+            showBeelineModal("Ошибка", "Необходимо авторизоваться в системе!", "❌");
+            return;
+        }
+
+        switchScreen('screen-schedule');
+        const container = document.getElementById('scheduleContentContainer');
+        container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загружаем ваш график из таблицы... 🔄</div>`;
+
+        try {
+            // ОПРЕДЕЛЯЕМ КОНФИГУРАЦИЮ ГОРОДА В САМОМ НАЧАЛЕ
+            const cityConfig = CITIES_CONFIG[currentUser.city] || CITIES_CONFIG["Темиртау"];
+
+            // Формируем запрос с передачей ФИО и Telegram ID для точного поиска в таблице
+            const url = `${cityConfig.scriptUrl}?action=getSchedule&fullName=${encodeURIComponent(currentUser.fullName)}&tgId=${encodeURIComponent(currentUser.tgId || '')}`;
+            
+            const response = await fetch(url, {
+                method: 'GET'
+            });
+            const res = await response.json();
+
+            if (res.status === 'ok') {
+                renderScheduleCalendar(res);
+            } else {
+                // Выводим текст ошибки от сервера Google, если сотрудник не найден
+                container.innerHTML = `
+                    <div style="text-align: center; color: #ff5252; padding: 20px;">
+                        ❌ ${res.message || 'Не удалось загрузить график'}
+                    </div>
+                `;
+            }
+        } catch (err) {
+            container.innerHTML = `
+                <div style="text-align: center; color: #ff5252; padding: 20px;">
+                    ❌ Ошибка соединения с сервером: ${err.toString()}
+                </div>
+            `;
+        }
+    }
+
+    function renderScheduleCalendar(res) {
+        const container = document.getElementById('scheduleContentContainer');
+        
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        
+        const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+        const currentMonthName = monthNames[month];
+
+        const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7; 
+        const totalDays = new Date(year, month + 1, 0).getDate();
+
+        const cityConfig = CITIES_CONFIG[currentUser.city] || {};
+        const cityScheduleUrl = cityConfig.scheduleSheetUrl || "https://docs.google.com/spreadsheets/d/your_sheet_id_here/edit";
+
+        let legendHtml = `
+            <div class="schedule-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:var(--status-v)"></div>В (Выходной)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--status-p)"></div>Р (Рабочий)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--status-o)"></div>О (Отпуск)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--status-b)"></div>Б (Больничный)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--status-pr)"></div>П (Прогул)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--status-u)"></div>У (Учеба)</div>
+            </div>
+        `;
+
+        let gridHtml = `
+            <div class="calendar-weekday">Пн</div>
+            <div class="calendar-weekday">Вт</div>
+            <div class="calendar-weekday">Ср</div>
+            <div class="calendar-weekday">Чт</div>
+            <div class="calendar-weekday">Пт</div>
+            <div class="calendar-weekday" style="color:var(--beeline-yellow);">Сб</div>
+            <div class="calendar-weekday" style="color:var(--beeline-yellow);">Вс</div>
+        `;
+
+        for (let i = 0; i < firstDayIndex; i++) {
+            gridHtml += `<div class="calendar-day empty"></div>`;
+        }
+
+        // Превращаем массив schedule от бэкенда в удобный словарь по дням месяца: { "01.09.2026": "P", ... } или по номерам дней
+        const scheduleArray = res.schedule || [];
+        const scheduleMap = {};
+        
+        scheduleArray.forEach(item => {
+            // item.date приходит в формате "DD.MM.YYYY" (например, "01.09.2026")
+            const parts = item.date.split('.');
+            if (parts.length === 3) {
+                const dayNum = parseInt(parts[0], 10); // Извлекаем день как число (1, 2, 3...)
+                scheduleMap[dayNum] = item.status;
+            }
+        });
+
+        for (let day = 1; day <= totalDays; day++) {
+            let status = scheduleMap[day] || 'В'; // Если данных нет, по умолчанию В
+
+            let badgeClass = 'badge-none';
+            let upperStatus = String(status).trim().toUpperCase();
+            if (upperStatus === 'В') badgeClass = 'badge-v';
+            else if (upperStatus === 'Р') badgeClass = 'badge-p';
+            else if (upperStatus === 'П') badgeClass = 'badge-pr';
+            else if (upperStatus === 'О') badgeClass = 'badge-o';
+            else if (upperStatus === 'Б') badgeClass = 'badge-b';
+            else if (upperStatus === 'У') badgeClass = 'badge-u';
+
+            // Формируем дату в формате ДД.ММ.ГГГГ для запроса детализации дня
+            let dayStr = String(day).padStart(2, '0');
+            let monthStr = String(month + 1).padStart(2, '0');
+            let fullDateStr = `${dayStr}.${monthStr}.${year}`;
+
+            gridHtml += `
+                <div class="calendar-day" onclick="handleDayClick('${fullDateStr}')" style="cursor: pointer;" title="Нажмите, чтобы посмотреть список на ${fullDateStr}">
+                    <span class="day-number">${day}</span>
+                    <div class="day-badge ${badgeClass}">${upperStatus}</div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div style="font-size: 14px; color: var(--beeline-yellow); margin-bottom: 4px; text-align: center; font-weight: 700;">
+                👤 ${res.fullName || currentUser.fullName} (${currentUser.city})
+            </div>
+            
+            <div class="calendar-header-title">📅 ${currentMonthName} ${year}</div>
+
+            ${legendHtml}
+
+            <div class="calendar-grid">
+                ${gridHtml}
+            </div>
+
+            <a href="${cityScheduleUrl}" target="_blank" class="btn main-btn" style="margin-top: 15px;">
+                📋 Посмотреть общий график г. ${currentUser.city} ↗
+            </a>
+        `;
+    }
+    /////////////////////////////////////////////
+    // Обработчик клика по дню в календаре
+    ////////////////////////////////////////////
+    async function handleDayClick(dateStr) {
+        // Показываем модальное окно загрузки
+        showBeelineModal("Загрузка...", `Получаем данные по сотрудникам на ${dateStr}...`, "⏳");
+
+        try {
+            const cityConfig = CITIES_CONFIG[currentUser.city] || CITIES_CONFIG["Темиртау"];
+            const url = `${cityConfig.scriptUrl}?action=getDayDetails&date=${encodeURIComponent(dateStr)}`;
+            
+            const response = await fetch(url, { method: 'GET' });
+            const res = await response.json();
+
+            if (res.status === 'ok') {
+                renderDayDetailsModal(res);
+            } else {
+                showBeelineModal("Ошибка", res.message || "Не удалось получить данные дня", "❌");
+            }
+        } catch (err) {
+            showBeelineModal("Ошибка", `Ошибка соединения: ${err.toString()}`, "❌");
+        }
+    }
+
+    /**
+     * Форматирование и вывод модального окна со списком сотрудников за день
+     */
+    function renderDayDetailsModal(res) {
+        const grouped = res.grouped || {};
+        
+        // Красивые заголовки для статусов с иконками
+        const statusTitles = {
+            'Р': '⚪ Работают:',
+            'В': '🟢 Выходной:',
+            'О': '🟡 Отпуск:',
+            'Б': '🔵 Больничный:',
+            'П': '🔴 Прогул:',
+            'У': '🟣 Учеба:'
+        };
+
+        let contentHtml = `<div style="max-height: 55vh; overflow-y: auto; text-align: left; padding: 5px;">`;
+        
+        let hasData = false;
+        for (let key in statusTitles) {
+            const list = grouped[key] || [];
+            if (list.length > 0) {
+                hasData = true;
+                contentHtml += `<div style="margin-bottom: 14px;">`;
+                contentHtml += `<div style="font-weight: 700; color: var(--beeline-yellow); margin-bottom: 6px; font-size: 15px;">${statusTitles[key]}</div>`;
+                contentHtml += `<ul style="margin: 0; padding-left: 20px; color: var(--text-primary); font-size: 14px; line-height: 1.5;">`;
+                list.forEach(name => {
+                    contentHtml += `<li>${name}</li>`;
+                });
+                contentHtml += `</ul></div>`;
+            }
+        }
+
+        if (!hasData) {
+            contentHtml += `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет данных по сотрудникам на эту дату.</div>`;
+        }
+        
+        contentHtml += `</div>`;
+
+        // Парсим дату формата ДД.ММ.ГГГГ для получения дня недели
+        let weekDayStr = "";
+        try {
+            const parts = res.date.split('.');
+            if (parts.length === 3) {
+                // Создаем дату (месяц в JS отсчитывается с 0)
+                const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                weekDayStr = dateObj.toLocaleDateString('ru-RU', { weekday: 'long' });
+                // Делаем первую букву заглавной
+                weekDayStr = weekDayStr.charAt(0).toUpperCase() + weekDayStr.slice(1);
+            }
+        } catch (e) {
+            weekDayStr = "";
+        }
+
+        // Формируем заголовок: если день недели определился, пишем его в скобках
+        const modalTitle = weekDayStr ? `📅 ${res.date} (${weekDayStr})` : `📅 ${res.date}`;
+
+        // Вызываем модальное окно с днем недели вместо смайлика
+        showBeelineModal(modalTitle, contentHtml, "");
+    }
+
+    // Регистрация с отправкой данных в Google Таблицу через doPost
+    async function handleRegister(e) {
+        e.preventDefault();
+        const city = document.getElementById('regCity').value;
+        if (!city) {
+            showBeelineModal("Внимание", "Пожалуйста, выберите город из списка!", "⚠️");
+            return;
+        }
+
+        const p1 = document.getElementById('regPassword').value;
+        const p2 = document.getElementById('regPasswordConfirm').value;
+        if (p1 !== p2) {
+            showBeelineModal("Ошибка", "Пароли не совпадают!", "❌");
+            document.getElementById('regPasswordConfirm').classList.add('input-error');
+            return;
+        }
+
+        const newUser = {
+            action: 'register',
+            city: city,
+            fullName: document.getElementById('regFullName').value.trim(),
+            warehouse: document.getElementById('regWarehouse').value.trim(),
+            role: document.getElementById('regRole').value,
+            workPhone: document.getElementById('regWorkPhone').value.trim(),
+            dwLogin: document.getElementById('regDwLogin').value.trim(),
+            password: p1,
+            tgId: document.getElementById('regTgId').value.trim(),
+            tgGroup: document.getElementById('regTgGroup').value.trim(),
+            email: document.getElementById('regEmail').value.trim()
+        };
+
+        if (usersDb.some(u => u.email.toLowerCase() === newUser.email.toLowerCase())) {
+            showBeelineModal("Ошибка", "Пользователь с такой рабочей почтой уже зарегистрирован!", "❌");
+            return;
+        }
+
+        try {
+            showBeelineModal("Регистрация", "Отправка данных пользователя...", "⏳");
+            const response = await fetch(GLOBAL_AUTH_SALARY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(newUser)
+            });
+            const res = await response.json();
+            if (res.status !== 'ok') {
+                console.warn("Ответ сервера:", res);
+            }
+        } catch (err) {
+            console.error("Ошибка при отправке в таблицу:", err);
+        }
+
+        usersDb.push(newUser);
+        localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+
+        showBeelineModal(
+            "Успешно", 
+            "Регистрация прошла успешно, пользователь создан! Теперь выполните вход.", 
+            "✅", 
+            `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-login');" style="margin-top:0;">Перейти ко входу</button>`
+        );
+    }
+// =========================================================================
+// 1. Сохранение доступа в Google Таблицу (через скрипт города)
+// =========================================================================
+async function handleSaveAccess(e) {
+    e.preventDefault();
+    
+    // Получаем нужную ссылку скрипта для текущего города
+    const scriptUrl = CITIES_CONFIG[currentUser.city] ? CITIES_CONFIG[currentUser.city].reportsScriptUrl : null;
+    
+    if (!scriptUrl) {
+        showBeelineModal("Ошибка", "Не найдена ссылка скрипта для вашего города!", "❌");
+        return;
+    }
+
+const newAccess = {
+        mode: 'equipment_access',
+        address: document.getElementById('accAddress').value.trim(),
+        phone1: "'" + document.getElementById('accPhone1').value.trim(),
+        phone2: "'" + document.getElementById('accPhone2').value.trim(),
+        kskKeys: document.getElementById('accKsk').value.trim(),     
+        roofOpen: document.getElementById('accRoof').value.trim(),   
+        intercomCode: document.getElementById('accIntercom').value.trim() 
+    };
+
+    try {
+        showBeelineModal("Сохранение", "Запись доступа в таблицу...", "⏳");
+        
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(newAccess)
+        });
+        
+        const res = await response.json();
+        if (res.status !== 'ok' && res.status !== 'success') {
+            throw new Error(res.message || "Ошибка сервера");
+        }
+    } catch (err) {
+        console.error("Ошибка сохранения в таблицу:", err);
+        showBeelineModal("Ошибка", "Не удалось записать данные в Google Таблицу.", "❌");
+        return;
+    }
+
+// Дублируем в локальный массив для быстрого поиска
+    accessDb.push({ 
+        id: 'acc_' + Date.now(), 
+        city: currentUser.city,
+        address: newAccess.address,
+        phone1: newAccess.phone1,
+        phone2: newAccess.phone2,
+        kskKeys: newAccess.kskKeys,
+        roofOpen: newAccess.roofOpen,
+        intercomCode: newAccess.intercomCode
+    });
+    localStorage.setItem('beeline_access_db', JSON.stringify(accessDb));
+
+    showBeelineModal(
+        "Успешно", 
+        "Доступ к оборудованию успешно сохранен в таблицу!", 
+        "✅",
+        `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-equipment-access');" style="margin-top:0;">К меню доступа</button>`
+    );
+
+    e.target.reset();
+    handleSearchAccess();
+}
+
+// =========================================================================
+// 2. Функция поиска доступа (запрос к скрипту города)
+// =========================================================================
+async function handleSearchAccess() {
+    const query = document.getElementById('searchAddressInput').value.toLowerCase().trim();
+    const container = document.getElementById('accessSearchResultsContainer');
+    const userCity = currentUser ? currentUser.city : 'Темиртау';
+    const scriptUrl = CITIES_CONFIG[userCity] ? CITIES_CONFIG[userCity].reportsScriptUrl : null;
+
+    if (!query) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); font-size: 13px; padding: 10px;">Введите адрес для поиска...</div>`;
+        return;
+    }
+
+    container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); font-size: 13px; padding: 10px;">Ищем в таблице... 🔄</div>`;
+
+    let serverResults = [];
+
+    // Всегда идем в Google Таблицу за актуальными данными
+    if (scriptUrl) {
+        try {
+            const response = await fetch(`${scriptUrl}?mode=equipment_search&query=${encodeURIComponent(query)}`);
+            const res = await response.json();
+            
+            if (res.status === 'success' && res.data) {
+                serverResults = res.data;
+            }
+        } catch (e) {
+            console.error("Ошибка запроса к таблице:", e);
+        }
+    }
+
+    // Также проверяем локальный массив (на случай того, что только что добавили и еще не обновили таблицу)
+    let localResults = accessDb.filter(item => {
+        const addr = (item.address || '').toLowerCase();
+        return addr.includes(query);
+    });
+
+    // Объединяем результаты и убираем дубликаты по адресу
+    const map = new Map();
+    [...serverResults, ...localResults].forEach(item => {
+        if (item.address) map.set(item.address.toLowerCase().trim(), item);
+    });
+    const filtered = Array.from(map.values());
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); font-size: 13px; padding: 10px;">Доступы по вашему запросу не найдены.</div>`;
+        return;
+    }
+
+    let html = '';
+    filtered.forEach(item => {
+        const cleanPhone1 = (item.phone1 || '').replace(/^'/, '');
+        const cleanPhone2 = (item.phone2 || '').replace(/^'/, '');
+
+        let phonesHtml = `<span>${cleanPhone1 || '-'}</span>`;
+        if (cleanPhone2 && cleanPhone2 !== '-') {
+            phonesHtml += `, <span>${cleanPhone2}</span>`;
+        }
+
+        const kskValue = item.kskKeys || item.ksk;
+        const roofValue = item.roofOpen || item.roof;
+        const intercomValue = item.intercomCode || item.intercom;
+
+        html += `
+            <device class="access-item-card" style="display:block; background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; margin-bottom:10px;">
+                <div class="access-info" style="margin-bottom:4px;">📍 <b>Адрес:</b> <span>${item.address}</span></div>
+                <div class="access-info" style="margin-bottom:4px;">📞 <b>Контактные номера:</b> ${phonesHtml}</div>
+                <div class="access-info" style="margin-bottom:4px;">🏢 <b>КСК (адрес ключей):</b> <span>${kskValue || '-'}</span></div>
+                <div class="access-info" style="margin-bottom:4px;">🏠 <b>Открытая крыша:</b> <span>${roofValue || '-'}</span></div>
+                <div class="access-info">🚪 <b>Код домофона:</b> <span style="color: var(--beeline-yellow);">${intercomValue || '-'}</span></div>
+            </device>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+    async function openAdminPanel() {
+        // Подгружаем актуальные данные из таблицы перед открытием админ-панели
+        await loadUsersFromSheet();
+        renderUsersList();
+        switchScreen('screen-admin');
+    }
+
+    function renderUsersList() {
+        const search = document.getElementById('adminSearch').value.toLowerCase();
+        const container = document.getElementById('usersListContainer');
+        
+        let filtered = usersDb.filter(u => 
+            u.fullName.toLowerCase().includes(search) || 
+            u.city.toLowerCase().includes(search) || 
+            u.email.toLowerCase().includes(search) ||
+            u.role.toLowerCase().includes(search)
+        );
+
+        if (currentUser.role === 'Старший Техник') {
+            filtered = filtered.filter(u => u.city === currentUser.city);
+        }
+
+        document.getElementById('usersCount').textContent = filtered.length;
+
+        let html = '';
+        filtered.forEach(u => {
+            let canModify = false;
+            if (currentUser.role === 'Владелец' || currentUser.role === 'Администратор') {
+                canModify = true;
+            } else if (currentUser.role === 'Старший Техник') {
+                if ((u.role === 'Техник-Универсал' || u.role === 'Бригадир') && u.city === currentUser.city) {
+                    canModify = true;
+                }
+            }
+
+            const isOwnerUser = (u.role === 'Владелец');
+            const canDelete = currentUser.role === 'Владелец' && !isOwnerUser && currentUser.id !== u.id;
+
+            html += `
+                <div class="user-row">
+                    <div class="user-info"><span>${u.fullName}</span> (${u.role})</div>
+                    <div class="user-info">Город: ${u.city} | Склад: ${u.warehouse}</div>
+                    <div class="user-info">Рабочий номер: <span>${u.workPhone || 'Не указан'}</span></div>
+                    <div class="user-info">Почта: ${u.email}</div>
+                    <div class="user-info">Логин DW: ${u.dwLogin} | Пароль: ••••••••</div>
+                    <div class="user-info">Telegram ID: ${u.tgId} | Группа ID: ${u.tgGroup}</div>
+                    ${(canModify || currentUser.id === u.id) ? `
+                        <div class="user-actions">
+                            <button class="btn action-btn" onclick="openEditModal('${u.id}')">✏️ Редактировать</button>
+                            ${canDelete ? `<button class="btn danger-btn" onclick="confirmDeleteUser('${u.id}')">🗑️ Удалить</button>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function openEditModal(userId) {
+        const u = usersDb.find(item => item.id === userId);
+        if (!u) return;
+
+        if (currentUser.role === 'Администратор' && (u.role === 'Администратор' || u.role === 'Владелец')) {
+            showBeelineModal("Доступ ограничен", "У вас нет прав на редактирование администраторов или владельца.", "⚠️");
+            return;
+        }
+        if (currentUser.role === 'Старший Техник') {
+            if (u.role !== 'Техник-Универсал' && u.role !== 'Бригадир') {
+                showBeelineModal("Доступ ограничен", "Старший техник может редактировать только Техников-Универсалов и Бригадиров.", "⚠️");
+                return;
+            }
+        }
+
+        document.getElementById('editUserId').value = u.id;
+        document.getElementById('editFullName').value = u.fullName;
+        
+        document.getElementById('editCity').value = u.city;
+        document.getElementById('editCityDisplay').value = u.city;
+
+        document.getElementById('editWarehouse').value = u.warehouse;
+        document.getElementById('editWorkPhone').value = u.workPhone || '';
+        document.getElementById('editPassword').value = u.password;
+        document.getElementById('editTgId').value = u.tgId;
+        document.getElementById('editTgGroup').value = u.tgGroup;
+        document.getElementById('editEmail').value = u.email;
+
+        const roleInput = document.getElementById('editRole');
+        const roleLabel = document.getElementById('editRoleLabel');
+        const optAdmin = document.getElementById('optAdmin');
+        const optSenior = document.getElementById('optSenior');
+        const optOwner = document.getElementById('optOwner');
+        const roleDropdown = document.getElementById('editRoleDropdown');
+
+        roleInput.value = u.role;
+        roleLabel.textContent = u.role;
+
+        if (u.role === 'Владелец') {
+            optOwner.style.display = 'block';
+            optAdmin.style.display = 'block';
+            optSenior.style.display = 'block';
+            roleDropdown.style.pointerEvents = 'none';
+        } else if (currentUser.role === 'Старший Техник') {
+            optAdmin.style.display = 'none';
+            optSenior.style.display = 'none';
+            optOwner.style.display = 'none';
+            roleDropdown.style.pointerEvents = 'auto';
+        } else if (currentUser.role === 'Администратор') {
+            optAdmin.style.display = 'none';
+            optSenior.style.display = 'block';
+            optOwner.style.display = 'none';
+            roleDropdown.style.pointerEvents = 'auto';
+        } else {
+            roleDropdown.style.pointerEvents = 'auto';
+            optOwner.style.display = 'none';
+            optAdmin.style.display = 'block';
+            optSenior.style.display = 'block';
+        }
+
+        document.getElementById('editUserModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editUserModal').style.display = 'none';
+    }
+
+    // Сохранение отредактированного пользователя с отправкой обновления в таблицу через doPost
+    async function saveEditedUser() {
+        const id = document.getElementById('editUserId').value;
+        const index = usersDb.findIndex(item => item.id === id);
+        if (index !== -1) {
+            let newRole = document.getElementById('editRole').value;
+            
+            if (usersDb[index].role === 'Владелец') {
+                newRole = 'Владелец';
+            }
+            if (currentUser.role === 'Старший Техник') {
+                if (newRole !== 'Техник-Универсал' && newRole !== 'Бригадир') {
+                    newRole = usersDb[index].role;
+                }
+            }
+
+            const updatedUser = {
+                action: 'update',
+                city: document.getElementById('editCity').value,
+                fullName: document.getElementById('editFullName').value.trim(),
+                warehouse: document.getElementById('editWarehouse').value.trim(),
+                role: newRole,
+                workPhone: document.getElementById('editWorkPhone').value.trim(),
+                dwLogin: usersDb[index].dwLogin,
+                password: document.getElementById('editPassword').value,
+                tgId: document.getElementById('editTgId').value.trim(),
+                tgGroup: document.getElementById('editTgGroup').value.trim(),
+                email: document.getElementById('editEmail').value.trim()
+            };
+
+            try {
+                await fetch(GLOBAL_AUTH_SALARY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(updatedUser)
+                });
+            } catch (err) {
+                console.error("Ошибка при обновлении данных в таблице:", err);
+            }
+
+            usersDb[index].fullName = updatedUser.fullName;
+            usersDb[index].warehouse = updatedUser.warehouse;
+            usersDb[index].role = updatedUser.role;
+            usersDb[index].workPhone = updatedUser.workPhone;
+            usersDb[index].password = updatedUser.password;
+            usersDb[index].tgId = updatedUser.tgId;
+            usersDb[index].tgGroup = updatedUser.tgGroup;
+            usersDb[index].email = updatedUser.email;
+
+            localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+
+            showBeelineModal("Успешно", "Изменения успешно сохранены!", "✅");
+            closeEditModal();
+            renderUsersList();
+            checkAuthSession();
+        }
+    }
+
+    function confirmDeleteUser(userId) {
+        showBeelineModal(
+            "Подтверждение удаления", 
+            "Вы уверены, что хотите полностью удалить эту учетную запись?", 
+            "⚠️", 
+            `
+            <div style="display:flex; gap:10px; margin-top:5px;">
+                <button class="btn danger-btn" style="margin-top:0;" onclick="deleteUser('${userId}')">Удалить</button>
+                <button class="btn action-btn" style="margin-top:0;" onclick="closeBeelineModal()">Отмена</button>
+            </div>
+            `
+        );
+    }
+
+    function deleteUser(userId) {
+        usersDb = usersDb.filter(item => item.id !== userId);
+        localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+
+        closeBeelineModal();
+        renderUsersList();
+    }
+
+const scrollBtn = document.getElementById('scrollQuickBtn');
+const scrollIcon = document.getElementById('scrollIcon');
+
+let currentScrollAction = 'down'; // 'down' или 'up'
+
+// Функция клика: если прокручено больше 200px — вверх, иначе — вниз
+function toggleScrollPage() {
+    if (currentScrollAction === 'down') {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    } else {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Отслеживаем скролл по простой позиции window.scrollY
+window.addEventListener('scroll', () => {
+    if (!scrollBtn || !scrollIcon) return;
+    
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const pageHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    // Показываем кнопку только если страница длиннее экрана
+    if (pageHeight <= clientHeight + 150) {
+        scrollBtn.style.display = 'none';
+        return;
+    } else {
+        scrollBtn.style.display = 'flex';
+    }
+
+    // Если прокрутили вниз меньше чем наполовину страницы — стрелка вниз, действие "вниз"
+    // Иначе — стрелка вверх, действие "наверх"
+    if (scrollY < (pageHeight - clientHeight) / 2) {
+        currentScrollAction = 'down';
+        scrollIcon.style.transform = 'rotate(180deg)'; // Стрелка вниз
+    } else {
+        currentScrollAction = 'up';
+        scrollIcon.style.transform = 'rotate(0deg)'; // Стрелка вверх
+    }
+});
+
+// --- ИНИЦИАЛИЗАЦИЯ И ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
+window.addEventListener('DOMContentLoaded', () => {
+    window.dispatchEvent(new Event('scroll'));
+    initScannerDefaults();
+});
+
+function switchScreen(screenId) {
+    document.querySelectorAll('.app-screen').forEach(screen => {
+        screen.style.display = 'none';
+        screen.classList.remove('active');
+    });
+    const target = document.getElementById(screenId);
+    if (target) {
+        target.style.display = 'block';
+        target.classList.add('active');
+    }
+}
+
+// --- ПЕРЕМЕННЫЕ СОСТОЯНИЯ ---
+let scannedBatch = [];
+let currentMode = 'router'; // 'router', 'stb', 'cable'
+let html5QrCode = null;
+let isManualMode = false;
+
+// Переменные для защиты от дубликатов и кулдауна камеры
+let lastScannedCode = "";
+let lastScanTime = 0;
+const SCAN_COOLDOWN = 3000; // Кулдаун 3 секунды на повторный сканирование того же серийника
+
+// --- ОТКРЫТИЕ И УПРАВЛЕНИЕ СКАНЕРОМ ---
+function openScannerScreen() {
+    switchScreen('screen-scanner');
+    initScannerDefaults();
+    startScanner();
+}
+
+function initScannerDefaults() {
+    isManualMode = false;
+    document.getElementById('camera-section').style.display = 'flex';
+    document.getElementById('manual-box').style.display = 'none';
+    document.getElementById('toggle-camera-btn').innerHTML = 'Ввести вручную ⌨️';
+    setEquipmentMode('router');
+}
+
+function startScanner() {
+    if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("reader");
+    }
+    
+    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+    
+    html5QrCode.start(
+        { facingMode: "environment" }, 
+        config, 
+        onScanSuccess,
+        onScanFailure
+    ).catch(err => {
+        console.error("Ошибка запуска камеры:", err);
+        toggleManualInputMode();
+        document.getElementById('scan-hint').innerText = "Камера недоступна. Введите штрих-код вручную:";
+    });
+}
+
+function stopScanner() {
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().catch(err => console.error("Ошибка остановки сканера:", err));
+    }
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    addItemToBatch(decodedText);
+}
+
+function onScanFailure(error) {
+    // Ошибки каждого кадра игнорируем
+}
+
+// --- УПРАВЛЕНИЕ КАМЕРОЙ / РУЧНЫМ ВВОДОМ ---
+function toggleManualInputMode() {
+    const cameraSection = document.getElementById('camera-section');
+    const manualBox = document.getElementById('manual-box');
+    const toggleBtn = document.getElementById('toggle-camera-btn');
+
+    isManualMode = !isManualMode;
+
+    if (isManualMode) {
+        cameraSection.style.display = 'none';
+        manualBox.style.display = 'flex';
+        toggleBtn.innerHTML = 'Включить камеру 📸';
+        stopScanner();
+        const serialInput = document.getElementById('manual-serial-input');
+        if (serialInput) serialInput.focus();
+    } else {
+        cameraSection.style.display = 'flex';
+        manualBox.style.display = 'none';
+        toggleBtn.innerHTML = 'Ввести вручную ⌨️';
+        startScanner();
+    }
+}
+
+// --- ВЫБОР РЕЖИМОВ ОБОРУДОВАНИЯ ---
+function setEquipmentMode(mode) {
+    currentMode = mode;
+    document.getElementById('mode-router-btn').classList.toggle('active', mode === 'router');
+    document.getElementById('mode-stb-btn').classList.toggle('active', mode === 'stb');
+    document.getElementById('mode-cable-btn').classList.remove('active');
+    document.getElementById('cable-name-card').style.display = 'none';
+    lastScannedCode = ""; // Сбрасываем при смене режима
+}
+
+function setCableMode() {
+    currentMode = 'cable';
+    document.getElementById('mode-router-btn').classList.remove('active');
+    document.getElementById('mode-stb-btn').classList.remove('active');
+    document.getElementById('mode-cable-btn').classList.add('active');
+    document.getElementById('cable-name-card').style.display = 'block';
+    lastScannedCode = ""; // Сбрасываем при смене режима
+}
+
+function selectCableOption(fullName, shortName, meters) {
+    document.getElementById('cable-selected').innerText = shortName;
+    document.getElementById('cable-name').value = fullName;
+    document.getElementById('cable-btn').dataset.meters = meters;
+    document.getElementById('cable-list').style.display = 'none';
+}
+
+// --- ДОБАВЛЕНИЕ И УДАЛЕНИЕ ЭЛЕМЕНТОВ ---
+function submitManualCode() {
+    const input = document.getElementById('manual-serial-input');
+    if (input && input.value.trim()) {
+        addItemToBatch(input.value);
+        input.value = '';
+    }
+}
+
+function addItemToBatch(code) {
+    if (!code) return;
+    code = code.trim();
+
+    // Проверка на дубликат по всему списку
+    const isDuplicate = scannedBatch.some(item => item.code === code);
+    if (isDuplicate) {
+        // Подбираем текст и иконку индивидуально под тип оборудования
+        let modalText = "";
+        let itemIcon = "🛜";
+
+        if (currentMode === 'router') {
+            modalText = `Данный роутер (S/N: ${code}) уже записан!`;
+            itemIcon = "🛜";
+        } else if (currentMode === 'stb') {
+            modalText = `Данная приставка (S/N: ${code}) уже записана!`;
+            itemIcon = "📺";
+        } else if (currentMode === 'cable') {
+            modalText = `Данный кабель (№ ${code}) уже записан!`;
+            itemIcon = "🔌";
+        }
+
+        // Вызываем модальное окно с вращающейся иконкой
+        showBeelineAlert("Дубликат", modalText, itemIcon, true);
+        
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+        }
+        return; 
+    }
+
+    let newItem = {
+        type: currentMode,
+        code: code
+    };
+
+    let displayTitle = "";
+    let labelText = code;
+
+    if (currentMode === 'router') {
+        displayTitle = `🛜 Роутер | S/N: ${code}`;
+    } else if (currentMode === 'stb') {
+        displayTitle = `📺 Приставка | S/N: ${code}`;
+    } else if (currentMode === 'cable') {
+        const cableNameFull = document.getElementById('cable-name').value;
+        const meters = parseInt(document.getElementById('cable-btn').dataset.meters || "500");
+        newItem.cableName = cableNameFull;
+        newItem.meters = meters;
+        displayTitle = `🔌 Кабель | № ${code} (${meters}м)`;
+        labelText = `${cableNameFull} (${meters}м) — № ${code}`;
+    }
+
+    newItem.fullText = labelText;
+    scannedBatch.push(newItem);
+
+    const lastBox = document.getElementById('last-scanned-box');
+    if (lastBox) lastBox.style.display = 'flex';
+    
+    const lastText = document.getElementById('last-scanned-text');
+    if (lastText) lastText.innerText = displayTitle;
+
+    updateBatchUI();
+
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+    }
+}
+
+function showBeelineAlert(title, text, icon = "⚠️", spin = false) {
+    const modal = document.getElementById('beelineModal');
+    const titleEl = document.getElementById('beelineModalTitle');
+    const textEl = document.getElementById('beelineModalText');
+    const iconEl = document.getElementById('beelineModalIcon');
+
+    if (titleEl) titleEl.textContent = title;
+    if (textEl) textEl.textContent = text;
+    
+    if (iconEl) {
+        iconEl.textContent = icon;
+        if (spin) {
+            iconEl.classList.add('spin-animation');
+        } else {
+            iconEl.classList.remove('spin-animation');
+        }
+    }
+    
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeBeelineModal() {
+    const modal = document.getElementById('beelineModal');
+    const iconEl = document.getElementById('beelineModalIcon');
+    if (iconEl) iconEl.classList.remove('spin-animation'); // убираем вращение при закрытии
+    if (modal) modal.style.display = 'none';
+}
+
+function removeItem(index) {
+    scannedBatch.splice(index, 1);
+    updateBatchUI();
+    showFormStep(); 
+    if (scannedBatch.length === 0) {
+        backToScanner();
+    }
+}
+
+function rescanLastItem() {
+    if (scannedBatch.length > 0) {
+        scannedBatch.pop();
+        updateBatchUI();
+    }
+    const lastBox = document.getElementById('last-scanned-box');
+    if (lastBox) lastBox.style.display = 'none';
+    lastScannedCode = ""; // Сбрасываем последний код для возможности повторного сканирования
+}
+
+// --- ОБНОВЛЕНИЕ ИНТЕРФЕЙСА И СЧЕТЧИКОВ ---
+function updateBatchUI() {
+    const totalCount = scannedBatch.length;
+    
+    const scanHint = document.getElementById('scan-hint');
+    if (scanHint) scanHint.innerText = `Наведите камеру на штрих-код (В списке: ${totalCount} шт.)`;
+    
+    const countText = document.getElementById('scan-count-text');
+    if (countText) countText.innerText = totalCount;
+
+    const badge = document.getElementById('batch-count-badge');
+    if (badge) badge.innerText = totalCount;
+
+    const proceedBtn = document.getElementById('proceed-to-form-btn');
+    if (proceedBtn) {
+        proceedBtn.style.display = totalCount > 0 ? 'block' : 'none';
+    }
+}
+
+// --- ПЕРЕХОД К ФОРМЕ ОФОРМЛЕНИЯ ---
+function showFormStep() {
+    stopScanner();
+    switchScreen('screen-form');
+
+    let routerCount = 0;
+    let stbCount = 0;
+    let cableCount = 0;
+
+    scannedBatch.forEach(item => {
+        if (item.type === 'router') routerCount++;
+        else if (item.type === 'stb') stbCount++;
+        else if (item.type === 'cable') cableCount++;
+    });
+
+    const counterContainer = document.getElementById('breakdown-counter');
+    if (counterContainer) {
+        counterContainer.style.display = 'grid';
+        counterContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        counterContainer.style.gap = '6px';
+        counterContainer.style.width = '100%';
+        counterContainer.style.margin = '8px 0';
+
+        counterContainer.innerHTML = `
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center; box-sizing: border-box;">
+                🛜 Роутер: ${routerCount}
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center; box-sizing: border-box;">
+                📺 Приставка: ${stbCount}
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center; box-sizing: border-box;">
+                🔌 Кабель: ${cableCount}
+            </div>
+        `;
+    }
+
+    const container = document.getElementById('scanned-codes-list-container');
+    if (container) {
+        container.innerHTML = scannedBatch.map((item, index) => {
+            let typeLabel = '🛜';
+            if (item.type === 'stb') typeLabel = '📺';
+            if (item.type === 'cable') typeLabel = '🔌';
+
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--card-border); font-size: 13px; color: #fff;">
+                    <span style="word-break: break-all; font-family: monospace;"><b>${index + 1}. ${typeLabel}</b> ${item.code} ${item.cableName ? '— ' + item.cableName : ''}</span>
+                    <button type="button" onclick="removeItem(${index})" style="background:none; border:none; color: #ef4444; cursor:pointer; font-size: 16px; padding: 0 4px;">✕</button>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+function backToScanner() {
+    switchScreen('screen-scanner');
+    startScanner();
+}
+
+// --- ВЫПАДАЮЩИЕ СПИСКИ И КАСТОМИЗАЦИЯ ---
+function toggleDropdown(listId) {
+    const list = document.getElementById(listId);
+    const isVisible = list.style.display === 'block';
+    document.querySelectorAll('.dropdown-list').forEach(l => l.style.display = 'none');
+    list.style.display = isVisible ? 'none' : 'block';
+}
+
+function selectOptionValue(hiddenId, hiddenVal, btnId, selectedText, listId) {
+    document.getElementById(hiddenId).value = hiddenVal;
+    document.getElementById(btnId.replace('-btn', '-selected')).innerText = selectedText;
+    document.getElementById(listId).style.display = 'none';
+}
+
+async function sendDataToGoogleSheet() {
+    if (scannedBatch.length === 0) {
+        alert('Список пуст!');
+        return;
+    }
+
+    const author = document.getElementById('author') ? document.getElementById('author').value : "Толокнов Евгений";
+    const installer = document.getElementById('installer') ? document.getElementById('installer').value : "";
+
+    const currentCity = window.selectedCity || "Темиртау"; 
+    const targetUrl = CITIES_CONFIG[currentCity] ? CITIES_CONFIG[currentCity].reportsScriptUrl : null;
+
+    if (!targetUrl) {
+        alert('Не найден URL отчетов для выбранного города!');
+        return;
+    }
+
+    const submitBtn = document.getElementById('submit-btn');
+    const loader = document.getElementById('loader-text');
+
+    if (submitBtn) submitBtn.style.display = 'none';
+    if (loader) loader.style.display = 'block';
+
+    try {
+        const payload = {
+            type: "BatchIssuance",
+            author: author,
+            installer: installer,
+            items: scannedBatch
+        };
+
+        await fetch(targetUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+
+        document.querySelectorAll('.app-screen').forEach(screen => {
+            screen.style.display = 'none';
+            screen.classList.remove('active');
+        });
+
+        const successScreen = document.getElementById('screen-success');
+        if (successScreen) {
+            successScreen.style.display = 'flex'; 
+            successScreen.classList.add('active');
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert('Ошибка отправки: ' + err.message);
+        if (submitBtn) submitBtn.style.display = 'flex';
+        if (loader) loader.style.display = 'none';
+    }
+}
+
+// --- СБРОС И ОТПРАВКА ---
+function resetAllApp() {
+    scannedBatch = [];
+    lastScannedCode = "";
+    updateBatchUI();
+    const lastBox = document.getElementById('last-scanned-box');
+    if (lastBox) lastBox.style.display = 'none';
+    switchScreen('screen-main');
+}
+
+function submitBatchToTable() {
+    switchScreen('screen-success');
+}
+
+</script>
+
+</body>
+</html>

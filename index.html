@@ -1105,7 +1105,7 @@
         <div class="card" id="cable-name-card" style="display: none; background: var(--card-bg); padding: 14px; border-radius: 16px; border: 1px solid var(--card-border);">
             <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Марка кабеля</label>
             <div class="custom-dropdown" id="cableDropdown" style="position: relative; width: 100%; margin-top: 6px;">
-                <button type="button" class="dropdown-select-btn dropdown-trigger" id="cable-btn" onclick="toggleDropdown('cableDropdown')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
+                <button type="button" class="dropdown-select-btn dropdown-trigger" id="cable-btn" onclick="toggleDropdown('cable-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
                     <span id="cable-selected">Кабель U/UTP 2х2 (500 м)</span>
                     <span class="dropdown-arrow">▼</span>
                 </button>
@@ -2903,14 +2903,29 @@ function openEditModal(userId) {
         startScanner();
     }
 
-    function selectCableOption(fullName, shortName, meters) {
-        const cableNameInput = document.getElementById('cable-name');
-        const cableSelected = document.getElementById('cable-selected');
-        if (cableNameInput) cableNameInput.value = fullName;
-        if (cableSelected) cableSelected.textContent = shortName;
-        currentCableMeters = meters;
-        toggleDropdown('cable-list');
-    }
+    function selectCableOption(fullValue, shortName, length) {
+        // 1. Устанавливаем полное значение в скрытый инпут
+        const hiddenInput = document.getElementById('cable-name');
+        if (hiddenInput) {
+            hiddenInput.value = fullValue;
+        }
+
+        // 2. Отображаем короткое название на кнопке
+        const selectedSpan = document.getElementById('cable-selected');
+        if (selectedSpan) {
+            selectedSpan.textContent = shortName;
+        }
+
+        // 3. Закрываем выпадающий список
+        const list = document.getElementById('cable-list');
+        if (list) {
+            list.style.display = 'none';
+            const dropdown = list.closest('.custom-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('open');
+            }
+        }
+    } // <-- Здесь функция корректно закрывается (лишняя скобка ниже удалена)
 
     function submitManualCode() {
         const input = document.getElementById('manual-serial-input');

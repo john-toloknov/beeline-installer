@@ -1435,7 +1435,7 @@
         checkAuthSession();
         handleSearchAccess();
         window.dispatchEvent(new Event('scroll'));
-        initScannerDefaults();
+        // Камера теперь инициализируется только при открытии экрана ТМЦ
     });
 
     async function loadUsersFromSheet() {

@@ -808,8 +808,6 @@
             document.getElementById('beelineModal').style.display = 'none';
         }
     </script>
-</body>
-</html>
 
 <div class="container">
 
@@ -1106,10 +1104,10 @@
         <!-- Выпадающий список для кабеля -->
         <div class="card" id="cable-name-card" style="display: none; background: var(--card-bg); padding: 14px; border-radius: 16px; border: 1px solid var(--card-border);">
             <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Марка кабеля</label>
-            <div class="custom-dropdown" style="position: relative; width: 100%; margin-top: 6px;">
-                <button type="button" class="dropdown-select-btn" id="cable-btn" onclick="toggleDropdown('cable-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
+            <div class="custom-dropdown" id="cableDropdown" style="position: relative; width: 100%; margin-top: 6px;">
+                <button type="button" class="dropdown-select-btn dropdown-trigger" id="cable-btn" onclick="toggleDropdown('cableDropdown')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
                     <span id="cable-selected">Кабель U/UTP 2х2 (500 м)</span>
-                    <span>▼</span>
+                    <span class="dropdown-arrow">▼</span>
                 </button>
                 <div class="dropdown-list" id="cable-list" style="position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #1c1c1c; border: 1px solid var(--card-border); border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 100; display: none;">
                     <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectCableOption('Кабель U/UTP 2х2хAWG 24/1 PVC Cat.5e (0,503)', 'Кабель U/UTP 2х2 (500 м)', 500)">Кабель U/UTP 2х2 (500 м)</div>
@@ -1149,7 +1147,7 @@
             <button class="btn action-btn" id="gallery-btn" onclick="document.getElementById('file-input').click()">Загрузить фото из галереи 📁</button>
             <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)" style="display: none;">
 
-            <button class="btn main-btn" id="proceed-to-form-btn" style="display: none;" onclick="showFormStep()">📝 Перейти к оформлению (<span id="batch-count-badge">0</span> шт.) 🚀</button>
+            <button class="btn main-btn" id="proceed-to-form-btn" style="display: none;" onclick="showFormStep();">📝 Перейти к оформлению (<span id="batch-count-badge">0</span> шт.) 🚀</button>
             
             <!-- Красная кнопка возврата в главное меню внизу -->
             <button class="btn danger-btn" onclick="switchScreen('screen-main'); stopScanner();">⬅️ Назад в главное меню</button>
@@ -1173,50 +1171,34 @@
 
         <button class="btn secondary-btn" onclick="backToScanner()">+ Добавить еще позиции 📱</button>
 
+<!-- Блок отображения автора выдачи -->
         <div class="card" style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border);">
             <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">КЕМ ВЫДАН 👤</label>
-            <div class="custom-dropdown" style="position: relative; width: 100%; margin-top: 6px;">
-                <button type="button" class="dropdown-select-btn" id="author-btn" onclick="toggleDropdown('author-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
-                    <span id="author-selected">Толокнов Евгений</span>
-                    <span>▼</span>
-                </button>
-                <div class="dropdown-list" id="author-list" style="position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #1c1c1c; border: 1px solid var(--card-border); border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 100; display: none;">
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('author', 'Толокнов Евгений', 'author-btn', 'Толокнов Евгений', 'author-list')">Толокнов Евгений</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('author', 'Лоос Виктор', 'author-btn', 'Лоос Виктор', 'author-list')">Лоос Виктор</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('author', 'Стрижко Дмитрий', 'author-btn', 'Стрижко Дмитрий', 'author-list')">Стрижко Дмитрий</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer;" onclick="selectOptionValue('author', 'Какалова Мария', 'author-btn', 'Какалова Мария', 'author-list')">Какалова Мария</div>
-                </div>
+            <div id="author-display-text" style="font-size: 14px; font-weight: 600; color: var(--beeline-yellow); margin-top: 6px;">
+                Загрузка...
             </div>
-            <input type="hidden" id="author" value="Толокнов Евгений">
+            <!-- Скрытое поле для отправки -->
+            <input type="hidden" id="author" value="">
         </div>
 
+        <!-- Блок выбора получателя (только сотрудники вашего города) -->
         <div class="card" style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--card-border);">
             <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">КОМУ ВЫДАН 👤</label>
             <div class="custom-dropdown" style="position: relative; width: 100%; margin-top: 6px;">
                 <button type="button" class="dropdown-select-btn" id="installer-btn" onclick="toggleDropdown('installer-list')" style="width: 100%; padding: 12px; border-radius: 10px; background: #0a0a0a; color: #fff; border: 1px solid var(--card-border); display: flex; justify-content: space-between; cursor: pointer;">
-                    <span id="installer-selected">Курмангалиев Тимур</span>
+                    <span id="installer-selected">Выберите сотрудника...</span>
                     <span>▼</span>
                 </button>
+                <!-- Список заполняется динамически в зависимости от города currentUser.city -->
                 <div class="dropdown-list" id="installer-list" style="position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #1c1c1c; border: 1px solid var(--card-border); border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 100; display: none;">
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Курмангалиев Тимур Берикович,Бригада №1 (Темиртау)', 'installer-btn', 'Курмангалиев Тимур', 'installer-list')">Курмангалиев Тимур</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Стрижко Дмитрий Юрьевич,Бригада №3 (Темиртау)', 'installer-btn', 'Стрижко Дмитрий', 'installer-list')">Стрижко Дмитрий</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Новиков Иван Викторович,Бригада №4 (Темиртау)', 'installer-btn', 'Новиков Иван', 'installer-list')">Новиков Иван</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Лоос Виктор Геннадьевич,Бригада №5 (Темиртау)', 'installer-btn', 'Лоос Виктор', 'installer-list')">Лоос Виктор</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Марчуков Андрей Артемович,Бригада №6 (Темиртау)', 'installer-btn', 'Марчуков Андрей', 'installer-list')">Марчуков Андрей</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Иванусь Аркадий Александрович,Бригада №7 (Темиртау)', 'installer-btn', 'Иванусь Аркадий', 'installer-list')">Иванусь Аркадий</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Павленко Николай Александрович,Бригада №8 (Темиртау)', 'installer-btn', 'Павленко Николай', 'installer-list')">Павленко Николай</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Седухин Владимир Игоревич,Бригада №9 (Темиртау)', 'installer-btn', 'Седухин Владимир', 'installer-list')">Седухин Владимир</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Янковицкий Сергей Валерьевич,Бригада №10 (Темиртау)', 'installer-btn', 'Янковицкий Сергей', 'installer-list')">Янковицкий Сергей</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222;" onclick="selectOptionValue('installer', 'Тарыца Захар Васильевич,Бригада №11 (Темиртау)', 'installer-btn', 'Тарыца Захар', 'installer-list')">Тарыца Захар</div>
-                    <div class="dropdown-item" style="padding: 12px; cursor: pointer;" onclick="selectOptionValue('installer', 'Кайзер Павел Иванович,Бригада №12 (Темиртау)', 'installer-btn', 'Кайзер Павел', 'installer-list')">Кайзер Павел</div>
                 </div>
             </div>
-            <input type="hidden" id="installer" value="Курмангалиев Тимур Берикович,Бригада №1 (Темиртау)">
+            <input type="hidden" id="installer" value="">
         </div>
 
         <button class="btn main-btn" id="submit-btn" onclick="sendDataToGoogleSheet()">Записать весь список в таблицу 🚀</button>
         
-        <!-- Кнопка «Назад в Главное меню» красного цвета вместо «Назад к сканеру» -->
+        <!-- Кнопка «Назад в Главное меню» -->
         <button class="btn danger-btn" onclick="switchScreen('screen-main'); stopScanner();">⬅️ Назад в главное меню</button>
 
         <div class="loader" id="loader-text" style="display: none; text-align: center; color: var(--beeline-yellow); font-weight: 600;">Запись данных в таблицу...⏳</div>
@@ -1233,7 +1215,7 @@
             <!-- Кнопки управления на экране успеха -->
             <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px;">
                 <button class="btn main-btn" onclick="resetAllApp()">Новая выдача 📲</button>
-                <button class="btn danger-btn" onclick="switchScreen('screen-main')">⬅️ Назад в главное меню</button>
+                <button class="btn danger-btn" onclick="goToMainMenu()">⬅️ Назад в главное меню</button>
             </div>
         </div>
     </div>
@@ -1337,18 +1319,13 @@
         КОНФИГУРАЦИЯ ГОРОДОВ И URL СКРИПТОВ (РАЗДЕЛЬНЫЕ ДЛЯ КАЖДОГО ГОРОДА)
         ========================================================================= */
     
-    // Общий скрипт для авторизации и зарплаты (единый на всю систему)
     const GLOBAL_AUTH_SALARY_URL = "https://script.google.com/macros/s/AKfycbyFcYBp90UUg7koztArk61GASabeelnRSoRvVF2-crsXdToB4Y-3bfmoRzGohrXfYMiFw/exec";
 
     const CITIES_CONFIG = {
         "Темиртау": {
-            // Скрипт графика для Темиртау
             scriptUrl: "https://script.google.com/macros/s/AKfycbwzA78v4H4SChuoTic5A9KTT_x918bEDaOZNMwXwQgOOezxpg0nXPEfPJ2pa1NXzuzwgw/exec",
-            // Скрипт отчетов для ЕЖЕДНЕВНЫЙ Темиртау
             reportsScriptUrl: "https://script.google.com/macros/s/AKfycbw_yI2oF5zXSY4KJNJTcolrrVj9-b-CzUauQR_W9N6oLotyV6Nv5m3m7V1F-6RM0lQsgQ/exec",
-            // Прямая ссылка на таблицу графиков (для кнопки просмотра)
             scheduleSheetUrl: "https://docs.google.com/spreadsheets/d/15iggvcMnhwA10w7ei3ahmhpkoV-ZRLLVkKeLdN_QB5k/edit?gid=636535801#gid=636535801",
-            
             reportsUrl: "https://john-toloknov.github.io/scaner-beeline/", 
             tmcUrl: "https://john-toloknov.github.io/qr-cod-html/",        
             tgGroupId: "-1001383444721"                         
@@ -1443,8 +1420,6 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
         initCitiesDropdowns();
-        
-        // Автоматически синхронизируем пользователей из гугл таблицы при загрузке
         await loadUsersFromSheet();
 
         const rememberedLogin = localStorage.getItem('beeline_remembered_login');
@@ -1459,9 +1434,10 @@
 
         checkAuthSession();
         handleSearchAccess();
+        window.dispatchEvent(new Event('scroll'));
+        initScannerDefaults();
     });
 
-    // Функция загрузки пользователей из Google Таблицы через doGet
     async function loadUsersFromSheet() {
         try {
             const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=getUsers`);
@@ -1577,8 +1553,15 @@
     }
 
     function switchScreen(screenId) {
-        document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
+        document.querySelectorAll('.app-screen').forEach(el => {
+            el.style.display = 'none';
+            el.classList.remove('active');
+        });
+        const target = document.getElementById(screenId);
+        if (target) {
+            target.style.display = 'block';
+            target.classList.add('active');
+        }
         window.scrollTo(0,0);
     }
 
@@ -1660,33 +1643,58 @@
     }
 
     function toggleDropdown(dropdownId) {
-        const dropdown = document.getElementById(dropdownId);
+    // В качестве dropdownId мы передаем ID самого контейнера списка (например, 'installer-list')
+        const list = document.getElementById(dropdownId);
+        if (!list) return;
+
+    // Находим родительский элемент .custom-dropdown для этой кнопки/списка
+        const dropdown = list.closest('.custom-dropdown');
+        if (!dropdown) return;
+
         const isOpen = dropdown.classList.contains('open');
-        
+
+    // Закрываем все остальные выпадающие списки на странице
         document.querySelectorAll('.custom-dropdown').forEach(d => {
-            if (d.id !== dropdownId) d.classList.remove('open');
-        });
-
-        if (!isOpen) {
-            dropdown.classList.add('open');
-        } else {
-            dropdown.classList.remove('open');
-        }
-    }
-
-    function selectDropdownOption(dropdownId, hiddenInputId, labelId, value, text) {
-        document.getElementById(hiddenInputId).value = value;
-        const label = document.getElementById(labelId);
-        label.textContent = text;
-        label.style.color = 'var(--text-main)';
-        document.getElementById(dropdownId).classList.remove('open');
-    }
-
-    window.addEventListener('click', (e) => {
-        if (!e.target.closest('.custom-dropdown')) {
-            document.querySelectorAll('.custom-dropdown').forEach(list => list.classList.remove('open'));
+            if (d !== dropdown) {
+                d.classList.remove('open');
+                const otherList = d.querySelector('.dropdown-list');
+                if (otherList) otherList.style.display = 'none';
         }
     });
+
+    // Открываем или закрываем текущий список
+        if (!isOpen) {
+            dropdown.classList.add('open');
+            list.style.display = 'block';
+        } else {
+            dropdown.classList.remove('open');
+            list.style.display = 'none';
+        }
+    }
+
+    function selectDropdownOption(listId, hiddenInputId, selectedSpanId, fullValue, shortName) {
+    // 1. Записываем выбранное значение в скрытый инпут
+        const hiddenInput = document.getElementById(hiddenInputId);
+        if (hiddenInput) {
+            hiddenInput.value = fullValue;
+        }
+
+    // 2. Меняем текст на кнопке выбора
+        const selectedSpan = document.getElementById(selectedSpanId);
+        if (selectedSpan) {
+            selectedSpan.textContent = shortName;
+        }
+
+    // 3. ЗАКРЫВАЕМ ВЫПАДАЮЩИЙ СПИСОК (вот этого как раз не хватало!)
+        const list = document.getElementById(listId);
+        if (list) {
+            list.style.display = 'none';
+            const dropdown = list.closest('.custom-dropdown');
+            if (dropdown) {
+                dropdown.classList.remove('open');
+            }
+        }
+    }
 
     function initCitiesDropdowns() {
         renderCitiesItems('city-items-container', CITIES_LIST, 'regCityDropdown', 'regCity', 'regCityLabel');
@@ -1708,8 +1716,7 @@
 
     function filterCities(query, dropdownId, hiddenInputId, labelId) {
         const filtered = CITIES_LIST.filter(c => c.toLowerCase().includes(query.toLowerCase()));
-        const containerId = 'city-items-container';
-        renderCitiesItems(containerId, filtered, dropdownId, hiddenInputId, labelId);
+        renderCitiesItems('city-items-container', filtered, dropdownId, hiddenInputId, labelId);
     }
 
     function handleLogin(e) {
@@ -1745,121 +1752,100 @@
         checkAuthSession();
     }
 
-/* =========================================================================
-   ВОССТАНОВЛЕНИЕ ПАРОЛЯ ЧЕРЕЗ GOOGLE APPS SCRIPT (GET / POST)
-   ========================================================================= */
-async function sendRecoveryCode() {
-    const login = document.getElementById('forgotLogin').value.trim();
-    const email = document.getElementById('forgotEmail').value.trim();
+    async function sendRecoveryCode() {
+        const login = document.getElementById('forgotLogin').value.trim();
+        const email = document.getElementById('forgotEmail').value.trim();
 
-    if (!login || !email) {
-        showBeelineModal("Внимание", "Пожалуйста, заполните логин и рабочую почту!", "⚠️");
-        return;
-    }
-
-    showBeelineModal("Проверка", "Запрос на отправку кода восстановления...", "⏳");
-
-    try {
-        // Вызываем doGet в Google Apps Script для проверки пользователя и отправки почты
-        const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=sendRecoveryCode&login=${encodeURIComponent(login)}&email=${encodeURIComponent(email)}`);
-        const res = await response.json();
-
-        if (res.status !== 'ok') {
-            showBeelineModal("Ошибка", res.message || "Пользователь с такими данными не найден!", "❌");
+        if (!login || !email) {
+            showBeelineModal("Внимание", "Пожалуйста, заполните логин и рабочую почту!", "⚠️");
             return;
         }
 
-        // Сохраняем полученные с сервера данные для сверки на втором шаге
-        generatedRecoveryCode = String(res.code);
-        recoveryEmailTarget = res.email;
+        showBeelineModal("Проверка", "Запрос на отправку кода восстановления...", "⏳");
 
-        showBeelineModal(
-            "Письмо отправлено", 
-            `Временный код подтверждения успешно отправлен на рабочую почту <b>${res.email}</b>.<br><br>Проверьте входящие (или спам).`, 
-            "📨"
-        );
-        switchScreen('screen-reset');
+        try {
+            const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=sendRecoveryCode&login=${encodeURIComponent(login)}&email=${encodeURIComponent(email)}`);
+            const res = await response.json();
 
-    } catch (err) {
-        console.error("Ошибка при запросе восстановления:", err);
-        showBeelineModal("Ошибка", "Не удалось связаться с сервером.", "❌");
-    }
-}
+            if (res.status !== 'ok') {
+                showBeelineModal("Ошибка", res.message || "Пользователь с такими данными не найден!", "❌");
+                return;
+            }
 
-function validateResetPasswordsMatch() {
-    const p1 = document.getElementById('newPass1').value;
-    const p2 = document.getElementById('newPass2').value;
-    
-    if (p2 && p1 !== p2) {
-        document.getElementById('newPass2').classList.add('input-error');
-    } else {
-        document.getElementById('newPass2').classList.remove('input-error');
-    }
-}
+            generatedRecoveryCode = String(res.code);
+            recoveryEmailTarget = res.email;
 
-async function confirmPasswordReset() {
-    const code = document.getElementById('resetCode').value.trim();
-    const p1 = document.getElementById('newPass1').value;
-    const p2 = document.getElementById('newPass2').value;
+            showBeelineModal(
+                "Письмо отправлено", 
+                `Временный код подтверждения успешно отправлен на рабочую почту <b>${res.email}</b>.<br><br>Проверьте входящие (или спам).`, 
+                "📨"
+            );
+            switchScreen('screen-reset');
 
-    if (code !== generatedRecoveryCode) {
-        showBeelineModal("Ошибка", "Неверный одноразовый код!", "❌");
-        return;
-    }
-    if (p1.length < 6) {
-        showBeelineModal("Ошибка", "Пароль должен содержать минимум 6 символов!", "❌");
-        return;
-    }
-    if (p1 !== p2) {
-        showBeelineModal("Ошибка", "Введенные пароли не совпадают!", "❌");
-        return;
+        } catch (err) {
+            console.error("Ошибка при запросе восстановления:", err);
+            showBeelineModal("Ошибка", "Не удалось связаться с сервером.", "❌");
+        }
     }
 
-    try {
-        showBeelineModal("Сохранение", "Обновление пароля...", "⏳");
-        
-        // Отправляем POST запрос с действием resetPassword, которое ожидает твой Apps Script бэкенд
-        const response = await fetch(GLOBAL_AUTH_SALARY_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'resetPassword',
-                email: recoveryEmailTarget,
-                password: p1
-            })
-        });
-        
-        const res = await response.json();
-        if (res.status !== 'ok') {
-            throw new Error(res.message || "Ошибка обновления на сервере");
+    async function confirmPasswordReset() {
+        const code = document.getElementById('resetCode').value.trim();
+        const p1 = document.getElementById('newPass1').value;
+        const p2 = document.getElementById('newPass2').value;
+
+        if (code !== generatedRecoveryCode) {
+            showBeelineModal("Ошибка", "Неверный одноразовый код!", "❌");
+            return;
+        }
+        if (p1.length < 6) {
+            showBeelineModal("Ошибка", "Пароль должен содержать минимум 6 символов!", "❌");
+            return;
+        }
+        if (p1 !== p2) {
+            showBeelineModal("Ошибка", "Введенные пароли не совпадают!", "❌");
+            return;
         }
 
-        // Обновляем локальную базу
-        const userIndex = usersDb.findIndex(u => u.email && u.email.toLowerCase() === recoveryEmailTarget.toLowerCase());
-        if (userIndex !== -1) {
-            usersDb[userIndex].password = p1;
-            localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+        try {
+            showBeelineModal("Сохранение", "Обновление пароля...", "⏳");
+            
+            const response = await fetch(GLOBAL_AUTH_SALARY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'resetPassword',
+                    email: recoveryEmailTarget,
+                    password: p1
+                })
+            });
+            
+            const res = await response.json();
+            if (res.status !== 'ok') {
+                throw new Error(res.message || "Ошибка обновления на сервере");
+            }
+
+            const userIndex = usersDb.findIndex(u => u.email && u.email.toLowerCase() === recoveryEmailTarget.toLowerCase());
+            if (userIndex !== -1) {
+                usersDb[userIndex].password = p1;
+                localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
+            }
+
+            recoveryEmailTarget = '';
+            generatedRecoveryCode = '';
+
+            showBeelineModal(
+                "Успешно", 
+                "Пароль успешно изменен и обновлен! Теперь вы можете войти в систему.", 
+                "✅", 
+                `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-login');" style="margin-top:0;">Перейти ко входу 🚀</button>`
+            );
+
+        } catch (err) {
+            console.error("Ошибка при перезаписи пароля в таблицу:", err);
+            showBeelineModal("Ошибка", "Не удалось сохранить новый пароль.", "❌");
         }
-
-        recoveryEmailTarget = '';
-        generatedRecoveryCode = '';
-
-        showBeelineModal(
-            "Успешно", 
-            "Пароль успешно изменен и обновлен! Теперь вы можете войти в систему.", 
-            "✅", 
-            `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-login');" style="margin-top:0;">Перейти ко входу 🚀</button>`
-        );
-
-    } catch (err) {
-        console.error("Ошибка при перезаписи пароля в таблицу:", err);
-        showBeelineModal("Ошибка", "Не удалось сохранить новый пароль.", "❌");
     }
-}
 
-/* =========================================================================
-        ФУНКЦИЯ ВЫГРУЗКИ ЗАРПЛАТЫ
-        ========================================================================= */
     async function openMySalary() {
         if (!currentUser) {
             showBeelineModal("Ошибка", "Необходимо авторизоваться в системе!", "❌");
@@ -1894,14 +1880,11 @@ async function confirmPasswordReset() {
         }
     }
 
-    // Вспомогательная функция для красивого вывода процентов
     function formatPct(val) {
         if (val === null || val === undefined || val === '') return '-';
         let str = String(val).replace(',', '.').replace('%', '').trim();
         let num = Number(str);
         if (isNaN(num)) return val;
-        
-        // Если это доля (например, 0.9937 или 0.47), умножаем на 100
         if (num > 0 && num <= 2) {
             return (num * 100).toFixed(0) + '%';
         }
@@ -1912,7 +1895,6 @@ async function confirmPasswordReset() {
         const container = document.getElementById('salaryContentContainer');
         const role = d.role || currentUser.role || 'Техник-Универсал';
         
-        // Вспомогательный генератор строки
         const row = (label, val, style = "") => val ? `
             <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px;">
                 <span style="color: var(--text-secondary);">${label}</span>
@@ -1920,7 +1902,6 @@ async function confirmPasswordReset() {
             </div>
         ` : '';
 
-        // Шапка профиля (ФИО может быть без отчества, обрабатываем корректно)
         let html = `
             <div style="background: rgba(255, 204, 0, 0.1); border: 1px solid var(--beeline-yellow); border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: center;">
                 <div style="font-size: 15px; color: var(--beeline-yellow); font-weight: 800;">👤 ${d.fullName || currentUser.fullName}</div>
@@ -1928,12 +1909,8 @@ async function confirmPasswordReset() {
             </div>
         `;
 
-        // ==========================================
-        // 1. СТАРШИЙ ТЕХНИК
-        // ==========================================
         if (role === "Старший Техник") {
             html += `
-                <!-- АККОРДЕОН: ЦЕЛИ -->
                 <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;" open>
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--beeline-yellow); outline: none;">
                         🎯 Цели и KPI (Старший техник)
@@ -1945,12 +1922,10 @@ async function confirmPasswordReset() {
                         ${row("Цель 2. SL-24 (план 85%):", formatPct(d.goal2))}
                         ${row("Цель 3. Результативность услуг (план 92%):", formatPct(d.goal3))}
                         ${row("Цель 4. Эффективность ресурсов (план 90%):", formatPct(d.goal4))}
-                        ${row("Итоговый KPI:", formatPct (d.kpiTotal, "color: #4CAF50;"))}
+                        ${row("Итоговый KPI:", formatPct(d.kpiTotal, "color: #4CAF50;"))}
                         ${row("Бонус за выполнение KPI:", d.goal1Bonus)}
                     </div>
                 </details>
-
-                <!-- АККОРДЕОН: ДОПЛАТЫ -->
                 <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;">
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-primary); outline: none;">
                         💰 Доплаты и компенсации
@@ -1964,8 +1939,6 @@ async function confirmPasswordReset() {
                         ${row("Доплата:", d.supplements)}
                     </div>
                 </details>
-
-                <!-- АККОРДЕОН: ШТРАФЫ -->
                 ${d.penalty && d.penalty !== "0" ? `
                 <details style="background: rgba(255, 77, 77, 0.05); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid rgba(255, 77, 77, 0.3);">
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--danger); outline: none;">
@@ -1976,13 +1949,8 @@ async function confirmPasswordReset() {
                     </div>
                 </details>` : ''}
             `;
-        } 
-        // ==========================================
-        // 2. БРИГАДИР
-        // ==========================================
-        else if (role === "Бригадир") {
+        } else if (role === "Бригадир") {
             html += `
-                <!-- АККОРДЕОН: ЦЕЛИ -->
                 <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;" open>
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--beeline-yellow); outline: none;">
                         🎯 Цели и KPI (Бригадир)
@@ -1995,11 +1963,9 @@ async function confirmPasswordReset() {
                         ${row("Цель 3. Конвертация (план 95%):", formatPct(d.goal3))}
                         ${row("Цель 4. Претензии на опоздания (план 0%):", formatPct(d.goal4))}
                         ${row("Цель 5. Продуктивность (план 100%):", formatPct(d.goal5))}
-                        ${row("Итоговый KPI:", formatPct (d.kpiTotal, "color: #4CAF50;"))}
+                        ${row("Итоговый KPI:", formatPct(d.kpiTotal, "color: #4CAF50;"))}
                     </div>
                 </details>
-
-                <!-- АККОРДЕОН: ДОПЛАТЫ -->
                 <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;">
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-primary); outline: none;">
                         💰 Доплаты и компенсации
@@ -2013,8 +1979,6 @@ async function confirmPasswordReset() {
                         ${row("Общая доплата:", d.supplements)}
                     </div>
                 </details>
-
-                <!-- АККОРДЕОН: ШТРАФЫ -->
                 ${d.penalties && d.penalties !== "0" ? `
                 <details style="background: rgba(255, 77, 77, 0.05); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid rgba(255, 77, 77, 0.3);">
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--danger); outline: none;">
@@ -2028,13 +1992,8 @@ async function confirmPasswordReset() {
                     </div>
                 </details>` : ''}
             `;
-        } 
-        // ==========================================
-        // 3. ТЕХНИК-УНИВЕРСАЛ
-        // ==========================================
-        else {
+        } else {
             html += `
-                <!-- АККОРДЕОН: ЦЕЛИ -->
                 <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;" open>
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--beeline-yellow); outline: none;">
                         🎯 Цели и KPI (Техник-универсал)
@@ -2050,8 +2009,6 @@ async function confirmPasswordReset() {
                         ${row("Итоговый KPI:", d.kpiTotal, "color: #4CAF50;")}
                     </div>
                 </details>
-
-                <!-- АККОРДЕОН: ДОПЛАТЫ -->
                 <details style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #333;">
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--text-primary); outline: none;">
                         💰 Доплаты и компенсации
@@ -2066,8 +2023,6 @@ async function confirmPasswordReset() {
                         ${row("Стажировка пред. месяц:", d.prevMonthInternship)}
                     </div>
                 </details>
-
-                <!-- АККОРДЕОН: ШТРАФЫ -->
                 ${d.penalties && d.penalties !== "0" ? `
                 <details style="background: rgba(255, 77, 77, 0.05); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; border: 1px solid rgba(255, 77, 77, 0.3);">
                     <summary style="cursor: pointer; font-size: 13px; font-weight: 700; color: var(--danger); outline: none;">
@@ -2083,9 +2038,6 @@ async function confirmPasswordReset() {
             `;
         }
 
-        // ==========================================
-        // СРАЗУ ВИДИМЫЕ ЗНАЧЕНИЯ (НАЛОГИ, АВР, НА РУКИ)
-        // ==========================================
         html += `
             <div style="background: var(--surface-card, #1e1e1e); border-radius: 12px; padding: 12px; margin-bottom: 12px; border: 1px solid #333;">
                 <div style="font-size: 12px; text-transform: uppercase; color: var(--beeline-yellow); font-weight: 700; margin-bottom: 8px;">📑 Налоги и Итоги АВР</div>
@@ -2105,9 +2057,6 @@ async function confirmPasswordReset() {
         container.innerHTML = html;
     }
 
-    /* =========================================================================
-        ФУНКЦИЯ ВЫГРУЗКИ ГРАФИКА (ИСПРАВЛЕННАЯ)
-        ========================================================================= */
     async function openMySchedule() {
         if (!currentUser) {
             showBeelineModal("Ошибка", "Необходимо авторизоваться в системе!", "❌");
@@ -2119,21 +2068,15 @@ async function confirmPasswordReset() {
         container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загружаем ваш график из таблицы... 🔄</div>`;
 
         try {
-            // ОПРЕДЕЛЯЕМ КОНФИГУРАЦИЮ ГОРОДА В САМОМ НАЧАЛЕ
             const cityConfig = CITIES_CONFIG[currentUser.city] || CITIES_CONFIG["Темиртау"];
-
-            // Формируем запрос с передачей ФИО и Telegram ID для точного поиска в таблице
             const url = `${cityConfig.scriptUrl}?action=getSchedule&fullName=${encodeURIComponent(currentUser.fullName)}&tgId=${encodeURIComponent(currentUser.tgId || '')}`;
             
-            const response = await fetch(url, {
-                method: 'GET'
-            });
+            const response = await fetch(url, { method: 'GET' });
             const res = await response.json();
 
             if (res.status === 'ok') {
                 renderScheduleCalendar(res);
             } else {
-                // Выводим текст ошибки от сервера Google, если сотрудник не найден
                 container.innerHTML = `
                     <div style="text-align: center; color: #ff5252; padding: 20px;">
                         ❌ ${res.message || 'Не удалось загрузить график'}
@@ -2151,7 +2094,6 @@ async function confirmPasswordReset() {
 
     function renderScheduleCalendar(res) {
         const container = document.getElementById('scheduleContentContainer');
-        
         const now = new Date();
         const year = now.getFullYear();
         const month = now.getMonth();
@@ -2190,22 +2132,19 @@ async function confirmPasswordReset() {
             gridHtml += `<div class="calendar-day empty"></div>`;
         }
 
-        // Превращаем массив schedule от бэкенда в удобный словарь по дням месяца: { "01.09.2026": "P", ... } или по номерам дней
         const scheduleArray = res.schedule || [];
         const scheduleMap = {};
         
         scheduleArray.forEach(item => {
-            // item.date приходит в формате "DD.MM.YYYY" (например, "01.09.2026")
             const parts = item.date.split('.');
             if (parts.length === 3) {
-                const dayNum = parseInt(parts[0], 10); // Извлекаем день как число (1, 2, 3...)
+                const dayNum = parseInt(parts[0], 10);
                 scheduleMap[dayNum] = item.status;
             }
         });
 
         for (let day = 1; day <= totalDays; day++) {
-            let status = scheduleMap[day] || 'В'; // Если данных нет, по умолчанию В
-
+            let status = scheduleMap[day] || 'В';
             let badgeClass = 'badge-none';
             let upperStatus = String(status).trim().toUpperCase();
             if (upperStatus === 'В') badgeClass = 'badge-v';
@@ -2215,7 +2154,6 @@ async function confirmPasswordReset() {
             else if (upperStatus === 'Б') badgeClass = 'badge-b';
             else if (upperStatus === 'У') badgeClass = 'badge-u';
 
-            // Формируем дату в формате ДД.ММ.ГГГГ для запроса детализации дня
             let dayStr = String(day).padStart(2, '0');
             let monthStr = String(month + 1).padStart(2, '0');
             let fullDateStr = `${dayStr}.${monthStr}.${year}`;
@@ -2232,31 +2170,20 @@ async function confirmPasswordReset() {
             <div style="font-size: 14px; color: var(--beeline-yellow); margin-bottom: 4px; text-align: center; font-weight: 700;">
                 👤 ${res.fullName || currentUser.fullName} (${currentUser.city})
             </div>
-            
             <div class="calendar-header-title">📅 ${currentMonthName} ${year}</div>
-
             ${legendHtml}
-
-            <div class="calendar-grid">
-                ${gridHtml}
-            </div>
-
+            <div class="calendar-grid">${gridHtml}</div>
             <a href="${cityScheduleUrl}" target="_blank" class="btn main-btn" style="margin-top: 15px;">
                 📋 Посмотреть общий график г. ${currentUser.city} ↗
             </a>
         `;
     }
-    /////////////////////////////////////////////
-    // Обработчик клика по дню в календаре
-    ////////////////////////////////////////////
-    async function handleDayClick(dateStr) {
-        // Показываем модальное окно загрузки
-        showBeelineModal("Загрузка...", `Получаем данные по сотрудникам на ${dateStr}...`, "⏳");
 
+    async function handleDayClick(dateStr) {
+        showBeelineModal("Загрузка...", `Получаем данные по сотрудникам на ${dateStr}...`, "⏳");
         try {
             const cityConfig = CITIES_CONFIG[currentUser.city] || CITIES_CONFIG["Темиртау"];
             const url = `${cityConfig.scriptUrl}?action=getDayDetails&date=${encodeURIComponent(dateStr)}`;
-            
             const response = await fetch(url, { method: 'GET' });
             const res = await response.json();
 
@@ -2270,13 +2197,8 @@ async function confirmPasswordReset() {
         }
     }
 
-    /**
-     * Форматирование и вывод модального окна со списком сотрудников за день
-     */
     function renderDayDetailsModal(res) {
         const grouped = res.grouped || {};
-        
-        // Красивые заголовки для статусов с иконками
         const statusTitles = {
             'Р': '⚪ Работают:',
             'В': '🟢 Выходной:',
@@ -2287,8 +2209,8 @@ async function confirmPasswordReset() {
         };
 
         let contentHtml = `<div style="max-height: 55vh; overflow-y: auto; text-align: left; padding: 5px;">`;
-        
         let hasData = false;
+        
         for (let key in statusTitles) {
             const list = grouped[key] || [];
             if (list.length > 0) {
@@ -2296,9 +2218,7 @@ async function confirmPasswordReset() {
                 contentHtml += `<div style="margin-bottom: 14px;">`;
                 contentHtml += `<div style="font-weight: 700; color: var(--beeline-yellow); margin-bottom: 6px; font-size: 15px;">${statusTitles[key]}</div>`;
                 contentHtml += `<ul style="margin: 0; padding-left: 20px; color: var(--text-primary); font-size: 14px; line-height: 1.5;">`;
-                list.forEach(name => {
-                    contentHtml += `<li>${name}</li>`;
-                });
+                list.forEach(name => { contentHtml += `<li>${name}</li>`; });
                 contentHtml += `</ul></div>`;
             }
         }
@@ -2306,60 +2226,92 @@ async function confirmPasswordReset() {
         if (!hasData) {
             contentHtml += `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет данных по сотрудникам на эту дату.</div>`;
         }
-        
         contentHtml += `</div>`;
 
-        // Парсим дату формата ДД.ММ.ГГГГ для получения дня недели
         let weekDayStr = "";
         try {
             const parts = res.date.split('.');
             if (parts.length === 3) {
-                // Создаем дату (месяц в JS отсчитывается с 0)
                 const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
                 weekDayStr = dateObj.toLocaleDateString('ru-RU', { weekday: 'long' });
-                // Делаем первую букву заглавной
                 weekDayStr = weekDayStr.charAt(0).toUpperCase() + weekDayStr.slice(1);
             }
-        } catch (e) {
-            weekDayStr = "";
-        }
+        } catch (e) { weekDayStr = ""; }
 
-        // Формируем заголовок: если день недели определился, пишем его в скобках
         const modalTitle = weekDayStr ? `📅 ${res.date} (${weekDayStr})` : `📅 ${res.date}`;
-
-        // Вызываем модальное окно с днем недели вместо смайлика
         showBeelineModal(modalTitle, contentHtml, "");
     }
 
-    // Регистрация с отправкой данных в Google Таблицу через doPost
-    async function handleRegister(e) {
+//регистрация
+async function handleRegister(e) {
         e.preventDefault();
+        
         const city = document.getElementById('regCity').value;
         if (!city) {
             showBeelineModal("Внимание", "Пожалуйста, выберите город из списка!", "⚠️");
             return;
         }
 
+        const fullNameInput = document.getElementById('regFullName');
+        const warehouseInput = document.getElementById('regWarehouse');
+        const roleInput = document.getElementById('regRole');
+        const workPhoneInput = document.getElementById('regWorkPhone');
+        const dwLoginInput = document.getElementById('regDwLogin');
         const p1 = document.getElementById('regPassword').value;
         const p2 = document.getElementById('regPasswordConfirm').value;
+        const tgIdInput = document.getElementById('regTgId');
+        const tgGroupInput = document.getElementById('regTgGroup');
+        const emailInput = document.getElementById('regEmail');
+
+        if (!fullNameInput.value.trim() || !warehouseInput.value.trim() || !roleInput.value || 
+            !workPhoneInput.value.trim() || !dwLoginInput.value.trim() || !p1 || !p2 || 
+            !tgIdInput.value.trim() || !tgGroupInput.value.trim() || !emailInput.value.trim()) {
+            showBeelineModal("Ошибка", "Все поля в форме регистрации должны быть заполнены!", "❌");
+            return;
+        }
+
         if (p1 !== p2) {
             showBeelineModal("Ошибка", "Пароли не совпадают!", "❌");
             document.getElementById('regPasswordConfirm').classList.add('input-error');
             return;
         }
 
+        const emailVal = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailVal)) {
+            showBeelineModal("Ошибка", "Введите корректный адрес электронной почты (например, example@mail.ru)!", "❌");
+            emailInput.classList.add('input-error');
+            return;
+        }
+
+        const phoneInput = workPhoneInput.value.trim();
+        const digitsCount = (phoneInput.match(/\d/g) || []).length;
+        if (digitsCount < 11) {
+            showBeelineModal("Внимание", "Рабочий номер телефона введен не полностью!", "⚠️");
+            return;
+        }
+
+        let formattedFullName = fullNameInput.value.trim()
+            .split(/\s+/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+        let warehouseVal = warehouseInput.value.trim();
+        const digits = warehouseVal.replace(/[^\d]/g, '');
+        warehouseVal = digits ? `Бригада №${digits}` : warehouseVal;
+
         const newUser = {
             action: 'register',
             city: city,
-            fullName: document.getElementById('regFullName').value.trim(),
-            warehouse: document.getElementById('regWarehouse').value.trim(),
-            role: document.getElementById('regRole').value,
-            workPhone: document.getElementById('regWorkPhone').value.trim(),
-            dwLogin: document.getElementById('regDwLogin').value.trim(),
+            fullName: formattedFullName,
+            warehouse: warehouseVal,
+            role: roleInput.value,
+            workPhone: phoneInput,
+            dwLogin: dwLoginInput.value.trim(),
             password: p1,
-            tgId: document.getElementById('regTgId').value.trim(),
-            tgGroup: document.getElementById('regTgGroup').value.trim(),
-            email: document.getElementById('regEmail').value.trim()
+            tgId: tgIdInput.value.trim(),
+            tgGroup: tgGroupInput.value.trim(),
+            email: emailVal
         };
 
         if (usersDb.some(u => u.email.toLowerCase() === newUser.email.toLowerCase())) {
@@ -2369,15 +2321,11 @@ async function confirmPasswordReset() {
 
         try {
             showBeelineModal("Регистрация", "Отправка данных пользователя...", "⏳");
-            const response = await fetch(GLOBAL_AUTH_SALARY_URL, {
+            await fetch(GLOBAL_AUTH_SALARY_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(newUser)
             });
-            const res = await response.json();
-            if (res.status !== 'ok') {
-                console.warn("Ответ сервера:", res);
-            }
         } catch (err) {
             console.error("Ошибка при отправке в таблицу:", err);
         }
@@ -2392,25 +2340,48 @@ async function confirmPasswordReset() {
             `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-login');" style="margin-top:0;">Перейти ко входу</button>`
         );
     }
+
 // =========================================================================
-// 1. Сохранение доступа в Google Таблицу (через скрипт города)
+// ПРОДАКШН МОДУЛЬ: Сохранение и поиск доступов к оборудованию
 // =========================================================================
+
+// 1. Сохранение доступа
 async function handleSaveAccess(e) {
     e.preventDefault();
     
-    // Получаем нужную ссылку скрипта для текущего города
-    const scriptUrl = CITIES_CONFIG[currentUser.city] ? CITIES_CONFIG[currentUser.city].reportsScriptUrl : null;
+    const phone1Input = document.getElementById('accPhone1').value.trim();
+    const phone2Input = document.getElementById('accPhone2').value.trim();
+
+    // Функция подсчета цифр в номере
+    const getDigitsCount = (str) => (str.match(/\d/g) || []).length;
+
+    // Проверяем первый номер (обязательный)
+    const digitsCount1 = getDigitsCount(phone1Input);
+    if (digitsCount1 > 0 && digitsCount1 < 11) {
+        showBeelineModal("Внимание", "Первый телефонный номер введен не полностью!", "⚠️");
+        return;
+    }
+
+    // Проверяем второй номер (если начали вводить, но не дописали)
+    const digitsCount2 = getDigitsCount(phone2Input);
+    if (phone2Input !== "" && digitsCount2 < 11) {
+        showBeelineModal("Внимание", "Второй телефонный номер введен не полностью!", "⚠️");
+        return;
+    }
+
+    const cityConf = CITIES_CONFIG[currentUser ? currentUser.city : "Темиртау"] || CITIES_CONFIG["Темиртау"];
+    const scriptUrl = cityConf ? cityConf.reportsScriptUrl : null;
     
     if (!scriptUrl) {
         showBeelineModal("Ошибка", "Не найдена ссылка скрипта для вашего города!", "❌");
         return;
     }
 
-const newAccess = {
-        mode: 'equipment_access',
+    const payload = {
+        mode: "equipment_access",
         address: document.getElementById('accAddress').value.trim(),
-        phone1: "'" + document.getElementById('accPhone1').value.trim(),
-        phone2: "'" + document.getElementById('accPhone2').value.trim(),
+        phone1: "'" + phone1Input,
+        phone2: "'" + (phone2Input || ""),
         kskKeys: document.getElementById('accKsk').value.trim(),     
         roofOpen: document.getElementById('accRoof').value.trim(),   
         intercomCode: document.getElementById('accIntercom').value.trim() 
@@ -2419,54 +2390,48 @@ const newAccess = {
     try {
         showBeelineModal("Сохранение", "Запись доступа в таблицу...", "⏳");
         
-        const response = await fetch(scriptUrl, {
+        await fetch(scriptUrl, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(newAccess)
+            body: JSON.stringify(payload)
         });
-        
-        const res = await response.json();
-        if (res.status !== 'ok' && res.status !== 'success') {
-            throw new Error(res.message || "Ошибка сервера");
-        }
+
+        accessDb.push({ 
+            id: 'acc_' + Date.now(), 
+            city: currentUser ? currentUser.city : "Темиртау",
+            address: payload.address,
+            phone1: payload.phone1,
+            phone2: payload.phone2,
+            kskKeys: payload.kskKeys,
+            roofOpen: payload.roofOpen,
+            intercomCode: payload.intercomCode
+        });
+        localStorage.setItem('beeline_access_db', JSON.stringify(accessDb));
+
+        showBeelineModal(
+            "Успешно", 
+            "Доступ к оборудованию успешно сохранен в таблицу!", 
+            "✅",
+            `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-equipment-access');" style="margin-top:0;">К меню доступа</button>`
+        );
+
+        e.target.reset();
+        handleSearchAccess();
+
     } catch (err) {
-        console.error("Ошибка сохранения в таблицу:", err);
+        console.error("Ошибка сохранения доступа:", err);
         showBeelineModal("Ошибка", "Не удалось записать данные в Google Таблицу.", "❌");
-        return;
     }
-
-// Дублируем в локальный массив для быстрого поиска
-    accessDb.push({ 
-        id: 'acc_' + Date.now(), 
-        city: currentUser.city,
-        address: newAccess.address,
-        phone1: newAccess.phone1,
-        phone2: newAccess.phone2,
-        kskKeys: newAccess.kskKeys,
-        roofOpen: newAccess.roofOpen,
-        intercomCode: newAccess.intercomCode
-    });
-    localStorage.setItem('beeline_access_db', JSON.stringify(accessDb));
-
-    showBeelineModal(
-        "Успешно", 
-        "Доступ к оборудованию успешно сохранен в таблицу!", 
-        "✅",
-        `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-equipment-access');" style="margin-top:0;">К меню доступа</button>`
-    );
-
-    e.target.reset();
-    handleSearchAccess();
 }
 
-// =========================================================================
-// 2. Функция поиска доступа (запрос к скрипту города)
-// =========================================================================
+// 2. Поиск и выгрузка доступов
 async function handleSearchAccess() {
     const query = document.getElementById('searchAddressInput').value.toLowerCase().trim();
     const container = document.getElementById('accessSearchResultsContainer');
     const userCity = currentUser ? currentUser.city : 'Темиртау';
-    const scriptUrl = CITIES_CONFIG[userCity] ? CITIES_CONFIG[userCity].reportsScriptUrl : null;
+    const cityConf = CITIES_CONFIG[userCity];
+    const scriptUrl = cityConf ? cityConf.reportsScriptUrl : null;
 
     if (!query) {
         container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); font-size: 13px; padding: 10px;">Введите адрес для поиска...</div>`;
@@ -2477,7 +2442,6 @@ async function handleSearchAccess() {
 
     let serverResults = [];
 
-    // Всегда идем в Google Таблицу за актуальными данными
     if (scriptUrl) {
         try {
             const response = await fetch(`${scriptUrl}?mode=equipment_search&query=${encodeURIComponent(query)}`);
@@ -2487,17 +2451,15 @@ async function handleSearchAccess() {
                 serverResults = res.data;
             }
         } catch (e) {
-            console.error("Ошибка запроса к таблице:", e);
+            console.error("Ошибка при запросе к серверу:", e);
         }
     }
 
-    // Также проверяем локальный массив (на случай того, что только что добавили и еще не обновили таблицу)
     let localResults = accessDb.filter(item => {
         const addr = (item.address || '').toLowerCase();
         return addr.includes(query);
     });
 
-    // Объединяем результаты и убираем дубликаты по адресу
     const map = new Map();
     [...serverResults, ...localResults].forEach(item => {
         if (item.address) map.set(item.address.toLowerCase().trim(), item);
@@ -2519,18 +2481,14 @@ async function handleSearchAccess() {
             phonesHtml += `, <span>${cleanPhone2}</span>`;
         }
 
-        const kskValue = item.kskKeys || item.ksk;
-        const roofValue = item.roofOpen || item.roof;
-        const intercomValue = item.intercomCode || item.intercom;
-
         html += `
-            <device class="access-item-card" style="display:block; background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; margin-bottom:10px;">
+            <div class="access-item-card" style="display:block; background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; margin-bottom:10px;">
                 <div class="access-info" style="margin-bottom:4px;">📍 <b>Адрес:</b> <span>${item.address}</span></div>
                 <div class="access-info" style="margin-bottom:4px;">📞 <b>Контактные номера:</b> ${phonesHtml}</div>
-                <div class="access-info" style="margin-bottom:4px;">🏢 <b>КСК (адрес ключей):</b> <span>${kskValue || '-'}</span></div>
-                <div class="access-info" style="margin-bottom:4px;">🏠 <b>Открытая крыша:</b> <span>${roofValue || '-'}</span></div>
-                <div class="access-info">🚪 <b>Код домофона:</b> <span style="color: var(--beeline-yellow);">${intercomValue || '-'}</span></div>
-            </device>
+                <div class="access-info" style="margin-bottom:4px;">🏢 <b>КСК (адрес ключей):</b> <span>${item.kskKeys || '-'}</span></div>
+                <div class="access-info" style="margin-bottom:4px;">🏠 <b>Открытая крыша:</b> <span>${item.roofOpen || '-'}</span></div>
+                <div class="access-info">🚪 <b>Код домофона:</b> <span style="color: var(--beeline-yellow);">${item.intercomCode || '-'}</span></div>
+            </div>
         `;
     });
 
@@ -2538,7 +2496,6 @@ async function handleSearchAccess() {
 }
 
     async function openAdminPanel() {
-        // Подгружаем актуальные данные из таблицы перед открытием админ-панели
         await loadUsersFromSheet();
         renderUsersList();
         switchScreen('screen-admin');
@@ -2595,7 +2552,8 @@ async function handleSearchAccess() {
         container.innerHTML = html;
     }
 
-    function openEditModal(userId) {
+// Сохранение редактирования удаление учетных запесей.
+function openEditModal(userId) {
         const u = usersDb.find(item => item.id === userId);
         if (!u) return;
 
@@ -2612,11 +2570,13 @@ async function handleSearchAccess() {
 
         document.getElementById('editUserId').value = u.id;
         document.getElementById('editFullName').value = u.fullName;
-        
         document.getElementById('editCity').value = u.city;
         document.getElementById('editCityDisplay').value = u.city;
+        
+        // Убираем лишний пробел в номере склада для красивого отображения в инпуте
+        let cleanWarehouse = u.warehouse ? u.warehouse.replace(/№\s+/, '№') : '';
+        document.getElementById('editWarehouse').value = cleanWarehouse;
 
-        document.getElementById('editWarehouse').value = u.warehouse;
         document.getElementById('editWorkPhone').value = u.workPhone || '';
         document.getElementById('editPassword').value = u.password;
         document.getElementById('editTgId').value = u.tgId;
@@ -2662,8 +2622,47 @@ async function handleSearchAccess() {
         document.getElementById('editUserModal').style.display = 'none';
     }
 
-    // Сохранение отредактированного пользователя с отправкой обновления в таблицу через doPost
     async function saveEditedUser() {
+        const fullNameInput = document.getElementById('editFullName');
+        const warehouseInput = document.getElementById('editWarehouse');
+        const workPhoneInput = document.getElementById('editWorkPhone');
+        const passwordInput = document.getElementById('editPassword');
+        const tgIdInput = document.getElementById('editTgId');
+        const tgGroupInput = document.getElementById('editTgGroup');
+        const emailInput = document.getElementById('editEmail');
+        const cityInput = document.getElementById('editCity');
+
+        if (!fullNameInput.value.trim() || !warehouseInput.value.trim() || 
+            !workPhoneInput.value.trim() || !passwordInput.value || 
+            !tgIdInput.value.trim() || !tgGroupInput.value.trim() || !emailInput.value.trim()) {
+            showBeelineModal("Ошибка", "Все поля в форме редактирования должны быть заполнены!", "❌");
+            return;
+        }
+
+        const emailVal = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailVal)) {
+            showBeelineModal("Ошибка", "Введите корректный адрес электронной почты (например, example@mail.ru)!", "❌");
+            emailInput.classList.add('input-error');
+            return;
+        }
+
+        const phoneInput = workPhoneInput.value.trim();
+        const digitsCount = (phoneInput.match(/\d/g) || []).length;
+        if (digitsCount < 11) {
+            showBeelineModal("Внимание", "Рабочий номер телефона введен не полностью!", "⚠️");
+            return;
+        }
+
+        let formattedFullName = fullNameInput.value.trim()
+            .split(/\s+/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+        let warehouseVal = warehouseInput.value.trim();
+        const digits = warehouseVal.replace(/[^\d]/g, '');
+        warehouseVal = digits ? `Бригада №${digits}` : warehouseVal;
+
         const id = document.getElementById('editUserId').value;
         const index = usersDb.findIndex(item => item.id === id);
         if (index !== -1) {
@@ -2680,16 +2679,16 @@ async function handleSearchAccess() {
 
             const updatedUser = {
                 action: 'update',
-                city: document.getElementById('editCity').value,
-                fullName: document.getElementById('editFullName').value.trim(),
-                warehouse: document.getElementById('editWarehouse').value.trim(),
+                city: cityInput.value,
+                fullName: formattedFullName,
+                warehouse: warehouseVal,
                 role: newRole,
-                workPhone: document.getElementById('editWorkPhone').value.trim(),
+                workPhone: phoneInput,
                 dwLogin: usersDb[index].dwLogin,
-                password: document.getElementById('editPassword').value,
-                tgId: document.getElementById('editTgId').value.trim(),
-                tgGroup: document.getElementById('editTgGroup').value.trim(),
-                email: document.getElementById('editEmail').value.trim()
+                password: passwordInput.value,
+                tgId: tgIdInput.value.trim(),
+                tgGroup: tgGroupInput.value.trim(),
+                email: emailVal
             };
 
             try {
@@ -2713,10 +2712,11 @@ async function handleSearchAccess() {
 
             localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
 
-            showBeelineModal("Успешно", "Изменения успешно сохранены!", "✅");
-            closeEditModal();
+            closeEditModal(); // Закрываем модальное окно редактирования
             renderUsersList();
             checkAuthSession();
+
+            showBeelineModal("Успешно", "Изменения успешно сохранены!", "✅");
         }
     }
 
@@ -2734,335 +2734,381 @@ async function handleSearchAccess() {
         );
     }
 
-    function deleteUser(userId) {
+    async function deleteUser(userId) {
+        // Находим пользователя в базе по его ID перед удалением
+        const userToDelete = usersDb.find(item => item.id === userId);
+        if (!userToDelete) return;
+
+        const deletePayload = {
+            action: 'delete',
+            id: userToDelete.id,
+            email: userToDelete.email, // на всякий случай передаем и почту/логин для поиска в таблице
+            dwLogin: userToDelete.dwLogin
+        };
+
+        try {
+            showBeelineModal("Удаление", "Удаление учетной записи из таблицы...", "⏳");
+            
+            // Отправляем запрос в Google Таблицу на удаление строки
+            await fetch(GLOBAL_AUTH_SALARY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(deletePayload)
+            });
+        } catch (err) {
+            console.error("Ошибка при удалении строки в таблице:", err);
+        }
+
+        // Удаляем из локального массива и обновляем localStorage
         usersDb = usersDb.filter(item => item.id !== userId);
         localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
 
         closeBeelineModal();
         renderUsersList();
+        showBeelineModal("Успешно", "Учетная запись успешно удалена!", "✅");
     }
 
-const scrollBtn = document.getElementById('scrollQuickBtn');
-const scrollIcon = document.getElementById('scrollIcon');
+    // =========================================================================
+    // ЛОГИКА СКАНЕРА И ТМЦ (С ИСПРАВЛЕННЫМ ПЕРЕХОДОМ И АВТОРИЗОВАННЫМ АВТОРОМ)
+    // =========================================================================
+    let scannedBatch = [];
+    let currentMode = 'router'; 
+    let currentCableMeters = 500;
+    let html5QrCode = null;
+    let isCameraRunning = false;
+    let lastScannedCode = "";
+    let lastScanTime = 0;
+    const SCAN_COOLDOWN = 3000; 
 
-let currentScrollAction = 'down'; // 'down' или 'up'
-
-// Функция клика: если прокручено больше 200px — вверх, иначе — вниз
-function toggleScrollPage() {
-    if (currentScrollAction === 'down') {
-        window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: 'smooth'
-        });
-    } else {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
-}
-
-// Отслеживаем скролл по простой позиции window.scrollY
-window.addEventListener('scroll', () => {
-    if (!scrollBtn || !scrollIcon) return;
-    
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    const pageHeight = document.documentElement.scrollHeight;
-    const clientHeight = document.documentElement.clientHeight;
-
-    // Показываем кнопку только если страница длиннее экрана
-    if (pageHeight <= clientHeight + 150) {
-        scrollBtn.style.display = 'none';
-        return;
-    } else {
-        scrollBtn.style.display = 'flex';
-    }
-
-    // Если прокрутили вниз меньше чем наполовину страницы — стрелка вниз, действие "вниз"
-    // Иначе — стрелка вверх, действие "наверх"
-    if (scrollY < (pageHeight - clientHeight) / 2) {
-        currentScrollAction = 'down';
-        scrollIcon.style.transform = 'rotate(180deg)'; // Стрелка вниз
-    } else {
-        currentScrollAction = 'up';
-        scrollIcon.style.transform = 'rotate(0deg)'; // Стрелка вверх
-    }
-});
-
-// --- ИНИЦИАЛИЗАЦИЯ И ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ---
-window.addEventListener('DOMContentLoaded', () => {
-    window.dispatchEvent(new Event('scroll'));
-    initScannerDefaults();
-});
-
-function switchScreen(screenId) {
-    document.querySelectorAll('.app-screen').forEach(screen => {
-        screen.style.display = 'none';
-        screen.classList.remove('active');
-    });
-    const target = document.getElementById(screenId);
-    if (target) {
-        target.style.display = 'block';
-        target.classList.add('active');
-    }
-}
-
-// --- ПЕРЕМЕННЫЕ СОСТОЯНИЯ ---
-let scannedBatch = [];
-let currentMode = 'router'; // 'router', 'stb', 'cable'
-let html5QrCode = null;
-let isManualMode = false;
-
-// Переменные для защиты от дубликатов и кулдауна камеры
-let lastScannedCode = "";
-let lastScanTime = 0;
-const SCAN_COOLDOWN = 3000; // Кулдаун 3 секунды на повторный сканирование того же серийника
-
-// --- ОТКРЫТИЕ И УПРАВЛЕНИЕ СКАНЕРОМ ---
-function openScannerScreen() {
-    switchScreen('screen-scanner');
-    initScannerDefaults();
-    startScanner();
-}
-
-function initScannerDefaults() {
-    isManualMode = false;
-    document.getElementById('camera-section').style.display = 'flex';
-    document.getElementById('manual-box').style.display = 'none';
-    document.getElementById('toggle-camera-btn').innerHTML = 'Ввести вручную ⌨️';
-    setEquipmentMode('router');
-}
-
-function startScanner() {
-    if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-    }
-    
-    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
-    
-    html5QrCode.start(
-        { facingMode: "environment" }, 
-        config, 
-        onScanSuccess,
-        onScanFailure
-    ).catch(err => {
-        console.error("Ошибка запуска камеры:", err);
-        toggleManualInputMode();
-        document.getElementById('scan-hint').innerText = "Камера недоступна. Введите штрих-код вручную:";
-    });
-}
-
-function stopScanner() {
-    if (html5QrCode && html5QrCode.isScanning) {
-        html5QrCode.stop().catch(err => console.error("Ошибка остановки сканера:", err));
-    }
-}
-
-function onScanSuccess(decodedText, decodedResult) {
-    addItemToBatch(decodedText);
-}
-
-function onScanFailure(error) {
-    // Ошибки каждого кадра игнорируем
-}
-
-// --- УПРАВЛЕНИЕ КАМЕРОЙ / РУЧНЫМ ВВОДОМ ---
-function toggleManualInputMode() {
-    const cameraSection = document.getElementById('camera-section');
-    const manualBox = document.getElementById('manual-box');
-    const toggleBtn = document.getElementById('toggle-camera-btn');
-
-    isManualMode = !isManualMode;
-
-    if (isManualMode) {
-        cameraSection.style.display = 'none';
-        manualBox.style.display = 'flex';
-        toggleBtn.innerHTML = 'Включить камеру 📸';
-        stopScanner();
-        const serialInput = document.getElementById('manual-serial-input');
-        if (serialInput) serialInput.focus();
-    } else {
-        cameraSection.style.display = 'flex';
-        manualBox.style.display = 'none';
-        toggleBtn.innerHTML = 'Ввести вручную ⌨️';
+    function openScannerScreen() {
+        switchScreen('screen-scanner');
+        initScannerDefaults();
         startScanner();
     }
-}
 
-// --- ВЫБОР РЕЖИМОВ ОБОРУДОВАНИЯ ---
-function setEquipmentMode(mode) {
-    currentMode = mode;
-    document.getElementById('mode-router-btn').classList.toggle('active', mode === 'router');
-    document.getElementById('mode-stb-btn').classList.toggle('active', mode === 'stb');
-    document.getElementById('mode-cable-btn').classList.remove('active');
-    document.getElementById('cable-name-card').style.display = 'none';
-    lastScannedCode = ""; // Сбрасываем при смене режима
-}
-
-function setCableMode() {
-    currentMode = 'cable';
-    document.getElementById('mode-router-btn').classList.remove('active');
-    document.getElementById('mode-stb-btn').classList.remove('active');
-    document.getElementById('mode-cable-btn').classList.add('active');
-    document.getElementById('cable-name-card').style.display = 'block';
-    lastScannedCode = ""; // Сбрасываем при смене режима
-}
-
-function selectCableOption(fullName, shortName, meters) {
-    document.getElementById('cable-selected').innerText = shortName;
-    document.getElementById('cable-name').value = fullName;
-    document.getElementById('cable-btn').dataset.meters = meters;
-    document.getElementById('cable-list').style.display = 'none';
-}
-
-// --- ДОБАВЛЕНИЕ И УДАЛЕНИЕ ЭЛЕМЕНТОВ ---
-function submitManualCode() {
-    const input = document.getElementById('manual-serial-input');
-    if (input && input.value.trim()) {
-        addItemToBatch(input.value);
-        input.value = '';
+    function initScannerDefaults() {
+        const cameraSection = document.getElementById('camera-section');
+        const manualBox = document.getElementById('manual-box');
+        const toggleBtn = document.getElementById('toggle-camera-btn');
+        
+        if (cameraSection) cameraSection.style.display = 'flex';
+        if (manualBox) manualBox.style.display = 'none';
+        if (toggleBtn) toggleBtn.innerHTML = 'Ввести вручную ⌨️';
+        setEquipmentMode('router');
     }
-}
 
-function addItemToBatch(code) {
-    if (!code) return;
-    code = code.trim();
+    function startScanner() {
+        const readerElement = document.getElementById('reader');
+        if (!readerElement) return;
+        if (isCameraRunning) return;
 
-    // Проверка на дубликат по всему списку
-    const isDuplicate = scannedBatch.some(item => item.code === code);
-    if (isDuplicate) {
-        // Подбираем текст и иконку индивидуально под тип оборудования
-        let modalText = "";
-        let itemIcon = "🛜";
+        // Небольшая задержка гарантирует, что элемент #reader успел отрисоваться и не скрыт display: none
+        setTimeout(() => {
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+            
+            const config = { fps: 15, qrbox: { width: 250, height: 120 } };
+            
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                config, 
+                (decodedText) => {
+                    addItemToBatch(decodedText);
+                },
+                (errorMessage) => {}
+            ).then(() => {
+                isCameraRunning = true;
+            }).catch(err => {
+                console.error("Ошибка запуска камеры:", err);
+                isCameraRunning = false;
+                const hint = document.getElementById('scan-hint');
+                if (hint) hint.innerText = "Камера недоступна. Нажмите «Ввести вручную»:";
+            });
+        }, 200);
+    }
+
+    function stopScanner() {
+        if (html5QrCode && isCameraRunning) {
+            html5QrCode.stop().then(() => {
+                isCameraRunning = false;
+                return html5QrCode.clear();
+            }).catch(err => {
+                console.error("Ошибка остановки сканера:", err);
+                isCameraRunning = false;
+            });
+        }
+    }
+
+    function toggleManualInputMode() {
+        const cameraSection = document.getElementById('camera-section');
+        const manualBox = document.getElementById('manual-box');
+        const toggleBtn = document.getElementById('toggle-camera-btn');
+        const serialInput = document.getElementById('manual-serial-input');
+
+        const isHidden = (manualBox.style.display === 'none' || !manualBox.style.display);
+
+        if (isHidden) {
+            cameraSection.style.display = 'none';
+            manualBox.style.display = 'flex';
+            toggleBtn.innerHTML = 'Включить камеру 📸';
+            stopScanner();
+            if (serialInput) serialInput.focus();
+        } else {
+            cameraSection.style.display = 'flex';
+            manualBox.style.display = 'none';
+            toggleBtn.innerHTML = 'Ввести вручную ⌨️';
+            startScanner();
+        }
+    }
+
+    function setEquipmentMode(mode) {
+        currentMode = mode;
+        const routerBtn = document.getElementById('mode-router-btn');
+        const stbBtn = document.getElementById('mode-stb-btn');
+        const cableBtn = document.getElementById('mode-cable-btn');
+        const cableCard = document.getElementById('cable-name-card');
+        const manualLabel = document.getElementById('manual-label');
+
+        if (routerBtn) routerBtn.classList.remove('active');
+        if (stbBtn) stbBtn.classList.remove('active');
+        if (cableBtn) cableBtn.classList.remove('active');
+        lastScannedCode = "";
+
+        if (mode === 'router') {
+            if (routerBtn) routerBtn.classList.add('active');
+            if (cableCard) cableCard.style.display = 'none';
+            if (manualLabel) manualLabel.textContent = 'Введите серийный номер роутера';
+        } else if (mode === 'stb') {
+            if (stbBtn) stbBtn.classList.add('active');
+            if (cableCard) cableCard.style.display = 'none';
+            if (manualLabel) manualLabel.textContent = 'Введите серийный номер приставки';
+        }
+        startScanner();
+    }
+
+    function setCableMode() {
+        currentMode = 'cable';
+        const routerBtn = document.getElementById('mode-router-btn');
+        const stbBtn = document.getElementById('mode-stb-btn');
+        const cableBtn = document.getElementById('mode-cable-btn');
+        const cableCard = document.getElementById('cable-name-card');
+        const manualLabel = document.getElementById('manual-label');
+
+        if (routerBtn) routerBtn.classList.remove('active');
+        if (stbBtn) stbBtn.classList.remove('active');
+        if (cableBtn) cableBtn.classList.add('active');
+        if (cableCard) cableCard.style.display = 'block';
+        if (manualLabel) manualLabel.textContent = 'Введите номер кабеля';
+        startScanner();
+    }
+
+    function selectCableOption(fullName, shortName, meters) {
+        const cableNameInput = document.getElementById('cable-name');
+        const cableSelected = document.getElementById('cable-selected');
+        if (cableNameInput) cableNameInput.value = fullName;
+        if (cableSelected) cableSelected.textContent = shortName;
+        currentCableMeters = meters;
+        toggleDropdown('cable-list');
+    }
+
+    function submitManualCode() {
+        const input = document.getElementById('manual-serial-input');
+        if (input && input.value.trim()) {
+            addItemToBatch(input.value);
+            input.value = '';
+        }
+    }
+
+    function addItemToBatch(code) {
+        if (!code) return;
+        code = code.trim();
+
+        const now = Date.now();
+        if (code === lastScannedCode && (now - lastScanTime < SCAN_COOLDOWN)) {
+            return; 
+        }
+        lastScannedCode = code;
+        lastScanTime = now;
+
+        const isDuplicate = scannedBatch.some(item => item.code === code);
+        if (isDuplicate) {
+            let modalText = `Данный элемент (S/N: ${code}) уже записан!`;
+            showBeelineModal("Дубликат", modalText, "⚠️");
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+            }
+            return; 
+        }
+
+        let labelText = code;
+        let displayTitle = "";
 
         if (currentMode === 'router') {
-            modalText = `Данный роутер (S/N: ${code}) уже записан!`;
-            itemIcon = "🛜";
+            displayTitle = `🛜 Роутер | S/N: ${code}`;
         } else if (currentMode === 'stb') {
-            modalText = `Данная приставка (S/N: ${code}) уже записана!`;
-            itemIcon = "📺";
+            displayTitle = `📺 Приставка | S/N: ${code}`;
         } else if (currentMode === 'cable') {
-            modalText = `Данный кабель (№ ${code}) уже записан!`;
-            itemIcon = "🔌";
+            const cableNameFull = document.getElementById('cable-name').value;
+            labelText = `${cableNameFull} (${currentCableMeters}м) — № ${code}`;
+            displayTitle = `🔌 Кабель | № ${code} (${currentCableMeters}м)`;
         }
 
-        // Вызываем модальное окно с вращающейся иконкой
-        showBeelineAlert("Дубликат", modalText, itemIcon, true);
+        scannedBatch.push({
+            type: currentMode,
+            code: code,
+            fullText: labelText,
+            cableName: currentMode === 'cable' ? document.getElementById('cable-name').value : '',
+            meters: currentMode === 'cable' ? currentCableMeters : 0
+        });
+
+        const lastBox = document.getElementById('last-scanned-box');
+        if (lastBox) lastBox.style.display = 'flex';
         
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-        }
-        return; 
-    }
+        const lastText = document.getElementById('last-scanned-text');
+        if (lastText) lastText.innerText = displayTitle;
 
-    let newItem = {
-        type: currentMode,
-        code: code
-    };
-
-    let displayTitle = "";
-    let labelText = code;
-
-    if (currentMode === 'router') {
-        displayTitle = `🛜 Роутер | S/N: ${code}`;
-    } else if (currentMode === 'stb') {
-        displayTitle = `📺 Приставка | S/N: ${code}`;
-    } else if (currentMode === 'cable') {
-        const cableNameFull = document.getElementById('cable-name').value;
-        const meters = parseInt(document.getElementById('cable-btn').dataset.meters || "500");
-        newItem.cableName = cableNameFull;
-        newItem.meters = meters;
-        displayTitle = `🔌 Кабель | № ${code} (${meters}м)`;
-        labelText = `${cableNameFull} (${meters}м) — № ${code}`;
-    }
-
-    newItem.fullText = labelText;
-    scannedBatch.push(newItem);
-
-    const lastBox = document.getElementById('last-scanned-box');
-    if (lastBox) lastBox.style.display = 'flex';
-    
-    const lastText = document.getElementById('last-scanned-text');
-    if (lastText) lastText.innerText = displayTitle;
-
-    updateBatchUI();
-
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-    }
-}
-
-function showBeelineAlert(title, text, icon = "⚠️", spin = false) {
-    const modal = document.getElementById('beelineModal');
-    const titleEl = document.getElementById('beelineModalTitle');
-    const textEl = document.getElementById('beelineModalText');
-    const iconEl = document.getElementById('beelineModalIcon');
-
-    if (titleEl) titleEl.textContent = title;
-    if (textEl) textEl.textContent = text;
-    
-    if (iconEl) {
-        iconEl.textContent = icon;
-        if (spin) {
-            iconEl.classList.add('spin-animation');
-        } else {
-            iconEl.classList.remove('spin-animation');
-        }
-    }
-    
-    if (modal) modal.style.display = 'flex';
-}
-
-function closeBeelineModal() {
-    const modal = document.getElementById('beelineModal');
-    const iconEl = document.getElementById('beelineModalIcon');
-    if (iconEl) iconEl.classList.remove('spin-animation'); // убираем вращение при закрытии
-    if (modal) modal.style.display = 'none';
-}
-
-function removeItem(index) {
-    scannedBatch.splice(index, 1);
-    updateBatchUI();
-    showFormStep(); 
-    if (scannedBatch.length === 0) {
-        backToScanner();
-    }
-}
-
-function rescanLastItem() {
-    if (scannedBatch.length > 0) {
-        scannedBatch.pop();
         updateBatchUI();
+
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        }
     }
-    const lastBox = document.getElementById('last-scanned-box');
-    if (lastBox) lastBox.style.display = 'none';
-    lastScannedCode = ""; // Сбрасываем последний код для возможности повторного сканирования
+
+    function rescanLastItem() {
+        if (scannedBatch.length > 0) {
+            scannedBatch.pop();
+            updateBatchUI();
+        }
+        const lastBox = document.getElementById('last-scanned-box');
+        if (lastBox) lastBox.style.display = 'none';
+        lastScannedCode = "";
+    }
+
+    function updateBatchUI() {
+        const totalCount = scannedBatch.length;
+        
+        const scanHint = document.getElementById('scan-hint');
+        if (scanHint) scanHint.innerText = `Наведите камеру на штрих-код (В списке: ${totalCount} шт.)`;
+        
+        const countText = document.getElementById('scan-count-text');
+        if (countText) countText.innerText = totalCount;
+
+        const badge = document.getElementById('batch-count-badge');
+        if (badge) badge.innerText = totalCount;
+
+        const proceedBtn = document.getElementById('proceed-to-form-btn');
+        if (proceedBtn) {
+            proceedBtn.style.display = totalCount > 0 ? 'block' : 'none';
+        }
+    }
+
+    function handleFile(event) {
+        if (event.target.files.length === 0) return;
+        const file = event.target.files[0];
+        const html5QrCodeImg = new Html5Qrcode("reader");
+        
+        html5QrCodeImg.scanFile(file, true)
+            .then(decodedText => {
+                addItemToBatch(decodedText);
+                showBeelineModal("Успешно", "Штрих-код успешно распознан из фото!", "✅");
+            })
+            .catch(err => {
+                showBeelineModal("Ошибка", "Не удалось обнаружить штрих-код на изображении.", "❌");
+            });
+    }
+
+// =========================================================================
+// ФУНКЦИЯ ЗАПОЛНЕНИЯ СПИСКА СОТРУДНИКОВ ПО ГОРОДУ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+// =========================================================================
+function populateInstallersDropdown() {
+    const listContainer = document.getElementById('installer-list');
+    const selectedSpan = document.getElementById('installer-selected');
+    const hiddenInput = document.getElementById('installer');
+    if (!listContainer) return;
+
+    // 1. Берем базу пользователей (или подстраховочный массив со всеми 4 сотрудниками)
+    let allUsers = (Array.isArray(usersDb) && usersDb.length > 0) ? usersDb : [
+        { fullName: "J.T.", warehouse: "Главный склад", city: "Темиртау" },
+        { fullName: "Лоос Виктор Геннадьевич", warehouse: "Бригада №5", city: "Темиртау" },
+        { fullName: "Толокнов Евгений Алексеевич", warehouse: "Бригада №15", city: "Темиртау" },
+        { fullName: "Павленко Николай Александрович", warehouse: "Бригада №8", city: "Темиртау" }
+    ];
+
+    // 2. Фильтруем строго по городу текущего пользователя ("Темиртау")
+    const userCity = (currentUser && currentUser.city) ? currentUser.city.trim().toLowerCase() : "темиртау";
+    let cityUsers = allUsers.filter(u => {
+        const uCity = (u.city || "").trim().toLowerCase();
+        return uCity === userCity || uCity === "";
+    });
+
+    if (cityUsers.length === 0) {
+        cityUsers = allUsers;
+    }
+
+    let html = '';
+    cityUsers.exports = cityUsers.forEach ? cityUsers : [];
+    cityUsers.forEach((u) => {
+        const name = u.fullName || u.name || "Сотрудник";
+        const warehouse = u.warehouse || "";
+        const city = u.city || "Темиртау";
+
+        const warehousePart = warehouse ? `, ${warehouse} (${city})` : ` (${city})`;
+        const fullValue = `${name}${warehousePart}`;
+
+        // Важно: вызываем ту самую функцию selectDropdownOption, которая у вас уже есть в коде!
+        html += `
+            <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222; color: #fff;" 
+                 onclick="selectDropdownOption('installer-list', 'installer', 'installer-selected', '${escapeHtml(fullValue)}', '${escapeHtml(name)}')">
+                <b>${name}</b> <span style="font-size: 11px; color: var(--text-secondary);">(${warehouse || 'Сотрудник'})</span>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
 }
 
-// --- ОБНОВЛЕНИЕ ИНТЕРФЕЙСА И СЧЕТЧИКОВ ---
-function updateBatchUI() {
-    const totalCount = scannedBatch.length;
-    
-    const scanHint = document.getElementById('scan-hint');
-    if (scanHint) scanHint.innerText = `Наведите камеру на штрих-код (В списке: ${totalCount} шт.)`;
-    
-    const countText = document.getElementById('scan-count-text');
-    if (countText) countText.innerText = totalCount;
-
-    const badge = document.getElementById('batch-count-badge');
-    if (badge) badge.innerText = totalCount;
-
-    const proceedBtn = document.getElementById('proceed-to-form-btn');
-    if (proceedBtn) {
-        proceedBtn.style.display = totalCount > 0 ? 'block' : 'none';
-    }
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text).replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
-// --- ПЕРЕХОД К ФОРМЕ ОФОРМЛЕНИЯ ---
+// =========================================================================
+// ПЕРЕХОД К ФОРМЕ (С АВТОМАТИЧЕСКИМ АВТОРОМ И ФИЛЬТРАЦИЕЙ СОТРУДНИКОВ)
+// =========================================================================
 function showFormStep() {
     stopScanner();
     switchScreen('screen-form');
 
+    // 1. Заполняем выпадающий список сотрудников («Кому выдан») для города текущего пользователя
+    if (typeof populateInstallersDropdown === 'function') {
+        populateInstallersDropdown();
+    }
+
+    // 2. Подставляем данные авторизованного пользователя в блок «Кем выдан»
+    const authorDisplay = document.getElementById('author-display-text');
+    const authorInput = document.getElementById('author');
+    
+    if (currentUser && currentUser.fullName) {
+        const roleStr = currentUser.role ? ` (${currentUser.role})` : '';
+        const cityStr = currentUser.city ? ` | 🏢 ${currentUser.city}` : '';
+        
+        if (authorDisplay) {
+            authorDisplay.innerHTML = `👤 <span style="color: var(--beeline-yellow); font-weight: 700;">${currentUser.fullName}</span>${roleStr}${cityStr}`;
+        }
+        if (authorInput) {
+            authorInput.value = currentUser.fullName;
+        }
+    } else {
+        if (authorDisplay) {
+            authorDisplay.innerHTML = `👤 <span style="color: var(--beeline-yellow);">Толокнов Евгений</span>`;
+        }
+        if (authorInput) {
+            authorInput.value = "Толокнов Евгений";
+        }
+    }
+
+    // 3. Считаем количество роутеров, приставок и кабелей для счетчиков
     let routerCount = 0;
     let stbCount = 0;
     let cableCount = 0;
@@ -3082,18 +3128,13 @@ function showFormStep() {
         counterContainer.style.margin = '8px 0';
 
         counterContainer.innerHTML = `
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center; box-sizing: border-box;">
-                🛜 Роутер: ${routerCount}
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center; box-sizing: border-box;">
-                📺 Приставка: ${stbCount}
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center; box-sizing: border-box;">
-                🔌 Кабель: ${cableCount}
-            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center;">🛜 Роутеры: ${routerCount}</div>
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center;">📺 Приставки: ${stbCount}</div>
+            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; text-align: center;">🔌 Кабели: ${cableCount}</div>
         `;
     }
 
+    // 4. Выводим список отсканированных позиций
     const container = document.getElementById('scanned-codes-list-container');
     if (container) {
         container.innerHTML = scannedBatch.map((item, index) => {
@@ -3102,104 +3143,159 @@ function showFormStep() {
             if (item.type === 'cable') typeLabel = '🔌';
 
             return `
-                <div style="display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--card-border); font-size: 13px; color: #fff;">
-                    <span style="word-break: break-all; font-family: monospace;"><b>${index + 1}. ${typeLabel}</b> ${item.code} ${item.cableName ? '— ' + item.cableName : ''}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--card-border); font-size: 13px; color: #fff; margin-bottom: 6px;">
+                    <span style="word-break: break-all; font-family: monospace;"><b>${index + 1}. ${typeLabel}</b> ${item.fullText}</span>
                     <button type="button" onclick="removeItem(${index})" style="background:none; border:none; color: #ef4444; cursor:pointer; font-size: 16px; padding: 0 4px;">✕</button>
                 </div>
             `;
         }).join('');
     }
-}
+} // <--- Закрывающая скобка для showFormStep на месте
 
-function backToScanner() {
-    switchScreen('screen-scanner');
-    startScanner();
-}
 
-// --- ВЫПАДАЮЩИЕ СПИСКИ И КАСТОМИЗАЦИЯ ---
-function toggleDropdown(listId) {
-    const list = document.getElementById(listId);
-    const isVisible = list.style.display === 'block';
-    document.querySelectorAll('.dropdown-list').forEach(l => l.style.display = 'none');
-    list.style.display = isVisible ? 'none' : 'block';
-}
-
-function selectOptionValue(hiddenId, hiddenVal, btnId, selectedText, listId) {
-    document.getElementById(hiddenId).value = hiddenVal;
-    document.getElementById(btnId.replace('-btn', '-selected')).innerText = selectedText;
-    document.getElementById(listId).style.display = 'none';
-}
-
-async function sendDataToGoogleSheet() {
-    if (scannedBatch.length === 0) {
-        alert('Список пуст!');
-        return;
+    function backToScanner() {
+        switchScreen('screen-scanner');
+        startScanner();
     }
 
-    const author = document.getElementById('author') ? document.getElementById('author').value : "Толокнов Евгений";
-    const installer = document.getElementById('installer') ? document.getElementById('installer').value : "";
-
-    const currentCity = window.selectedCity || "Темиртау"; 
-    const targetUrl = CITIES_CONFIG[currentCity] ? CITIES_CONFIG[currentCity].reportsScriptUrl : null;
-
-    if (!targetUrl) {
-        alert('Не найден URL отчетов для выбранного города!');
-        return;
+    function removeItem(index) {
+        scannedBatch.splice(index, 1);
+        updateBatchUI();
+        if (scannedBatch.length === 0) {
+            backToScanner();
+        } else {
+            showFormStep(); 
+        }
     }
 
-    const submitBtn = document.getElementById('submit-btn');
-    const loader = document.getElementById('loader-text');
-
-    if (submitBtn) submitBtn.style.display = 'none';
-    if (loader) loader.style.display = 'block';
-
-    try {
-        const payload = {
-            type: "BatchIssuance",
-            author: author,
-            installer: installer,
-            items: scannedBatch
-        };
-
-        await fetch(targetUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-        });
-
-        document.querySelectorAll('.app-screen').forEach(screen => {
-            screen.style.display = 'none';
-            screen.classList.remove('active');
-        });
-
-        const successScreen = document.getElementById('screen-success');
-        if (successScreen) {
-            successScreen.style.display = 'flex'; 
-            successScreen.classList.add('active');
+    async function sendDataToGoogleSheet() {
+        if (scannedBatch.length === 0) {
+            showBeelineModal("Внимание", "Список оборудования пуст!", "⚠️");
+            return;
         }
 
-    } catch (err) {
-        console.error(err);
-        alert('Ошибка отправки: ' + err.message);
-        if (submitBtn) submitBtn.style.display = 'flex';
-        if (loader) loader.style.display = 'none';
+        // Автоматически берем ФИО авторизованного пользователя из сессии
+        const author = (currentUser && currentUser.fullName) 
+            ? currentUser.fullName 
+            : (document.getElementById('author') ? document.getElementById('author').value : "Толокнов Евгений");
+            
+        const installerEl = document.getElementById('installer');
+        const installer = installerEl ? installerEl.value : "";
+
+        const currentCity = currentUser ? currentUser.city : "Темиртау"; 
+        const targetUrl = CITIES_CONFIG[currentCity] ? CITIES_CONFIG[currentCity].reportsScriptUrl : GLOBAL_AUTH_SALARY_URL;
+
+        const submitBtn = document.getElementById('submit-btn');
+        const loader = document.getElementById('loader-text');
+
+        if (submitBtn) submitBtn.style.display = 'none';
+        if (loader) loader.style.display = 'block';
+
+        try {
+            // Формируем batchData в том виде, который ожидает блок handleScannerTmc в скрипте
+            const formattedBatchData = scannedBatch.map(item => {
+                return {
+                    mode: item.type,                 // 'router', 'stb' или 'cable'
+                    serial: item.code,               // Серийный номер
+                    cableName: item.cableName || "", // Название кабеля (для кабелей)
+                    meters: item.meters || 0         // Метраж (для кабелей)
+                };
+            });
+
+            const payload = {
+                mode: "scanner_tmc",                 // Обязательный ключ для вашего Apps Script
+                action: "batchSave",
+                author: author,
+                installer: installer,
+                batchData: formattedBatchData
+            };
+
+            await fetch(targetUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.style.display = 'none';
+                screen.classList.remove('active');
+            });
+
+            const successScreen = document.getElementById('screen-success');
+            if (successScreen) {
+                successScreen.style.display = 'flex'; 
+                successScreen.classList.add('active');
+            }
+
+        } catch (err) {
+            console.error(err);
+            showBeelineModal("Ошибка", 'Ошибка отправки: ' + err.message, "❌");
+            if (submitBtn) submitBtn.style.display = 'flex';
+            if (loader) loader.style.display = 'none';
+        }
     }
-}
 
-// --- СБРОС И ОТПРАВКА ---
-function resetAllApp() {
-    scannedBatch = [];
-    lastScannedCode = "";
-    updateBatchUI();
-    const lastBox = document.getElementById('last-scanned-box');
-    if (lastBox) lastBox.style.display = 'none';
-    switchScreen('screen-main');
-}
+    function resetAllApp() {
+        scannedBatch = [];
+        lastScannedCode = "";
+        updateBatchUI();
+        const lastBox = document.getElementById('last-scanned-box');
+        if (lastBox) lastBox.style.display = 'none';
+        
+        // Открываем экран сканера и запускаем камеру для новой выдачи
+        openScannerScreen();
+    }
 
-function submitBatchToTable() {
-    switchScreen('screen-success');
-}
+    function goToMainMenu() {
+        stopScanner();
+        switchScreen('screen-main');
+    }
+
+    // Автоматическая подстановка «Бригада № » при клике на поле склада
+document.addEventListener('focusin', (e) => {
+    if (e.target && e.target.id === 'regWarehouse') {
+        if (!e.target.value.trim()) {
+            e.target.value = 'Бригада № ';
+        }
+    }
+});
+
+// Автоформатирование ФИО и Склада «на лету» в инпутах
+document.addEventListener('input', (e) => {
+    // Для ФИО: делаем первую букву каждого слова заглавной
+    if (e.target.id === 'regFullName' || e.target.id === 'editFullName') {
+        const cursorPosition = e.target.selectionStart;
+        const formatted = e.target.value
+            .split(/\s+/)
+            .map(word => word ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : '')
+            .join(' ');
+        // Предотвращаем прыжки курсора, если текст изменился
+        if (e.target.value !== formatted) {
+            e.target.value = formatted;
+        }
+    }
+});
+
+document.addEventListener('focusin', (e) => {
+    // Автоподстановка префикса для склада, если поле пустое
+    if (e.target.id === 'regWarehouse' || e.target.id === 'editWarehouse') {
+        if (!e.target.value.trim()) {
+            e.target.value = 'Бригада №';
+        }
+    }
+});
+
+document.addEventListener('blur', (e) => {
+    // Когда уходим из поля склада, приводим к формату Бригада №1 (без пробела)
+    if (e.target.id === 'regWarehouse' || e.target.id === 'editWarehouse') {
+        let val = e.target.value.trim();
+        if (val) {
+            const digits = val.replace(/[^\d]/g, '');
+            e.target.value = digits ? `Бригада №${digits}` : val;
+        }
+    }
+}, true);
 
 </script>
 

@@ -777,12 +777,507 @@
             text-align: center;
             font-weight: 600;
         }
-    </style>
+    
+/* ==========================================================
+   ОТЧЕТЫ ТЕХНИКОВ — стили исходного файла, изолированные
+   от основного приложения
+   ========================================================== */
+#screen-technician-reports .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+#screen-technician-reports h2,
+#screen-technician-reports h3 {
+            color: var(--beeline-yellow);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+#screen-technician-reports .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+#screen-technician-reports label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            margin-top: 10px;
+            padding-left: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+#screen-technician-reports input,
+#screen-technician-reports textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--beeline-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+#screen-technician-reports input:focus,
+#screen-technician-reports textarea:focus {
+            border-color: var(--beeline-yellow);
+            box-shadow: 0 0 0 1px var(--beeline-yellow);
+        }
+#screen-technician-reports .date-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+#screen-technician-reports .date-input-wrapper input[type="date"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: var(--beeline-dark);
+            color: var(--text-main);
+            cursor: pointer;
+            padding-right: 35px;
+        }
+#screen-technician-reports .date-input-wrapper::after {
+            content: "▼";
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: var(--beeline-yellow);
+            pointer-events: none;
+        }
+#screen-technician-reports input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: auto; height: auto;
+            color: transparent; background: transparent;
+            cursor: pointer;
+        }
+#screen-technician-reports .materials-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+#screen-technician-reports .materials-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+#screen-technician-reports .materials-grid-2 .field-container,
+#screen-technician-reports .materials-grid-3 .field-container {
+            width: 100%;
+            min-width: 0;
+        }
+#screen-technician-reports .accordion-item {
+            background-color: #252525;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: visible;
+            transition: border-color 0.2s;
+            position: relative;
+        }
+#screen-technician-reports .accordion-item:hover {
+            border-color: #555;
+        }
+#screen-technician-reports .accordion-item:nth-child(1) { z-index: 60; }
+#screen-technician-reports .accordion-item:nth-child(2) { z-index: 55; }
+#screen-technician-reports .accordion-item:nth-child(3) { z-index: 50; }
+#screen-technician-reports .accordion-item:nth-child(4) { z-index: 45; }
+#screen-technician-reports .accordion-item:nth-child(5) { z-index: 40; }
+#screen-technician-reports .accordion-item:nth-child(6) { z-index: 35; }
+#screen-technician-reports .accordion-header {
+            width: 100%;
+            padding: 14px 16px;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+#screen-technician-reports .accordion-header::after {
+            content: "▼";
+            font-size: 11px;
+            color: var(--beeline-yellow);
+            transition: transform 0.3s ease;
+        }
+#screen-technician-reports .accordion-item.open .accordion-header::after {
+            transform: rotate(180deg);
+        }
+#screen-technician-reports .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            padding: 0 16px;
+            background-color: var(--card-bg);
+            border-radius: 0 0 10px 10px;
+        }
+#screen-technician-reports .accordion-item.open .accordion-content {
+            max-height: 600px;
+            padding: 0 16px 16px 16px;
+            border-top: 1px solid var(--card-border);
+            overflow: visible;
+        }
+#screen-technician-reports .custom-dropdown {
+            position: relative;
+            width: 100%;
+        }
+#screen-technician-reports .dropdown-select-btn {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: var(--beeline-dark);
+            color: var(--text-main);
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+#screen-technician-reports .dropdown-select-btn:hover {
+            border-color: var(--beeline-yellow);
+        }
+#screen-technician-reports .dropdown-select-btn::after {
+            content: "▼";
+            font-size: 10px;
+            color: var(--beeline-yellow);
+            margin-left: 10px;
+        }
+#screen-technician-reports .dropdown-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            width: 100%;
+            background: #1c1c1c;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 9999;
+            display: none;
+            box-sizing: border-box;
+        }
+#screen-technician-reports .dropdown-list.open {
+            display: block;
+        }
+#screen-technician-reports .dropdown-item {
+            padding: 12px 14px;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            border-bottom: 1px solid #222;
+            transition: background 0.15s;
+        }
+#screen-technician-reports .dropdown-item:last-child {
+            border-bottom: none;
+        }
+#screen-technician-reports .dropdown-item:hover {
+            background: rgba(255, 204, 0, 0.15);
+            color: var(--beeline-yellow);
+        }
+#screen-technician-reports .dropdown-item-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            border-bottom: 1px solid #222;
+            transition: background 0.15s;
+        }
+#screen-technician-reports .dropdown-item-checkbox:hover {
+            background: rgba(255, 204, 0, 0.15);
+            color: var(--beeline-yellow);
+        }
+#screen-technician-reports .dropdown-item-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--beeline-yellow);
+            cursor: pointer;
+        }
+#screen-technician-reports .dropdown-group-label {
+            padding: 8px 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--beeline-yellow);
+            background: #121212;
+            border-bottom: 1px solid #222;
+            border-top: 1px solid #222;
+        }
+#screen-technician-reports .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+#screen-technician-reports .input-group input {
+            flex: 1;
+        }
+#screen-technician-reports .btn-scan {
+            background-color: #2b2b2b;
+            border: 1px solid var(--card-border);
+            color: var(--beeline-yellow);
+            padding: 0 12px;
+            height: 45px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+#screen-technician-reports .btn-scan:active {
+            background-color: #3b3b3b;
+        }
+#screen-technician-reports .btn {
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-sizing: border-box;
+            margin-top: 15px;
+        }
+#screen-technician-reports .btn:active {
+            transform: scale(0.98);
+        }
+#screen-technician-reports .main-btn { 
+            background-color: var(--beeline-yellow); 
+            color: #000000; 
+            box-shadow: 0 4px 14px rgba(255, 204, 0, 0.2);
+        }
+#screen-technician-reports .main-btn:hover {
+            background-color: var(--beeline-yellow-hover);
+        }
+#screen-technician-reports .action-btn {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            font-size: 14px;
+            font-weight: 600;
+        }
+#screen-technician-reports .action-btn:hover {
+            border-color: var(--beeline-yellow);
+            color: var(--beeline-yellow);
+        }
+#screen-technician-reports .step {
+            display: none;
+        }
+#screen-technician-reports .step.active {
+            display: block;
+        }
+#screen-technician-reports .gpon-only,
+#screen-technician-reports .ppr-only,
+#screen-technician-reports .standard-report-block {
+            display: none;
+        }
+#screen-technician-reports #scanner-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+#screen-technician-reports #reader {
+            width: 100%;
+            max-width: 350px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+#screen-technician-reports .photo-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+#screen-technician-reports .photo-thumb {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #222;
+            border: 1px solid var(--card-border);
+        }
+#screen-technician-reports .photo-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+#screen-technician-reports .photo-thumb .delete-btn {
+            position: absolute;
+            top: 2px; right: 2px;
+            background: rgba(0,0,0,0.7);
+            color: var(--danger);
+            border: none;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+#screen-technician-reports .file-upload-label {
+            display: block;
+            background: var(--beeline-dark);
+            border: 2px dashed var(--card-border);
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--beeline-yellow);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+#screen-technician-reports {
+    width: 100%;
+    box-sizing: border-box;
+}
+#screen-technician-reports > .container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    display: block;
+    box-sizing: border-box;
+}
+#screen-technician-reports .card {
+    display: block;
+    gap: 0;
+    box-shadow: none;
+}
+
+#screen-technician-reports .tr-nav-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    align-items: stretch;
+}
+#screen-technician-reports .tr-nav-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+#screen-technician-reports .tr-nav-row .btn {
+    min-width: 0;
+    margin-top: 8px;
+}
+#screen-technician-reports .tr-nav-row-3 .tr-submit-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+#screen-technician-reports .tr-back-btn {
+    background-color: var(--beeline-yellow) !important;
+    color: #000000 !important;
+    border: 1px solid var(--beeline-yellow) !important;
+}
+#screen-technician-reports .tr-danger-nav-btn {
+    background-color: var(--danger) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--danger) !important;
+    box-shadow: none !important;
+}
+#screen-technician-reports .tr-home-btn {
+    background-color: var(--danger) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--danger) !important;
+    box-shadow: none !important;
+    margin-top: 8px;
+}
+#screen-technician-reports .tr-author-display {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    background-color: var(--beeline-dark);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: 14px;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+}
+#screen-technician-reports .btn-scan {
+    flex: 0 0 auto;
+}
+#screen-technician-reports .field-container {
+    min-width: 0;
+}
+#screen-technician-reports .standard-report-block,
+#screen-technician-reports .ppr-only {
+    width: 100%;
+}
+#screen-technician-reports .gpon-only,
+#screen-technician-reports .ppr-only,
+#screen-technician-reports .standard-report-block {
+    display: none;
+}
+#screen-technician-reports .step {
+    display: none;
+}
+#screen-technician-reports .step.active {
+    display: block;
+}
+#screen-technician-reports .accordion-item.open .accordion-content {
+    max-height: 2000px;
+}
+#screen-technician-reports #tr-scanner-modal {
+    display: none;
+}
+#screen-technician-reports #tr-reader {
+    width: 100%;
+    max-width: 350px;
+}
+@media (max-width: 520px) {
+    #screen-technician-reports .tr-nav-row-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    #screen-technician-reports .materials-grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+</style>
 </head>
 <!-- Библиотеки для сканирования -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
 <body>
+
+    <button id="smartScrollBtn" onclick="handleSmartScroll()" style="position: fixed; right: 20px; bottom: 80px; width: 45px; height: 45px; border-radius: 50%; background: #18181b; border: 1px solid #333; color: var(--beeline-yellow); font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; transition: transform 0.2s;" title="Прокрутить">
+    ▼
+    </button>
 
     <!-- МОДАЛЬНОЕ ОКНО УВЕДОМЛЕНИЙ -->
     <div id="beelineModal" class="beeline-modal-overlay">
@@ -965,8 +1460,7 @@
         <h2>Главное меню</h2>
         <div class="card" style="display: flex; flex-direction: column; gap: 4px;">
             <div id="userInfoHeader" style="font-size: 13px; color: var(--beeline-yellow); margin-bottom: 5px;"></div>
-            
-            <a href="#" id="reportsLinkBtn" target="_blank" class="btn main-btn">📝 Отчеты по заявкам</a>
+            <button class="btn main-btn" id="technicianReportsBtn" onclick="openTechnicianReports()">📝 Отчеты по заявкам</button>
             
             <!-- Меню монтажника -->
             <button class="btn main-btn" id="installerMenuBtn" style="display: none;" onclick="switchScreen('screen-installer-menu')">👷 Меню монтажника</button>
@@ -982,6 +1476,588 @@
             
             <button class="btn danger-btn" onclick="logout()" style="margin-top: 20px;">🔚 Выйти</button>
         </div>
+    </div>
+
+    <!-- 4.3. ОТЧЕТЫ ТЕХНИКОВ / ОТЧЕТЫ ПО ЗАЯВКАМ -->
+    <div id="screen-technician-reports" class="app-screen">
+<div class="container">
+    <h2>Отчет монтажника</h2>
+
+    <form id="tr-reportForm" onsubmit="submitReport(event)">
+        
+        <!-- ВЫБОР ТИПА ОТЧЕТА -->
+        <div class="card" style="z-index: 100;">
+            <label>Вид отчета:</label>
+            <div class="custom-dropdown">
+                <button type="button" class="dropdown-select-btn" id="tr-reportType-btn" onclick="toggleDropdown(event, 'tr-reportType-list')">Включение FTTB</button>
+                <input type="hidden" id="tr-reportType" value="Включение FTTB">
+                <div class="dropdown-list" id="tr-reportType-list">
+                    <div class="dropdown-group-label">FTTB</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Включение FTTB', 'tr-reportType-btn', 'Включение FTTB', 'tr-reportType-list'); handleReportTypeChange();">Включение FTTB</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Переезд FTTB', 'tr-reportType-btn', 'Переезд FTTB', 'tr-reportType-list'); handleReportTypeChange();">Переезд FTTB</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Сервис FTTB', 'tr-reportType-btn', 'Сервис FTTB', 'tr-reportType-list'); handleReportTypeChange();">Сервис FTTB</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Демонтаж FTTB', 'tr-reportType-btn', 'Демонтаж FTTB', 'tr-reportType-list'); handleReportTypeChange();">Демонтаж FTTB</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'ППР FTTB', 'tr-reportType-btn', 'ППР FTTB', 'tr-reportType-list'); handleReportTypeChange();">ППР FTTB</div>
+                    
+                    <div class="dropdown-group-label">GPON</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Включение GPON', 'tr-reportType-btn', 'Включение GPON', 'tr-reportType-list'); handleReportTypeChange();">Включение GPON</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Переезд GPON', 'tr-reportType-btn', 'Переезд GPON', 'tr-reportType-list'); handleReportTypeChange();">Переезд GPON</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Сервис GPON', 'tr-reportType-btn', 'Сервис GPON', 'tr-reportType-list'); handleReportTypeChange();">Сервис GPON</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'Демонтаж GPON', 'tr-reportType-btn', 'Демонтаж GPON', 'tr-reportType-list'); handleReportTypeChange();">Демонтаж GPON</div>
+                    <div class="dropdown-item" onclick="selectOption('tr-reportType', 'ППР GPON', 'tr-reportType-btn', 'ППР GPON', 'tr-reportType-list'); handleReportTypeChange();">ППР GPON</div>
+                </div>
+            </div>
+
+            <label for="tr-reportDate" id="tr-dateLabel">Дата монтажа:</label>
+            <div class="date-input-wrapper">
+                <input type="date" id="tr-reportDate" required>
+            </div>
+        </div>
+
+        <!-- ================= СТАНДАРТНЫЕ ШАГИ ================= -->
+        <div class="standard-report-block">
+            <!-- ШАГ 1: ДАННЫЕ АБОНЕНТА -->
+            <div class="step active" id="tr-step-client">
+                <div class="card">
+                    <h3>Данные абонента</h3>
+                    <label>Номер заявки</label>
+                    <input type="text" id="tr-appNumber" placeholder="940299">
+
+                    <label>Адрес</label>
+                    <input type="text" id="tr-address" placeholder="просп. Республики 69/1 21">
+
+                    <label>Логин</label>
+                    <input type="text" id="tr-login" placeholder="0017100080">
+
+                    <label>ФИО абонента</label>
+                    <input type="text" id="tr-clientName" placeholder="Усачёва Мария Александровна">
+                </div>
+                <div class="tr-nav-row tr-nav-row-2">
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="exitTechnicianReports()">🏠 Главное меню</button>
+                    <button type="button" class="btn main-btn" onclick="nextStep(1)">Далее ➡️</button>
+                </div>
+            </div>
+
+            <!-- ШАГ 2: РАСХОДНЫЕ МАТЕРИАЛЫ -->
+            <div class="step" id="tr-step-materials">
+                <div class="card">
+                    <h3>Расходные материалы</h3>
+                    
+                    <label>Способ перетяжки</label>
+                    <div class="custom-dropdown">
+                        <button type="button" class="dropdown-select-btn" id="tr-pullMethod-btn" onclick="toggleDropdown(event, 'tr-pullMethod-list')">Выберите способ</button>
+                        <input type="hidden" id="tr-pullMethod" value="">
+                        <div class="dropdown-list" id="tr-pullMethod-list">
+                            <div class="dropdown-item" onclick="selectOption('tr-pullMethod', 'Дрс', 'tr-pullMethod-btn', 'Дрс', 'tr-pullMethod-list')">Дрс</div>
+                            <div class="dropdown-item" onclick="selectOption('tr-pullMethod', 'Шахта', 'tr-pullMethod-btn', 'Шахта', 'tr-pullMethod-list')">Шахта</div>
+                            <div class="dropdown-item" onclick="selectOption('tr-pullMethod', 'Окно', 'tr-pullMethod-btn', 'Окно', 'tr-pullMethod-list')">Окно</div>
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-2">
+                        <div class="field-container">
+                            <label>Номер кабеля</label>
+                            <input type="text" id="tr-cableNum" placeholder="9922281">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во Кабеля</label>
+                            <input type="number" step="0.1" id="tr-cableQty" placeholder="65">
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-2">
+                        <div class="field-container">
+                            <label>Номер патч-корда</label>
+                            <input type="text" id="tr-patchCableNum" placeholder="15593">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во патч-корда</label>
+                            <input type="number" step="0.1" id="tr-patchCableQty" placeholder="15">
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-2">
+                        <div class="field-container">
+                            <label>Кол-во коннекторов</label>
+                            <input type="number" id="tr-connectorsQty" placeholder="10">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во изоленты</label>
+                            <input type="number" id="tr-tapeQty" placeholder="1">
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-3">
+                        <div class="field-container">
+                            <label>Кол-во клипс</label>
+                            <input type="number" id="tr-clipsQty" placeholder="45">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во хомутов</label>
+                            <input type="number" id="tr-clampsQty" placeholder="30">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во UY2</label>
+                            <input type="number" id="tr-uy2Qty" placeholder="10">
+                        </div>
+                    </div>
+
+                    <!-- СПЕЦИФИЧНЫЕ РАСХОДНИКИ ДЛЯ GPON -->
+                    <div class="gpon-only">
+                        <div class="materials-grid-2" style="margin-top: 12px;">
+                            <div class="field-container">
+                                <label>Кабель канал 10/15</label>
+                                <input type="number" step="0.1" id="tr-cc1015" placeholder="Метров">
+                            </div>
+                            <div class="field-container">
+                                <label>Кабель канал 20/10</label>
+                                <input type="number" step="0.1" id="tr-cc2010" placeholder="Метров">
+                            </div>
+                        </div>
+
+                        <div class="materials-grid-3" style="margin-top: 8px;">
+                            <div class="field-container">
+                                <label>Внешний угол</label>
+                                <input type="number" step="0.1" id="tr-extCorner" placeholder="Метров">
+                            </div>
+                            <div class="field-container">
+                                <label>Внутренний угол</label>
+                                <input type="number" step="0.1" id="tr-intCorner" placeholder="Метров">
+                            </div>
+                            <div class="field-container">
+                                <label>Поворотный угол</label>
+                                <input type="number" step="0.1" id="tr-ftthTurnCorner" placeholder="Метров">
+                            </div>
+                        </div>
+
+                        <div class="materials-grid-3" style="margin-top: 8px;">
+                            <div class="field-container">
+                                <label>Хвостовик поворотный</label>
+                                <input type="number" id="tr-ftthTail" placeholder="Штук">
+                            </div>
+                            <div class="field-container">
+                                <label>Дюбель 6*40</label>
+                                <input type="number" id="tr-dowels" placeholder="Штук">
+                            </div>
+                            <div class="field-container">
+                                <label>Клипса FTTH</label>
+                                <input type="number" id="tr-ftthClip" placeholder="Штук">
+                            </div>
+                        </div>
+
+                        <div class="materials-grid-2" style="margin-top: 8px;">
+                            <div class="field-container">
+                                <label>Кабельный настенный ввод FTTH</label>
+                                <input type="number" id="tr-ftthWallIn" placeholder="Штук">
+                            </div>
+                            <div class="field-container"></div>
+                        </div>
+
+                        <div class="materials-grid-2" style="margin-top: 8px;">
+                            <div class="field-container">
+                                <label>Оптический патч-корд</label>
+                                <input type="number" step="0.1" id="tr-optPatchMeters" placeholder="Метров">
+                            </div>
+                            <div class="field-container">
+                                <label>&nbsp;</label>
+                                <input type="number" id="tr-optPatchCount" placeholder="Штук">
+                            </div>
+                        </div>
+
+                        <div class="materials-grid-2" style="margin-top: 8px;">
+                            <div class="field-container">
+                                <label>SOC SC/APC 3.0mm</label>
+                                <input type="number" id="tr-socConnector" placeholder="Штук">
+                            </div>
+                            <div class="field-container">
+                                <label>Fast-коннектор </label>
+                                <input type="number" id="tr-fastConnector" placeholder="Штук">
+                            </div>
+                        </div>
+
+                        <div class="materials-grid-2" style="margin-top: 8px;">
+                            <div class="field-container">
+                                <label>Оптическая гильза</label>
+                                <input type="number" id="tr-kdzs" placeholder="Штук">
+                            </div>
+                            <div class="field-container">
+                                <label>Адаптер</label>
+                                <input type="number" id="tr-adapter" placeholder="Штук">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tr-nav-row">
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="prevStep(2)">⬅️ Назад</button>
+                    <button type="button" class="btn main-btn" onclick="nextStep(2)">Далее ➡️</button>
+                </div>
+                <button type="button" class="btn tr-home-btn" onclick="exitTechnicianReports()">🏠 Главное меню</button>
+            </div>
+
+            <!-- ШАГ 3: ОБОРУДОВАНИЕ -->
+            <div class="step" id="tr-step-equipment">
+                <div class="card">
+                    <h3>Оборудование</h3>
+                    
+                    <!-- Роутер 1 -->
+                    <div class="accordion-item open">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">Роутер 1</button>
+                        <div class="accordion-content">
+                            <label>Модель роутера 1</label>
+                            <div class="custom-dropdown">
+                                <button type="button" class="dropdown-select-btn" id="tr-r1Model-btn" onclick="toggleDropdown(event, 'tr-r1Model-list')">TP-Link EX222 (AX-1800)</button>
+                                <input type="hidden" id="tr-r1Model" value="TP-Link EX222 (AX-1800)">
+                                <div class="dropdown-list" id="tr-r1Model-list"></div>
+                            </div>
+
+                            <label>Серийный номер роутера 1</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-r1Sn" oninput="autoDetectRouterModel(this.value, 'tr-r1Model')">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-r1Sn')">📷 Сканировать</button>
+                            </div>
+                            <label>MAC адрес роутера 1</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-r1Mac">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-r1Mac')">📷 Сканировать</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Роутер 2 -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">Роутер 2</button>
+                        <div class="accordion-content">
+                            <label>Модель роутера 2</label>
+                            <div class="custom-dropdown">
+                                <button type="button" class="dropdown-select-btn" id="tr-r2Model-btn" onclick="toggleDropdown(event, 'tr-r2Model-list')">Роутер абонента</button>
+                                <input type="hidden" id="tr-r2Model" value="Роутер абонента">
+                                <div class="dropdown-list" id="tr-r2Model-list"></div>
+                            </div>
+
+                            <label>Серийный номер роутера 2</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-r2Sn" oninput="autoDetectRouterModel(this.value, 'tr-r2Model')">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-r2Sn')">📷 Сканировать</button>
+                            </div>
+                            <label>MAC адрес роутера 2</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-r2Mac">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-r2Mac')">📷 Сканировать</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Роутер 3 -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">Роутер 3</button>
+                        <div class="accordion-content">
+                            <label>Модель роутера 3</label>
+                            <div class="custom-dropdown">
+                                <button type="button" class="dropdown-select-btn" id="tr-r3Model-btn" onclick="toggleDropdown(event, 'tr-r3Model-list')">Роутер абонента</button>
+                                <input type="hidden" id="tr-r3Model" value="Роутер абонента">
+                                <div class="dropdown-list" id="tr-r3Model-list"></div>
+                            </div>
+
+                            <label>Серийный номер роутера 3</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-r3Sn" oninput="autoDetectRouterModel(this.value, 'tr-r3Model')">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-r3Sn')">📷 Сканировать</button>
+                            </div>
+                            <label>MAC адрес роутера 3</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-r3Mac">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-r3Mac')">📷 Сканировать</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Приставка 1 -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">Приставка 1</button>
+                        <div class="accordion-content">
+                            <label>Модель приставки 1</label>
+                            <div class="custom-dropdown">
+                                <button type="button" class="dropdown-select-btn" id="tr-tv1Model-btn" onclick="toggleDropdown(event, 'tr-tv1Model-list')">Без приставки</button>
+                                <input type="hidden" id="tr-tv1Model" value="Без приставки">
+                                <div class="dropdown-list" id="tr-tv1Model-list"></div>
+                            </div>
+
+                            <label>Серийный номер приставки 1</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-tv1Sn" oninput="autoDetectTvModel(this.value, 'tr-tv1Model')">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-tv1Sn')">📷 Сканировать</button>
+                            </div>
+                            <label>MAC адрес приставки 1</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-tv1Mac">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-tv1Mac')">📷 Сканировать</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Приставка 2 -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">Приставка 2</button>
+                        <div class="accordion-content">
+                            <label>Модель приставки 2</label>
+                            <div class="custom-dropdown">
+                                <button type="button" class="dropdown-select-btn" id="tr-tv2Model-btn" onclick="toggleDropdown(event, 'tr-tv2Model-list')">Без приставки</button>
+                                <input type="hidden" id="tr-tv2Model" value="Без приставки">
+                                <div class="dropdown-list" id="tr-tv2Model-list"></div>
+                            </div>
+
+                            <label>Серийный номер приставки 2</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-tv2Sn" oninput="autoDetectTvModel(this.value, 'tr-tv2Model')">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-tv2Sn')">📷 Сканировать</button>
+                            </div>
+                            <label>MAC адрес приставки 2</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-tv2Mac">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-tv2Mac')">📷 Сканировать</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Приставка 3 -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-header" onclick="toggleAccordion(this)">Приставка 3</button>
+                        <div class="accordion-content">
+                            <label>Модель приставки 3</label>
+                            <div class="custom-dropdown">
+                                <button type="button" class="dropdown-select-btn" id="tr-tv3Model-btn" onclick="toggleDropdown(event, 'tr-tv3Model-list')">Без приставки</button>
+                                <input type="hidden" id="tr-tv3Model" value="Без приставки">
+                                <div class="dropdown-list" id="tr-tv3Model-list"></div>
+                            </div>
+
+                            <label>Серийный номер приставки 3</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-tv3Sn" oninput="autoDetectTvModel(this.value, 'tr-tv3Model')">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-tv3Sn')">📷 Сканировать</button>
+                            </div>
+                            <label>MAC адрес приставки 3</label>
+                            <div class="input-group">
+                                <input type="text" id="tr-tv3Mac">
+                                <button type="button" class="btn-scan" onclick="openScanner('tr-tv3Mac')">📷 Сканировать</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tr-nav-row">
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="prevStep(3)">⬅️ Назад</button>
+                    <button type="button" class="btn main-btn" onclick="nextStep(3)">Далее ➡️</button>
+                </div>
+                <button type="button" class="btn tr-home-btn" onclick="exitTechnicianReports()">🏠 Главное меню</button>
+            </div>
+
+            <!-- ШАГ 4: ЗАВЕРШЕНИЕ СТАНДАРТНОГО ОТЧЕТА -->
+            <div class="step" id="tr-step-finish">
+                <div class="card">
+                    <h3>Завершение отчета</h3>
+                    
+                    <label>Акт</label>
+                    <input type="text" id="tr-actStatus" value="Не сдан" readonly style="color: var(--text-secondary);">
+
+                    <label>ФИО Монтажника</label>
+                    <div class="tr-author-display" id="tr-author-display">👤 Авторизованный пользователь</div>
+                    <input type="hidden" id="tr-installerName">
+
+                    <!-- ПОИСК И ВЫБОР ТЕМАТИКИ ЗАВЕРШЕНИЯ -->
+                    <label>Тематика завершения</label>
+                    <div class="custom-dropdown" id="tr-theme-dropdown-container">
+                        <input type="text" id="tr-themeSearchInput" placeholder="🔍 Введите для поиска тематики..." autocomplete="off" oninput="filterThemes()" onclick="openThemeDropdown(event)" style="cursor: pointer;">
+                        <input type="hidden" id="tr-completionTheme" value="">
+                        <div class="dropdown-list" id="tr-completionTheme-list" style="max-height: 250px;">
+                            <!-- Сюда динамически рендерятся тематики -->
+                        </div>
+                    </div>
+
+                    <label>Комментарий</label>
+                    <textarea id="tr-comment" rows="3"></textarea>
+
+                    <label style="margin-top: 15px;">Фото отчета (до 10 штук):</label>
+                    <label class="file-upload-label" for="tr-photoInput">📂 Загрузить из галереи</label>
+                    <input type="file" id="tr-photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotoUpload(event, 10)">
+
+                    <div class="photo-preview-grid" id="tr-photoPreviewContainer"></div>
+                </div>
+
+                <div class="tr-nav-row tr-nav-row-3">
+                    <button type="button" class="btn tr-back-btn" onclick="prevStep(4)">⬅️ Назад</button>
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="exitTechnicianReports()">🏠 Назад в главное меню</button>
+                    <button type="submit" class="btn tr-submit-btn" style="background-color: var(--success); color: white;">💾 Отправить отчет</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ФОРМА ППР (3 ШАГА) ================= -->
+        <div class="ppr-only">
+            
+            <!-- ППР ШАГ 1: Данные адреса ППР -->
+            <div class="step active" id="tr-ppr-step-1">
+                <div class="card">
+                    <h3>Данные адреса ППР</h3>
+
+                    <label>Адрес ППР</label>
+                    <input type="text" id="tr-pprAddress" placeholder="просп. Республики 69/1">
+
+                    <label>Логин ППР</label>
+                    <input type="text" id="tr-pprLogin" placeholder="0011998877">
+
+                    <label>Место проведения ППР (можно выбрать несколько)</label>
+                    <div class="custom-dropdown">
+                        <button type="button" class="dropdown-select-btn" id="tr-pprPlace-btn" onclick="toggleDropdown(event, 'tr-pprPlace-list')">Выберите место (-а)</button>
+                        <input type="hidden" id="tr-pprPlace" value="">
+                        <div class="dropdown-list" id="tr-pprPlace-list">
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="ТКД" onchange="updateMultiSelect('tr-pprPlace', 'tr-pprPlace-btn', 'tr-pprPlace-list', 'Выберите место (-а)')"> ТКД</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Крыша" onchange="updateMultiSelect('tr-pprPlace', 'tr-pprPlace-btn', 'tr-pprPlace-list', 'Выберите место (-а)')"> Крыша</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Чердачное помещение" onchange="updateMultiSelect('tr-pprPlace', 'tr-pprPlace-btn', 'tr-pprPlace-list', 'Выберите место (-а)')"> Чердачное помещение</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Подъезд" onchange="updateMultiSelect('tr-pprPlace', 'tr-pprPlace-btn', 'tr-pprPlace-list', 'Выберите место (-а)')"> Подъезд</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="КРТ" onchange="updateMultiSelect('tr-pprPlace', 'tr-pprPlace-btn', 'tr-pprPlace-list', 'Выберите место (-а)')"> КРТ</label>
+                        </div>
+                    </div>
+
+                    <label>Вид производимых работ (можно выбрать несколько)</label>
+                    <div class="custom-dropdown">
+                        <button type="button" class="dropdown-select-btn" id="tr-pprWorkType-btn" onclick="toggleDropdown(event, 'tr-pprWorkType-list')">Выберите вид работ (-ы)</button>
+                        <input type="hidden" id="tr-pprWorkType" value="">
+                        <div class="dropdown-list" id="tr-pprWorkType-list">
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Строительство новых плинтов" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Строительство новых плинтов</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Замена существующих плинтов" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Замена существующих плинтов</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Строительство дополнительных плинтов" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Строительство дополнительных плинтов</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Строительство кртм" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Строительство кртм</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Замена кртм" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Замена кртм</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Строительство дрс" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Строительство дрс</label>
+                            <label class="dropdown-item-checkbox"><input type="checkbox" value="Замена дрс" onchange="updateMultiSelect('tr-pprWorkType', 'tr-pprWorkType-btn', 'tr-pprWorkType-list', 'Выберите вид работ (-ы)')"> Замена дрс</label>
+                        </div>
+                    </div>
+
+                    <label>Подъезд №</label>
+                    <input type="text" id="tr-pprEntrance" placeholder="1">
+                </div>
+                <div class="tr-nav-row tr-nav-row-2">
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="exitTechnicianReports()">🏠 Главное меню</button>
+                    <button type="button" class="btn main-btn" onclick="nextPprStep(1)">Далее ➡️</button>
+                </div>
+            </div>
+
+            <!-- ППР ШАГ 2: Расходные материалы -->
+            <div class="step" id="tr-ppr-step-2">
+                <div class="card">
+                    <h3>Расходные материалы</h3>
+                    
+                    <div class="materials-grid-2">
+                        <div class="field-container">
+                            <label>Номер кабеля</label>
+                            <input type="text" id="tr-pprCableNum" placeholder="9922281">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во Кабеля</label>
+                            <input type="number" step="0.1" id="tr-pprCableQty" placeholder="65">
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-3" style="margin-top: 8px;">
+                        <div class="field-container">
+                            <label>Кол-во клипс</label>
+                            <input type="number" id="tr-pprClipsQty" placeholder="45">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во коннекторов</label>
+                            <input type="number" id="tr-pprConnectorsQty" placeholder="10">
+                        </div>
+                        <div class="field-container">
+                            <label>Кол-во хомутов</label>
+                            <input type="number" id="tr-pprClampsQty" placeholder="30">
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-2" style="margin-top: 8px;">
+                        <div class="field-container">
+                            <label>Кол-во изоленты</label>
+                            <input type="number" id="tr-pprTapeQty" placeholder="1">
+                        </div>
+                        <div class="field-container">
+                            <label>Дюбель 6*40</label>
+                            <input type="number" id="tr-pprDowels" placeholder="Штук">
+                        </div>
+                    </div>
+
+                    <div class="materials-grid-2" style="margin-top: 8px;">
+                        <div class="field-container">
+                            <label>Кабель канал 40/25</label>
+                            <input type="number" step="0.1" id="tr-pprCc4025" placeholder="Метров">
+                        </div>
+                        <div class="field-container">
+                            <label>Кабель канал 60/40</label>
+                            <input type="number" step="0.1" id="tr-pprCc6040" placeholder="Метров">
+                        </div>
+                    </div>
+                </div>
+                <div class="tr-nav-row">
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="prevPprStep(2)">⬅️ Назад</button>
+                    <button type="button" class="btn main-btn" onclick="nextPprStep(2)">Далее ➡️</button>
+                </div>
+                <button type="button" class="btn tr-home-btn" onclick="exitTechnicianReports()">🏠 Главное меню</button>
+            </div>
+
+            <!-- ППР ШАГ 3: Завершение отчета -->
+            <div class="step" id="tr-ppr-step-3">
+                <div class="card">
+                    <h3>Завершение отчета</h3>
+
+                    <label>ФИО Монтажника 1</label>
+                    <div class="tr-author-display" id="tr-pprInstaller1-display">👤 Авторизованный пользователь</div>
+                    <input type="hidden" id="tr-pprInstaller1">
+
+                    <label>Часовая ставка 1 монтажника</label>
+                    <input type="number" step="0.1" id="tr-pprRate1" placeholder="0">
+
+                    <label style="margin-top: 15px;">ФИО Монтажника 2</label>
+                    <div class="custom-dropdown">
+                        <button type="button" class="dropdown-select-btn" id="tr-pprInstaller2-btn" onclick="toggleDropdown(event, 'tr-pprInstaller2-list')">Выберите второго монтажника</button>
+                        <input type="hidden" id="tr-pprInstaller2">
+                        <div class="dropdown-list" id="tr-pprInstaller2-list"></div>
+                    </div>
+
+                    <label>Часовая ставка 2 монтажника</label>
+                    <input type="number" step="0.1" id="tr-pprRate2" placeholder="0">
+
+                    <label style="margin-top: 15px;">Комментарий</label>
+                    <textarea id="tr-pprComment" rows="3"></textarea>
+
+                    <label style="margin-top: 15px;">До ППР (до 20 штук):</label>
+                    <label class="file-upload-label" for="tr-pprPhotoBeforeInput">📂 Загрузить ДО из галереи</label>
+                    <input type="file" id="tr-pprPhotoBeforeInput" accept="image/*" multiple style="display:none;" onchange="handlePprPhotoUpload(event, 'before', 20)">
+                    <div class="photo-preview-grid" id="tr-pprPhotoBeforeContainer"></div>
+
+                    <label style="margin-top: 15px;">После ППР (до 20 штук):</label>
+                    <label class="file-upload-label" for="tr-pprPhotoAfterInput">📂 Загрузить ПОСЛЕ из галереи</label>
+                    <input type="file" id="tr-pprPhotoAfterInput" accept="image/*" multiple style="display:none;" onchange="handlePprPhotoUpload(event, 'after', 20)">
+                    <div class="photo-preview-grid" id="tr-pprPhotoAfterContainer"></div>
+                </div>
+
+                <div class="tr-nav-row tr-nav-row-3">
+                    <button type="button" class="btn tr-back-btn" onclick="prevPprStep(3)">⬅️ Назад</button>
+                    <button type="button" class="btn tr-danger-nav-btn" onclick="exitTechnicianReports()">🏠 Назад в главное меню</button>
+                    <button type="submit" class="btn tr-submit-btn" style="background-color: var(--success); color: white;">💾 Отправить отчет ППР</button>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+<!-- ОКНО СКАНЕРА КАМЕРА (ШТРИХ-КОДОВ) -->
+<div id="tr-scanner-modal">
+    <div style="width:100%; max-width:350px; display:flex; justify-content:space-between; margin-bottom: 10px;">
+        <span style="color:var(--beeline-yellow); font-weight:bold;">Сканирование штрих-кода</span>
+        <button type="button" onclick="closeScanner()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;">✕ Закрыть</button>
+    </div>
+    <div id="tr-reader"></div>
+</div>
     </div>
 
     <!-- 4.1. МЕНЮ МОНТАЖНИКА -->
@@ -1219,6 +2295,131 @@
             </div>
         </div>
     </div>
+    
+    <!-- ЭКРАН 4.1.7: ВОЗВРАТ ОБОРУДОВАНИЯ -->
+<div id="screen-return-equipment" class="app-screen" style="display: none;">
+    <h2>Возврат оборудования</h2>
+    <div class="card" style="max-width: 600px; margin: 0 auto; background: var(--beeline-card-bg, #1e1e1e); padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <form onsubmit="handleReturnEquipment(event)">
+            <!-- Скрытые поля для даты и ответственного -->
+            <input type="hidden" id="retDate">
+            <input type="hidden" id="retResponsible">
+            <input type="hidden" id="retWarehouse">
+
+            <label>Серия (Серийный номер)</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <input type="text" id="retSerial" required placeholder="Введите или отсканируйте серийный номер" oninput="detectNomenclatureBySerial(this.value)" style="flex: 1;">
+                <button type="button" class="btn secondary-btn" style="width: auto; margin-top: 0; padding: 0 14px;" onclick="openScanner('retSerial')">📷</button>
+            </div>
+
+            <label>МАК адрес</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <input type="text" id="retMac" placeholder="Введите или отсканируйте МАК адрес" style="flex: 1;">
+                <button type="button" class="btn secondary-btn" style="width: auto; margin-top: 0; padding: 0 14px;" onclick="openScanner('retMac')">📷</button>
+            </div>
+
+            <label>Номенклатура</label>
+            <div class="custom-dropdown" id="retNomenclatureDropdown" style="margin-bottom: 12px;">
+                <div class="dropdown-trigger" onclick="toggleReturnDropdown('retNomenclatureDropdown')">
+                    <span id="retNomenclatureLabel">Выберите номенклатуру...</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="dropdown-list" style="display: none;">
+                    <div style="padding: 8px; background: var(--beeline-dark); position: sticky; top: 0; z-index: 2;">
+                        <input type="text" class="dropdown-search-input" placeholder="🔍 Поиск номенклатуры..." oninput="filterNomenclature(this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div id="retNomenclatureItemsContainer">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="retNomenclature" required>
+
+            <label>Комплектация</label>
+            <div class="custom-dropdown" id="retKitDropdown" style="margin-bottom: 12px;">
+                <div class="dropdown-trigger" onclick="toggleReturnDropdown('retKitDropdown')">
+                    <span id="retKitLabel">Выберите комплектацию...</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="dropdown-list" style="display: none; padding: 6px;">
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="Блок питания" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">Блок питания</span>
+                    </label>
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="Патч корд" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">Патч корд</span>
+                    </label>
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="HDMI" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">HDMI</span>
+                    </label>
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="RCA" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">RCA</span>
+                    </label>
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="Пульт ДУ" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">Пульт ДУ</span>
+                    </label>
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="Батарейки" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">Батарейки</span>
+                    </label>
+                    <label class="checkbox-container" onclick="event.stopPropagation()">
+                        <input type="checkbox" class="kit-checkbox" value="Коробка" onchange="updateKitSelection()">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">Коробка</span>
+                    </label>
+                </div>
+            </div>
+            <input type="hidden" id="retKit" required>
+
+            <label>Причина возврата</label>
+            <textarea id="retReason" rows="3" required placeholder="Опишите причину возврата оборудования..." style="margin-bottom: 12px;"></textarea>
+
+            <label>Статус</label>
+            <div class="custom-dropdown" id="retStatusDropdown" style="margin-bottom: 16px;">
+                <div class="dropdown-trigger" onclick="toggleReturnDropdown('retStatusDropdown')">
+                    <span id="retStatusLabel">Выберите статус...</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="dropdown-list" style="display: none;">
+                    <div class="dropdown-item" onclick="selectReturnDropdownOption('retStatusDropdown', 'retStatus', 'retStatusLabel', 'Рефарб', 'Рефарб')">Рефарб</div>
+                    <div class="dropdown-item" onclick="selectReturnDropdownOption('retStatusDropdown', 'retStatus', 'retStatusLabel', 'Брак', 'Брак')">Брак</div>
+                    <div class="dropdown-item" onclick="selectReturnDropdownOption('retStatusDropdown', 'retStatus', 'retStatusLabel', 'Утилизация', 'Утилизация')">Утилизация</div>
+                </div>
+            </div>
+            <input type="hidden" id="retStatus" required>
+
+            <button type="submit" class="btn main-btn" style="margin-bottom: 10px;">💾 Записать возврат</button>
+        </form>
+        <button class="btn danger-btn" onclick="switchScreen('screen-installer-menu')">⬅️ Возврат в главное меню</button>
+    </div>
+</div>
+
+<!-- ЭКРАН: Проверка возвращенного оборудования -->
+<div id="screen-check-return" class="app-screen screen" style="display: none; padding: 15px; color: var(--text-main);">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h3 style="color: var(--beeline-yellow); margin: 0;">📦 Мои возвраты за месяц</h3>
+    </div>
+    
+    <!-- Сюда динамически загружается список -->
+    <div id="returnedEquipmentListContainer" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+        <!-- Контент загрузится автоматически -->
+    </div>
+
+    <!-- Кнопка возврата в стиле «Назад в меню монтажника» -->
+    <button class="btn" onclick="switchScreen('screen-installer-menu')" style="background: rgba(238, 37, 36, 0.15); border: 1px solid var(--danger); color: var(--danger); width: 100%; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+        ⬅️ Назад в меню монтажника
+    </button>
+</div>
 
 <!-- 5. АДМИН-ПАНЕЛЬ -->
     <div id="screen-admin" class="app-screen">
@@ -1581,7 +2782,6 @@
                 tmcUrl: "https://john-toloknov.github.io/qr-cod-html/" 
             };
             
-            document.getElementById('reportsLinkBtn').href = cityConf.reportsUrl;
             document.getElementById('scannerAppBtn').href = cityConf.tmcUrl;
 
             const adminBtn = document.getElementById('adminPanelBtn');
@@ -1642,32 +2842,54 @@
         }
     }
 
-    function toggleDropdown(dropdownId) {
-    // В качестве dropdownId мы передаем ID самого контейнера списка (например, 'installer-list')
-        const list = document.getElementById(dropdownId);
+    function toggleDropdown(arg1, arg2) {
+        // Поддерживает исходный вызов базового приложения: toggleDropdown('list-id')
+        // и форму отчета: toggleDropdown(event, 'list-id').
+        let listId;
+        let event = null;
+
+        if (typeof arg1 === 'string' && arg2 === undefined) {
+            listId = arg1;
+        } else {
+            event = arg1;
+            listId = arg2;
+        }
+
+        if (event && typeof event.stopPropagation === 'function') {
+            event.stopPropagation();
+        }
+
+        // В отчете все ID начинаются с tr-. Это позволяет безопасно
+        // работать рядом с выпадающими списками основного приложения.
+        let list = document.getElementById(listId);
+        if (!list && listId && !listId.startsWith('tr-')) {
+            list = document.getElementById('tr-' + listId);
+        }
         if (!list) return;
 
-    // Находим родительский элемент .custom-dropdown для этой кнопки/списка
         const dropdown = list.closest('.custom-dropdown');
         if (!dropdown) return;
 
-        const isOpen = dropdown.classList.contains('open');
+        const isOpen = dropdown.classList.contains('open') || list.classList.contains('open');
 
-    // Закрываем все остальные выпадающие списки на странице
         document.querySelectorAll('.custom-dropdown').forEach(d => {
             if (d !== dropdown) {
                 d.classList.remove('open');
                 const otherList = d.querySelector('.dropdown-list');
-                if (otherList) otherList.style.display = 'none';
-        }
-    });
+                if (otherList) {
+                    otherList.classList.remove('open');
+                    otherList.style.display = 'none';
+                }
+            }
+        });
 
-    // Открываем или закрываем текущий список
         if (!isOpen) {
             dropdown.classList.add('open');
+            list.classList.add('open');
             list.style.display = 'block';
         } else {
             dropdown.classList.remove('open');
+            list.classList.remove('open');
             list.style.display = 'none';
         }
     }
@@ -3311,6 +4533,1324 @@ document.addEventListener('blur', (e) => {
         }
     }
 }, true);
+
+
+
+/* ==========================================================
+   МОДУЛЬ «ОТЧЕТЫ ТЕХНИКОВ» — функционал из исходного файла
+   ========================================================== */
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxINc6eOKp6cNkGxpPMj58WCSJSD6CpPxaSUo59Z2woVx4sMXK8UfDjLqOKuh-G07JBaw/exec";
+    const reportTg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+
+    
+
+    document.getElementById('tr-reportDate').valueAsDate = new Date();
+
+    let currentStep = 1;
+    let currentPprStep = 1;
+    let photosList = [];
+    let pprPhotosBefore = [];
+    let pprPhotosAfter = [];
+    let activeInputId = null;
+    let reportHtml5QrCode = null;
+
+    const installersList = [
+        "Курмангалиев Тимур Берикович,Бригада №1 (Темиртау)",
+        "Стрижко Дмитрий Юрьевич,Бригада №3 (Темиртау)",
+        "Новиков Иван Викторович,Бригада №4 (Темиртау)",
+        "Лоос Виктор Геннадьевич,Бригада №5 (Темиртау)",
+        "Марчуков Андрей Артемович,Бригада №6 (Темиртау)",
+        "Иванусь Аркадий Александрович,Бригада №7 (Темиртау)",
+        "Павленко Николай Александрович,Бригада №8 (Темиртау)",
+        "Седухин Владимир Игоревич,Бригада №9 (Темиртау)",
+        "Янковицкий Сергей Валерьевич,Бригада №10 (Темиртау)",
+        "Тарыца Захар Васильевич,Бригада №11 (Темиртау)",
+        "Кайзер Павел Иванович,Бригада №12 (Темиртау)"
+    ];
+
+    const standardRouterModels = [
+        "TP-Link EX222 (AX-1800)",
+        "ZXHN H3601P V7 (ZTE Router)",
+        "TP Link EC225-G5 (AC-1300)",
+        "AC1200 - G12-B",
+        "Basic (Модель F1O-D)",
+        "TP-Link Archer C20",
+        "TP-Link Archer C24",
+        "DGP X3000TR (GPON)",
+        "TP-Link HC220-G5 (Ultimate White)",
+        "AX3000 (Ultimate Black)",
+        "TP-Link DEKO M4 (Ultimate)",
+        "Роутер абонента"
+    ];
+
+    const demontazhRouterModels = [
+        "TP-Link EX222 (AX-1800)",
+        "ZXHN H3601P V7 (ZTE Router)",
+        "TP Link EC225-G5 (AC-1300)",
+        "AC1200 - G12-B",
+        "Basic (Модель F1O-D)",
+        "TURBO",
+        "TP-Link Archer C20",
+        "TP-Link Archer C24",
+        "DGP X3000TR (GPON)",
+        "TP-Link HC220-G5 (Ultimate White)",
+        "AX3000 (Ultimate Black)",
+        "TP-Link DEKO M4 (Ultimate)",
+        "TP-Link WR840N",
+        "D-Link Dir 615",
+        "Роутер абонента"
+    ];
+
+    const standardTvBoxes = [
+        "Приставка IPTV ZXV10 B860H",
+        "RASSE-001",
+        "Без приставки"
+    ];
+
+    const demontazhTvBoxes = [
+        "Приставка IPTV ZXV10 B860H",
+        "RASSE-001",
+        "Без приставки"
+    ];
+
+    const themesService = [
+        "Замена коннектора на ТКД", "Перенос выезда по запросу клиента", "Выход из строя коммутатора ТКД",
+        "Настройка Wi-Fi роутера Basic", "STB предоставлена", "Замена порта на КРТ",
+        "Замена коннектора в квартире абонента", "Перегружен магистральный канал", "Проблемы с доступом",
+        "Предоставление Ultimate роутера", "Проблема на стороне абонентского оборудования", "Замена Wi-Fi роутера Ultimate",
+        "Замена кабеля от КРТ", "Сервис отработан удалённо", "Выход из строя коммутатора АГУ",
+        "Подключение активного клиента к порту", "Ошибка инициатора- другое", "Диверсия/саботаж/вредительство",
+        "Настройка Wi-Fi роутера Ultimate", "Настройка приложения на Smart TV", "Замена Wi-Fi роутера Basic",
+        "Предоставление Econom роутера", "HDMI кабель предоставлен", "Перегрузки на сети FTTB",
+        "Проблема на стороне внешнего провайдера", "Электропитание ТКД", "Самоустранение по приезду МБ",
+        "SWAP TV приставок", "Соединение кабеля вне квартиры Абонента", "Проблемы с биллингом",
+        "Зависание ТКД", "Ошибка конфигурации АГУ/ТКД", "Отказ от сервиса",
+        "Прошивка Wi-Fi роутера Econom", "Предоставление Basic роутера", "Самоустранение по звонку",
+        "Абонент переподключен", "Электропитание АГУ", "Подключение Smart TV", "Влияние ТТ/ГП",
+        "Восстановление соединения на КРТ", "Кража оборудования", "Замена STB", "Замена кабеля от ТКД",
+        "Ошибка инициатора- неверные данные", "Блок питания предоставлен", "Отказ от сим-карты",
+        "Отключение клиента от порта", "Решен ГЭСПД", "Клиента нет дома", "Плановые и аварийные работы на сети Кар-Тел",
+        "Прошивка Wi-Fi роутера Basic", "Зависание АГУ", "Настройка STB", "SWAP Эконом бесплатно",
+        "Зависание каналов", "Пульт предоставлен", "Слабый пользователь", "Настройка Wi-Fi роутера Econom",
+        "Отключение электропитания на сети (работы ГЭС/РЭС/КСК/АЖК и т.д.)", "Замена порта ТКД",
+        "Ошибка инициатора- неполная диагностика", "Соединение/замена кабеля в квартире абонента", "Недозвон",
+        "Патчкорд предоставлен", "Замена Wi-Fi роутера Econom", "Сим-карты предоставлены", "Выбор другого оператора",
+        "Выезд на длительный срок", "КСК не дают ключей. Нет доступа к оборудованию",
+        "по вине монтажников, не приехали, не позвонили", "Требование клиента особых условий подключения, при прокладке кабеля",
+        "Ошибка при создании заявки - адрес", "Ошибка при создании заявки - Тарифный план (наполнение, цена, пакет)",
+        "Ошибка при создании заявки - некорректная консультация", "Ошибка при создании заявки - не подавали заявку",
+        "Долгое ожидание включения", "Контрактный ТП другого провайдера",
+        "Нет тех.возможности (нет свободных портов ТКД / Требуется установка допсвича)", "Нет тех.возможности (Нет ДРС)",
+        "Нет тех.возможности (установка допплинтов / расширение (ДРС))", "Нет технической возможности ( долгое ожидание из за доп оборудования, выбор др оператора)",
+        "Нет технической возможности (Забиты закладные трубки в кв. от застройщиков)", "Финансовые затруднения (Клиент не готов к оплате АП)",
+        "Финансовые затруднения (Дорого в сравнение с конкурентами)", "Дубликат по активной заявке", "Требуется переезд",
+        "Действующий клиент", "Отказ от прохождения биометрии", "Видеокамера настроена", "Видеокамера заменена",
+        "Настройка Wi-Fi роутера ONT", "Массовый перевод по CRQ", "Предоставление ONT роутера",
+        "Видеокамера демонтирована", "Подключение видеокамеры", "Демонтаж ONT", "Демонтаж Wi-Fi роутера в ОПИО",
+        "Замена Wi-Fi роутера ONT", "Прошика Wi-Fi роутера ONT", "Демонтаж Wi-Fi + STB в ОПИО", "Замена порта на ОРК",
+        "Демонтаж STB в ОПИО", "Замена оптического патчкорда в квартире", "Замена оптического патчкорда в подъезде", "Повреждение ОК"
+    ];
+
+    const themesDemontazh = [
+        "STB демонтирован", "Роутер демонтирован", "STB+Wi-Fi роутер демонтированы", "Отказ от демонтажа/возврата"
+    ];
+
+    const themesPereezd = [
+        "Переезд абонента завершен", "Отказ от сервиса"
+    ];
+
+    const themesVkljuchenie = [
+        "Подключение B2C клиента", "Подключение B2B клиента", "Выбор другого оператора", "Выезд на длительный срок",
+        "КСК не дают ключей. Нет доступа к оборудованию", "по вине монтажников, не приехали, не позвонили",
+        "Требование клиента особых условий подключения, при прокладке кабеля", "Ошибка при создании заявки - адрес",
+        "Ошибка при создании заявки - Тарифный план (наполнение, цена, пакет)", "Ошибка при создании заявки - некорректная консультация",
+        "Ошибка при создании заявки - не подавали заявку", "Долгое ожидание включения", "Контрактный ТП другого провайдера",
+        "Нет тех.возможности (нет свободных портов ТКД / Требуется установка допсвича)", "Нет тех.возможности (Нет ДРС)",
+        "Нет тех.возможности (установка допплинтов / расширение (ДРС))", "Нет технической возможности ( долгое ожидание из за доп оборудования, выбор др оператора)",
+        "Нет технической возможности (Забиты закладные трубки в кв. от застройщиков)", "Ошибка СУЗ (Проблема с активацией)",
+        "Ошибка СУЗ (При сборе Тарифа)", "Финансовые затруднения (Клиент не готов к оплате АП)",
+        "Финансовые затруднения (Дорого в сравнение с конкурентами)", "Дубликат по активной заявке", "Требуется переезд",
+        "Действующий клиент", "Отказ от прохождения биометрии", "День X"
+    ];
+
+    function getActiveThemesList() {
+        const type = document.getElementById('tr-reportType').value;
+        if (type.includes('Демонтаж')) return themesDemontazh;
+        if (type.includes('Переезд')) return themesPereezd;
+        if (type.includes('Включение')) return themesVkljuchenie;
+        if (type.includes('Сервис')) return themesService;
+        return themesService;
+    }
+
+    function renderThemesList(filter = '') {
+        const listContainer = document.getElementById('tr-completionTheme-list');
+        const currentList = getActiveThemesList();
+        
+        const filtered = currentList.filter(item => 
+            item.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        let html = '';
+        if (filtered.length === 0) {
+            html = `<div class="dropdown-item" style="color: var(--text-secondary); cursor: default;">Ничего не найдено</div>`;
+        } else {
+            filtered.forEach(theme => {
+                const safeTheme = theme.replace(/'/g, "\\'");
+                html += `<div class="dropdown-item" onclick="selectTheme('${safeTheme}')">${theme}</div>`;
+            });
+        }
+        listContainer.innerHTML = html;
+    }
+
+    function openThemeDropdown(event) {
+        event.stopPropagation();
+        document.querySelectorAll('.dropdown-list').forEach(el => {
+            if (el.id !== 'tr-completionTheme-list') el.classList.remove('open');
+        });
+        document.getElementById('tr-completionTheme-list').classList.add('open');
+        renderThemesList(document.getElementById('tr-themeSearchInput').value);
+    }
+
+    function filterThemes() {
+        const query = document.getElementById('tr-themeSearchInput').value;
+        document.getElementById('tr-completionTheme').value = query;
+        document.getElementById('tr-completionTheme-list').classList.add('open');
+        renderThemesList(query);
+    }
+
+    function selectTheme(themeName) {
+        document.getElementById('tr-completionTheme').value = themeName;
+        document.getElementById('tr-themeSearchInput').value = themeName;
+        document.getElementById('tr-completionTheme-list').classList.remove('open');
+    }
+
+    function getReportInstallersFromDatabase() {
+        let allUsers = Array.isArray(usersDb) ? usersDb.filter(Boolean) : [];
+
+        if (!allUsers.length) {
+            allUsers = [
+                { fullName: 'J.T.', warehouse: 'Главный склад', city: 'Темиртау' },
+                { fullName: 'Толокнов Евгений Алексеевич', warehouse: 'Бригада №15', city: 'Темиртау' }
+            ];
+        }
+
+        const userCity = (currentUser && currentUser.city ? currentUser.city : '').trim().toLowerCase();
+
+        let cityUsers = allUsers.filter(u => {
+            const uCity = String(u.city || '').trim().toLowerCase();
+            return !userCity || uCity === userCity || !uCity;
+        });
+
+        if (!cityUsers.length) cityUsers = allUsers;
+
+        return cityUsers.map(u => ({
+            id: u.id || u.dwLogin || u.fullName,
+            fullName: u.fullName || u.name || 'Сотрудник',
+            warehouse: u.warehouse || '',
+            city: u.city || (currentUser ? currentUser.city : '')
+        }));
+    }
+
+    function formatReportInstallerValue(user) {
+        const warehousePart = user.warehouse ? `, ${user.warehouse}` : '';
+        const cityPart = user.city ? ` (${user.city})` : '';
+        return `${user.fullName}${warehousePart}${cityPart}`;
+    }
+
+    function setReportAuthorizedUser() {
+        const name = currentUser && currentUser.fullName ? currentUser.fullName : 'Авторизованный пользователь';
+        const role = currentUser && currentUser.role ? ` (${currentUser.role})` : '';
+        const city = currentUser && currentUser.city ? ` | 🏢 ${currentUser.city}` : '';
+        const display = `👤 ${name}${role}${city}`;
+
+        const displayEl = document.getElementById('tr-author-display');
+        const hiddenEl = document.getElementById('tr-installerName');
+        const pprDisplayEl = document.getElementById('tr-pprInstaller1-display');
+        const pprHiddenEl = document.getElementById('tr-pprInstaller1');
+
+        if (displayEl) displayEl.textContent = display;
+        if (hiddenEl) hiddenEl.value = name;
+
+        if (pprDisplayEl) pprDisplayEl.textContent = display;
+        if (pprHiddenEl) pprHiddenEl.value = name;
+    }
+
+    function initInstallersDropdowns() {
+        setReportAuthorizedUser();
+        updatePprInstallersLists();
+    }
+
+    function updatePprInstallersLists() {
+        const list2 = document.getElementById('tr-pprInstaller2-list');
+        const hidden2 = document.getElementById('tr-pprInstaller2');
+        const btn2 = document.getElementById('tr-pprInstaller2-btn');
+
+        if (!list2) return;
+
+        const currentName = currentUser && currentUser.fullName ? currentUser.fullName : '';
+        const users = getReportInstallersFromDatabase();
+
+        let html = '';
+        users.forEach(user => {
+            if (user.fullName === currentName) return;
+
+            const value = formatReportInstallerValue(user);
+            const safeValue = String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            const safeName = String(user.fullName).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+            html += `<div class="dropdown-item" onclick="selectOption('tr-pprInstaller2', '${safeValue}', 'tr-pprInstaller2-btn', '${safeName}', 'tr-pprInstaller2-list')">${safeName}<span style="display:block;font-size:11px;color:var(--text-secondary);">${user.warehouse || 'Сотрудник'}${user.city ? ' · ' + user.city : ''}</span></div>`;
+        });
+
+        if (!html) {
+            html = `<div class="dropdown-item" style="color:var(--text-secondary);cursor:default;">Нет доступных сотрудников</div>`;
+        }
+
+        list2.innerHTML = html;
+
+        if (hidden2 && hidden2.value === currentName) {
+            hidden2.value = '';
+            if (btn2) btn2.textContent = 'Выберите второго монтажника';
+        }
+    }
+
+    function initEquipmentDropdowns() {
+        const type = document.getElementById('tr-reportType').value;
+        const isDemontazh = type.includes('Демонтаж');
+
+        const routerList = isDemontazh ? demontazhRouterModels : standardRouterModels;
+        const tvList = isDemontazh ? demontazhTvBoxes : standardTvBoxes;
+        
+        ['r1', 'r2', 'r3'].forEach(prefix => {
+            const listContainer = document.getElementById(`tr-${prefix}Model-list`);
+            if (!listContainer) return;
+            
+            let html = '';
+            routerList.forEach(model => {
+                html += `<div class="dropdown-item" onclick="selectOption('tr-${prefix}Model', '${model}', 'tr-${prefix}Model-btn', '${model}', 'tr-${prefix}Model-list')">${model}</div>`;
+            });
+            listContainer.innerHTML = html;
+
+            if (prefix === 'r1') {
+                document.getElementById(`tr-${prefix}Model`).value = "TP-Link EX222 (AX-1800)";
+                document.getElementById(`tr-${prefix}Model-btn`).textContent = "TP-Link EX222 (AX-1800)";
+            } else {
+                document.getElementById(`tr-${prefix}Model`).value = "Роутер абонента";
+                document.getElementById(`tr-${prefix}Model-btn`).textContent = "Роутер абонента";
+            }
+        });
+
+        ['tv1', 'tv2', 'tv3'].forEach(prefix => {
+            const listContainer = document.getElementById(`tr-${prefix}Model-list`);
+            if (!listContainer) return;
+            
+            let html = '';
+            tvList.forEach(model => {
+                html += `<div class="dropdown-item" onclick="selectOption('tr-${prefix}Model', '${model}', 'tr-${prefix}Model-btn', '${model}', 'tr-${prefix}Model-list')">${model}</div>`;
+            });
+            listContainer.innerHTML = html;
+
+            document.getElementById(`tr-${prefix}Model`).value = "Без приставки";
+            document.getElementById(`tr-${prefix}Model-btn`).textContent = "Без приставки";
+        });
+    }
+    function toggleAccordion(headerElement) {
+        const item = headerElement.parentElement;
+        item.classList.toggle('open');
+    }
+
+    function selectOption(hiddenInputId, value, btnId, displayText, listId) {
+        document.getElementById(hiddenInputId).value = value;
+        document.getElementById(btnId).textContent = displayText;
+        document.getElementById(listId).classList.remove('open');
+    }
+
+    function updateMultiSelect(hiddenInputId, btnId, listId, defaultText) {
+        const list = document.getElementById(listId);
+        const checkboxes = list.querySelectorAll('input[type="checkbox"]');
+        const selected = [];
+        
+        checkboxes.forEach(cb => {
+            if (cb.checked) selected.push(cb.value);
+        });
+
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const btn = document.getElementById(btnId);
+
+        if (selected.length > 0) {
+            hiddenInput.value = selected.join(', ');
+            btn.textContent = selected.join(', ');
+        } else {
+            hiddenInput.value = '';
+            btn.textContent = defaultText;
+        }
+    }
+
+    window.addEventListener('click', function(e) {
+        if (!e.target.closest('#screen-technician-reports .custom-dropdown')) {
+            document.querySelectorAll('#screen-technician-reports .dropdown-list').forEach(el => el.classList.remove('open'));
+        }
+    });
+
+    function handleReportTypeChange() {
+        const type = document.getElementById('tr-reportType').value;
+        const standardBlock = document.querySelector('.standard-report-block');
+        const pprBlock = document.querySelector('.ppr-only');
+        const gponOnlyBlock = document.querySelector('.gpon-only');
+        const dateLabel = document.getElementById('tr-dateLabel');
+
+        if (type.includes("ППР")) {
+            standardBlock.style.display = 'none';
+            pprBlock.style.display = 'block';
+            dateLabel.textContent = "Дата ППР:";
+            showPprStep(1);
+            return;
+        }
+
+        pprBlock.style.display = 'none';
+        standardBlock.style.display = 'block';
+        dateLabel.textContent = "Дата монтажа:";
+
+        if (type.includes("GPON") && !type.includes("Демонтаж")) {
+            gponOnlyBlock.style.display = 'block';
+        } else {
+            gponOnlyBlock.style.display = 'none';
+        }
+
+        const currentThemes = getActiveThemesList();
+        if (currentThemes.length > 0) {
+            document.getElementById('tr-themeSearchInput').value = currentThemes[0];
+            document.getElementById('tr-completionTheme').value = currentThemes[0];
+        }
+
+        initEquipmentDropdowns();
+        showStep(1);
+    }
+
+    function isDemontazh() {
+        return document.getElementById('tr-reportType').value.includes("Демонтаж");
+    }
+
+    function isПереезд() {
+        return document.getElementById('tr-reportType').value.includes("Переезд");
+    }
+
+    function getNextStepNum(current) {
+        if (isDemontazh()) {
+            if (current === 1) return 3;
+            if (current === 3) return 4;
+        } else if (isПереезд()) {
+            if (current === 1) return 2;
+            if (current === 2) return 4;
+        } else {
+            return current + 1;
+        }
+        return current;
+    }
+
+    function getPrevStepNum(current) {
+        if (isDemontazh()) {
+            if (current === 4) return 3;
+            if (current === 3) return 1;
+        } else if (isПереезд()) {
+            if (current === 4) return 2;
+            if (current === 2) return 1;
+        } else {
+            return current - 1;
+        }
+        return current;
+    }
+
+    function showStep(step) {
+        document.querySelectorAll('.standard-report-block .step').forEach(el => el.classList.remove('active'));
+
+        if (step === 1) document.getElementById('tr-step-client').classList.add('active');
+        if (step === 2) document.getElementById('tr-step-materials').classList.add('active');
+        if (step === 3) document.getElementById('tr-step-equipment').classList.add('active');
+        if (step === 4) document.getElementById('tr-step-finish').classList.add('active');
+
+        currentStep = step;
+        window.scrollTo(0, 0);
+    }
+
+    function nextStep(fromStep) {
+        const next = getNextStepNum(fromStep);
+        showStep(next);
+    }
+
+    function prevStep(fromStep) {
+        const prev = getPrevStepNum(fromStep);
+        showStep(prev);
+    }
+
+    function showPprStep(step) {
+        document.querySelectorAll('.ppr-only .step').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tr-ppr-step-${step}`).classList.add('active');
+        currentPprStep = step;
+        window.scrollTo(0, 0);
+    }
+
+    function nextPprStep(fromStep) {
+        showPprStep(fromStep + 1);
+    }
+
+    function prevPprStep(fromStep) {
+        showPprStep(fromStep - 1);
+    }
+
+    function openScanner(inputId) {
+        activeInputId = inputId;
+        document.getElementById('tr-scanner-modal').style.display = 'flex';
+        
+        if (!reportHtml5QrCode) {
+            reportHtml5QrCode = new Html5Qrcode("reader");
+        }
+
+        reportHtml5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 20, qrbox: { width: 260, height: 130 } },
+            (decodedText) => {
+                if (reportTg.HapticFeedback) reportTg.HapticFeedback.notificationOccurred('success');
+                
+                let inputElement = document.getElementById(activeInputId);
+                if (inputElement) {
+                    inputElement.value = decodedText;
+                    
+                    if (activeInputId === 'tr-r1Sn') {
+                        autoDetectRouterModel(decodedText, 'tr-r1Model');
+                    } else if (activeInputId === 'tr-r2Sn') {
+                        autoDetectRouterModel(decodedText, 'tr-r2Model');
+                    } else if (activeInputId === 'tr-r3Sn') {
+                        autoDetectRouterModel(decodedText, 'tr-r3Model');
+                    } else if (activeInputId === 'tr-tv1Sn') {
+                        autoDetectTvModel(decodedText, 'tr-tv1Model');
+                    } else if (activeInputId === 'tr-tv2Sn') {
+                        autoDetectTvModel(decodedText, 'tr-tv2Model');
+                    } else if (activeInputId === 'tr-tv3Sn') {
+                        autoDetectTvModel(decodedText, 'tr-tv3Model');
+                    }
+                }
+                
+                closeScanner();
+            },
+            (errorMessage) => {}
+        ).catch(err => {
+            console.error("Ошибка запуска сканера:", err);
+        });
+    }
+
+    function closeScanner() {
+        if (reportHtml5QrCode && reportHtml5QrCode.isScanning) {
+            reportHtml5QrCode.stop().then(() => {
+                document.getElementById('tr-scanner-modal').style.display = 'none';
+            }).catch(() => {
+                document.getElementById('tr-scanner-modal').style.display = 'none';
+            });
+        } else {
+            document.getElementById('tr-scanner-modal').style.display = 'none';
+        }
+    }
+
+    function autoDetectRouterModel(serial, modelInputId) {
+        if (!serial) return;
+        const s = serial.trim();
+        let detectedModel = "";
+
+        if (s.indexOf("QXH") === 0) {
+            detectedModel = "D-Link Dir 615";
+        } else if (s.indexOf("318") === 0 || s.indexOf("317") === 0 || s.indexOf("218") === 0 || s.indexOf("216") === 0) {
+            detectedModel = "Маршрутизатор беспроводной 840 TP-Link";
+        } else if (s.indexOf("2312T2DM") === 0 || s.indexOf("2309T2DM") === 0) {
+            detectedModel = "AX3000 (Ultimate Black)";
+        } else if (s.indexOf("22161K") === 0) {
+            detectedModel = "TP-Link DEKO M4 (Ultimate)";
+        } else if (s.indexOf("220B") === 0) {
+            detectedModel = "TP-Link Archer C24";
+        } else if (s.indexOf("2184545") === 0 || s.indexOf("2212252") === 0 || s.indexOf("2211846") === 0 || s.indexOf("2211477") === 0 || s.indexOf("2211225") === 0) {
+            detectedModel = "TP-Link Archer C20";
+        } else if (s.includes("BRDM")) {
+            detectedModel = "TURBO";
+        } else if (s.includes("DDM")) {
+            detectedModel = "AC1200 - G12-B";
+        } else if (s.indexOf("ZTEPHAG") === 0) {
+            detectedModel = "ZXHN H3601P V7 (ZTE Router)";
+        } else if (s.indexOf("223B0A3") === 0) {
+            detectedModel = "TP-Link HC220-G5 (Ultimate White)";
+        } else if (s.indexOf("225507Y") === 0 || s.indexOf("2258085") === 0 || s.indexOf("226110C") === 0 || s.indexOf("22550HS") === 0 || s.indexOf("225500S") === 0 || s.indexOf("22570CR") === 0 || s.indexOf("2256443") === 0) {
+            detectedModel = "TP-Link EX222 (AX-1800)";
+        } else if (s.indexOf("22482P1") === 0 || s.indexOf("224C3S8") === 0 || s.indexOf("22494J9") === 0 || s.indexOf("22473N7") === 0 || s.indexOf("22473N8") === 0 || s.indexOf("22524R3") === 0 || s.indexOf("22461W9") === 0 || s.indexOf("22454W2") === 0 || s.indexOf("2245291") === 0 || s.indexOf("224A0W2") === 0 || s.indexOf("224B5Q4") === 0 || s.indexOf("224C3SB") === 0 || s.indexOf("224BQ40") === 0 || s.indexOf("2244774") === 0 || s.indexOf("224B2K4") === 0) {
+            detectedModel = "TP Link EC225-G5 (AC-1300)";
+        } else if (s.includes("FRDM") || s.includes("EBDM") || s.includes("FNDM")) {
+            detectedModel = "Basic (Модель F1O-D)";
+        }
+
+        if (detectedModel) {
+            let btnId = modelInputId + '-btn';
+            let listId = modelInputId + '-list';
+            
+            if (typeof selectOption === 'function') {
+                selectOption(modelInputId, detectedModel, btnId, detectedModel, listId);
+            } else {
+                document.getElementById(modelInputId).value = detectedModel;
+                document.getElementById(btnId).innerText = detectedModel;
+            }
+            
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+        }
+    }
+
+    function autoDetectTvModel(serial, modelInputId) {
+        if (!serial) return;
+        const s = serial.trim();
+        let detectedModel = "";
+
+        if (s.indexOf("VMPZ") === 0) {
+            detectedModel = "Приставка IPTV ZXV10 B860H";
+        } else if (s.indexOf("VMPLC") === 0) {
+            detectedModel = "RASSE-001";
+        }
+
+        if (detectedModel) {
+            let btnId = modelInputId + '-btn';
+            let listId = modelInputId + '-list';
+            
+            if (typeof selectOption === 'function') {
+                selectOption(modelInputId, detectedModel, btnId, detectedModel, listId);
+            } else {
+                document.getElementById(modelInputId).value = detectedModel;
+                document.getElementById(btnId).innerText = detectedModel;
+            }
+            
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            }
+        }
+    }
+
+    function handlePhotoUpload(event, limit) {
+        const files = Array.from(event.target.files);
+        files.forEach(file => {
+            if (photosList.length < limit) photosList.push(file);
+        });
+        renderPhotos();
+        event.target.value = ''; 
+    }
+
+    function removePhoto(index) {
+        photosList.splice(index, 1);
+        renderPhotos();
+    }
+
+    function renderPhotos() {
+        const container = document.getElementById('tr-photoPreviewContainer');
+        container.innerHTML = '';
+        photosList.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'photo-thumb';
+                div.innerHTML = `
+                    <img src="${e.target.result}">
+                    <button type="button" class="delete-btn" onclick="removePhoto(${index})">✕</button>
+                `;
+                container.appendChild(div);
+            }
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function handlePprPhotoUpload(event, type, limit) {
+        const files = Array.from(event.target.files);
+        files.forEach(file => {
+            if (type === 'before' && pprPhotosBefore.length < limit) pprPhotosBefore.push(file);
+            if (type === 'after' && pprPhotosAfter.length < limit) pprPhotosAfter.push(file);
+        });
+        renderPprPhotos(type);
+        event.target.value = '';
+    }
+
+    function removePprPhoto(index, type) {
+        if (type === 'before') pprPhotosBefore.splice(index, 1);
+        if (type === 'after') pprPhotosAfter.splice(index, 1);
+        renderPprPhotos(type);
+    }
+
+    function renderPprPhotos(type) {
+        const containerId = type === 'before' ? 'tr-pprPhotoBeforeContainer' : 'tr-pprPhotoAfterContainer';
+        const list = type === 'before' ? pprPhotosBefore : pprPhotosAfter;
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        
+        list.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'photo-thumb';
+                div.innerHTML = `
+                    <img src="${e.target.result}">
+                    <button type="button" class="delete-btn" onclick="removePprPhoto(${index}, '${type}')">✕</button>
+                `;
+                container.appendChild(div);
+            }
+            reader.readAsDataURL(file);
+        });
+    }
+
+    let isSubmitting = false;
+
+    async function submitReport(e) {
+        e.preventDefault();
+        
+        if (isSubmitting) return;
+
+        const type = document.getElementById('tr-reportType').value;
+        const reportDate = document.getElementById('tr-reportDate').value;
+        
+        if (type.includes("ППР")) {
+            setReportAuthorizedUser();
+            const m1 = document.getElementById('tr-pprInstaller1').value;
+            const m2 = document.getElementById('tr-pprInstaller2').value;
+            if (!m1) {
+                alert("Не удалось определить авторизованного монтажника!");
+                return;
+            }
+            if (!m2) {
+                alert("Пожалуйста, выберите второго монтажника для ППР!");
+                return;
+            }
+        } else {
+            setReportAuthorizedUser();
+            const installer = document.getElementById('tr-installerName').value;
+            if (!installer) {
+                alert("Не удалось определить авторизованного монтажника!");
+                return;
+            }
+            const themeVal = document.getElementById('tr-completionTheme').value;
+            if (!themeVal) {
+                alert("Пожалуйста, укажите или выберите тематику завершения!");
+                return;
+            }
+        }
+
+        isSubmitting = true;
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = "⏳ Отправка...";
+        submitBtn.disabled = true;
+
+        try {
+            let reportData = {};
+
+            if (type.includes("ППР")) {
+                reportData = {
+                    type: type,
+                    date: reportDate,
+                    valA: document.getElementById('tr-pprLogin').value || document.getElementById('tr-pprAddress').value,
+                    valB: document.getElementById('tr-pprAddress').value,
+                    valC: "Подъезд: " + document.getElementById('tr-pprEntrance').value,
+                    valD: "Место: " + document.getElementById('tr-pprPlace').value,
+                    valF: document.getElementById('tr-pprCableNum').value,
+                    valG: document.getElementById('tr-pprCableQty').value,
+                    valH: document.getElementById('tr-pprComment').value,
+                    valJ: document.getElementById('tr-pprClipsQty').value,
+                    valK: document.getElementById('tr-pprConnectorsQty').value,
+                    valL: document.getElementById('tr-pprClampsQty').value,
+                    valM: document.getElementById('tr-pprTapeQty').value,
+                    valN: document.getElementById('tr-pprDowels').value,
+                    valP: document.getElementById('tr-pprCc4025').value,
+                    valQ: document.getElementById('tr-pprCc6040').value,
+                    valO: "Вид работ: " + document.getElementById('tr-pprWorkType').value,
+                    valAG: "Монтажники: " + document.getElementById('tr-pprInstaller1').value + ", " + document.getElementById('tr-pprInstaller2').value,
+                    valAH: "Ставка 1: " + document.getElementById('tr-pprRate1').value + " | Ставка 2: " + document.getElementById('tr-pprRate2').value,
+                    valAI: document.getElementById('tr-pprComment').value,
+                    valAJ: "Фото ДО: " + pprPhotosBefore.length + " | Фото ПОСЛЕ: " + pprPhotosAfter.length
+                };
+            } else {
+                reportData = {
+                    type: type,
+                    date: reportDate,
+                    valA: document.getElementById('tr-appNumber').value,
+                    valB: document.getElementById('tr-address').value,
+                    valC: document.getElementById('tr-clientName').value,
+                    valD: document.getElementById('tr-login').value,
+                    valAI: document.getElementById('tr-comment').value,
+                    valAG: "Монтажник: " + document.getElementById('tr-installerName').value + " | Тематика: " + document.getElementById('tr-completionTheme').value,
+                    valAJ: "Фото отчета: " + photosList.length
+                };
+                
+                if (!isDemontazh()) {
+                    reportData.valF = document.getElementById('tr-cableNum').value;
+                    reportData.valG = document.getElementById('tr-cableQty').value;
+                    reportData.valH = document.getElementById('tr-patchCableNum').value;
+                    reportData.valI = document.getElementById('tr-patchCableQty').value;
+                    reportData.valJ = document.getElementById('tr-clipsQty').value;
+                    reportData.valK = document.getElementById('tr-connectorsQty').value;
+                    reportData.valL = document.getElementById('tr-clampsQty').value;
+                    reportData.valM = document.getElementById('tr-tapeQty').value;
+                    reportData.valN = document.getElementById('tr-uy2Qty').value;
+                    reportData.valO = document.getElementById('tr-pullMethod').value;
+                }
+
+                if (!isПереезд()) {
+                    reportData.valQ = document.getElementById('tr-r1Model').value;
+                    reportData.valR = document.getElementById('tr-r1Sn').value;
+                    reportData.valS = document.getElementById('tr-r1Mac').value;
+                    reportData.valT = document.getElementById('tr-r2Model').value;
+                    reportData.valU = document.getElementById('tr-r2Sn').value;
+                    reportData.valV = document.getElementById('tr-r2Mac').value;
+                    reportData.valW = document.getElementById('tr-r3Model').value;
+                    reportData.valX = document.getElementById('tr-r3Sn').value;
+                    reportData.valY = document.getElementById('tr-r3Mac').value;
+
+                    reportData.valZ = document.getElementById('tr-tv1Model').value;
+                    reportData.valAA = document.getElementById('tr-tv1Sn').value;
+                    reportData.valAB = document.getElementById('tr-tv1Mac').value;
+                    reportData.valAC = document.getElementById('tr-tv2Model').value;
+                    reportData.valAD = document.getElementById('tr-tv2Sn').value;
+                    reportData.valAE = document.getElementById('tr-tv2Mac').value;
+                }
+            }
+
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(reportData)
+            });
+
+            alert("✅ Отчет успешно отправлен в Google Таблицу!");
+            
+            if (tg && reportTg.close) {
+                reportTg.close();
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("❌ Ошибка при отправке отчета: " + error.message);
+        } finally {
+            isSubmitting = false;
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    // ===== Навигация и сброс формы отчетов =====
+    function resetTechnicianReportState() {
+        currentStep = 1;
+        currentPprStep = 1;
+        photosList = [];
+        pprPhotosBefore = [];
+        pprPhotosAfter = [];
+        activeInputId = null;
+
+        const form = document.getElementById('tr-reportForm');
+        if (form) form.reset();
+
+        const type = document.getElementById('tr-reportType');
+        const typeBtn = document.getElementById('tr-reportType-btn');
+        if (type) type.value = 'Включение FTTB';
+        if (typeBtn) typeBtn.textContent = 'Включение FTTB';
+
+        const date = document.getElementById('tr-reportDate');
+        if (date) date.valueAsDate = new Date();
+
+        try {
+            initInstallersDropdowns();
+            initEquipmentDropdowns();
+            handleReportTypeChange();
+            setReportAuthorizedUser();
+
+            const defaultThemes = getActiveThemesList();
+            const search = document.getElementById('tr-themeSearchInput');
+            const hidden = document.getElementById('tr-completionTheme');
+            if (defaultThemes.length > 0) {
+                if (search) search.value = defaultThemes[0];
+                if (hidden) hidden.value = defaultThemes[0];
+            }
+
+            renderPhotos();
+            renderPprPhotos('before');
+            renderPprPhotos('after');
+        } catch (e) {
+            console.warn('Ошибка сброса отчета:', e);
+        }
+    }
+
+    function exitTechnicianReports() {
+        try { closeScanner(); } catch (e) {}
+        switchScreen('screen-main');
+        window.scrollTo(0, 0);
+    }
+
+    function openTechnicianReports() {
+        if (!currentUser) {
+            showBeelineModal("Ошибка", "Необходимо авторизоваться в системе!", "❌");
+            return;
+        }
+        switchScreen('screen-technician-reports');
+        resetTechnicianReportState();
+        window.scrollTo(0, 0);
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        try {
+            initInstallersDropdowns();
+            initEquipmentDropdowns();
+            handleReportTypeChange();
+            setReportAuthorizedUser();
+        } catch (e) {
+            console.warn('Ошибка инициализации отчетов:', e);
+        }
+    });
+
+    /* ==========================================================================
+   БЛОК: ВОЗВРАТ ОБОРУДОВАНИЯ И ПРОСМОТР ВОЗВРАТОВ (МЕНЮ МОНТАЖНИКА)
+   ========================================================================== */
+
+// 1. СПИСОК ДОСТУПНЫХ НОМЕНКЛАТУР И УПРАВЛЕНИЕ ВЫПАДАЮЩИМИ СПИСКАМИ
+
+const NOMENCLATURE_LIST = [
+    "D-Link Dir 615",
+    "Маршрутизатор беспроводной 840 TP-Link",
+    "Двухдиапазонный гигабитный Wi-Fi 6 MESH Роутер (маршрутизатор) AX3000, 1 штука в комплекте / AX3000",
+    "TP-Link DEKO M4 (Ultimate)",
+    "Маршрутизатор беспроводной двухдиапазонный Archer C24",
+    "Маршрутизатор беспроводной двухдиапазонный Archer C20",
+    "Роутер Wi-Fi TURBO / router Wi-Fi TURBO",
+    "Беспроводной двух диапазонный гигабитный Роутер (маршрутизатор) AC1200 - G12-B",
+    "Роутер L2TP Устройство доступа конечного пользователя ZXHN H3601P V7 (L2TP)/Router L2TP Customer Pre",
+    "Роутер AC1200 MESH TP-Link HC220-G5 Для проектов AC1200 Гигабитная домашняя Mesh-система Wi-Fi",
+    "Роутер L2TP Беспроводной двухдиапазонный гигабитный Wi-Fi 6-TP-Link EX222 (KZBL) router L2TP",
+    "Беспроводной двух диапазонный гигабитный Роутер (маршрутизатор) AC1200 - TP Link EC225-G5",
+    "Роутер СРЕ / Router СРЕ (Модель F1O-D)",
+    "Приставка IPTV ZXV10 B860H|||",
+    "RASSE-001"
+];
+
+// Открытие / закрытие выпадающих списков возврата
+function toggleReturnDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+    const list = dropdown.querySelector('.dropdown-list');
+    if (!list) return;
+    
+    // Закрываем другие открытые списки
+    document.querySelectorAll('.custom-dropdown .dropdown-list').forEach(el => {
+        if (el !== list) el.style.display = 'none';
+    });
+
+    list.style.display = (list.style.display === 'block') ? 'none' : 'block';
+}
+
+// Выбор элемента из выпадающего списка
+function selectReturnDropdownOption(dropdownId, hiddenInputId, labelId, value, text) {
+    const hiddenInput = document.getElementById(hiddenInputId);
+    const label = document.getElementById(labelId);
+    
+    if (hiddenInput) hiddenInput.value = value;
+    if (label) {
+        label.textContent = text;
+        label.style.color = 'var(--text-main, #fff)';
+    }
+    
+    const dropdown = document.getElementById(dropdownId);
+    if (dropdown) {
+        const list = dropdown.querySelector('.dropdown-list');
+        if (list) list.style.display = 'none';
+    }
+}
+
+// Заполнение выпадающего списка номенклатуры
+function initNomenclatureDropdown(list = NOMENCLATURE_LIST) {
+    const container = document.getElementById('retNomenclatureItemsContainer');
+    if (!container) return;
+    let html = '';
+    list.forEach(item => {
+        const safeItem = item.replace(/'/g, "\\'");
+        html += `<div class="dropdown-item" onclick="selectReturnDropdownOption('retNomenclatureDropdown', 'retNomenclature', 'retNomenclatureLabel', '${safeItem}', '${safeItem}')">${item}</div>`;
+    });
+    container.innerHTML = html;
+}
+
+// Поиск по номенклатурам
+function filterNomenclature(query) {
+    const filtered = NOMENCLATURE_LIST.filter(item => item.toLowerCase().includes(query.toLowerCase()));
+    initNomenclatureDropdown(filtered);
+}
+
+
+// 2. АВТООПРЕДЕЛЕНИЕ МОДЕЛИ ПО СЕРИЙНОМУ НОМЕРУ
+
+function detectModelBySerial(s) {
+    if (!s) return "";
+    let detectedModel = "";
+
+    if (s.indexOf("QXH") === 0) {
+        detectedModel = "D-Link Dir 615";
+    } else if (s.indexOf("318") === 0 || s.indexOf("317") === 0 || s.indexOf("218") === 0 || s.indexOf("216") === 0) {
+        detectedModel = "Маршрутизатор беспроводной 840 TP-Link";
+    } else if (s.indexOf("2312T2DM") === 0 || s.indexOf("2309T2DM") === 0) {
+        detectedModel = "Двухдиапазонный гигабитный Wi-Fi 6 MESH Роутер (маршрутизатор) AX3000, 1 штука в комплекте / AX3000";
+    } else if (s.indexOf("22161K") === 0) {
+        detectedModel = "TP-Link DEKO M4 (Ultimate)";
+    } else if (s.indexOf("220B") === 0) {
+        detectedModel = "Маршрутизатор беспроводной двухдиапазонный Archer C24";
+    } else if (s.indexOf("2184545") === 0 || s.indexOf("2212252") === 0 || s.indexOf("2211846") === 0 || s.indexOf("2211477") === 0 || s.indexOf("2211225") === 0) {
+        detectedModel = "Маршрутизатор беспроводной двухдиапазонный Archer C20";
+    } else if (s.includes("BRDM")) {
+        detectedModel = "Роутер Wi-Fi TURBO / router Wi-Fi TURBO";
+    } else if (s.includes("DDM")) {
+        detectedModel = "Беспроводной двух диапазонный гигабитный Роутер (маршрутизатор) AC1200 - G12-B";
+    } else if (s.indexOf("ZTEPHAG") === 0) {
+        detectedModel = "Роутер L2TP Устройство доступа конечного пользователя ZXHN H3601P V7 (L2TP)/Router L2TP Customer Pre";
+    } else if (s.indexOf("223B0A3") === 0) {
+        detectedModel = "Роутер AC1200 MESH TP-Link HC220-G5 Для проектов AC1200 Гигабитная домашняя Mesh-система Wi-Fi";
+    } else if (s.indexOf("225507Y") === 0 || s.indexOf("2258085") === 0 || s.indexOf("226110C") === 0 || s.indexOf("22550HS") === 0 || s.indexOf("225500S") === 0 || s.indexOf("22570CR") === 0 || s.indexOf("2256443") === 0) {
+        detectedModel = "Роутер L2TP Беспроводной двухдиапазонный гигабитный Wi-Fi 6-TP-Link EX222 (KZBL) router L2TP";
+    } else if (s.indexOf("22482P1") === 0 || s.indexOf("224C3S8") === 0 || s.indexOf("22494J9") === 0 || s.indexOf("22473N7") === 0 || s.indexOf("22473N8") === 0 || s.indexOf("22524R3") === 0 || s.indexOf("22461W9") === 0 || s.indexOf("22454W2") === 0 || s.indexOf("2245291") === 0 || s.indexOf("224A0W2") === 0 || s.indexOf("224B5Q4") === 0 || s.indexOf("224C3SB") === 0 || s.indexOf("224BQ40") === 0 || s.indexOf("2244774") === 0 || s.indexOf("224B2K4") === 0) {
+        detectedModel = "Беспроводной двух диапазонный гигабитный Роутер (маршрутизатор) AC1200 - TP Link EC225-G5";
+    } else if (s.includes("FRDM") || s.includes("EBDM") || s.includes("FNDM")) {
+        detectedModel = "Роутер СРЕ / Router СРЕ (Модель F1O-D)";
+    } else if (s.indexOf("VMPZ") === 0) {
+        detectedModel = "Приставка IPTV ZXV10 B860H|||";
+    } else if (s.indexOf("VMPLC") === 0) {
+        detectedModel = "RASSE-001";
+    }
+
+    return detectedModel;
+}
+
+function detectNomenclatureBySerial(serialVal) {
+    const model = detectModelBySerial(serialVal.trim());
+    if (model) {
+        selectReturnDropdownOption('retNomenclatureDropdown', 'retNomenclature', 'retNomenclatureLabel', model, model);
+    }
+}
+
+
+// 3. УПРАВЛЕНИЕ МНОЖЕСТВЕННЫМ ВЫБОРОМ КОМПЛЕКТАЦИИ
+
+function updateKitSelection() {
+    const checkboxes = document.querySelectorAll('.kit-checkbox:checked');
+    const selectedValues = Array.from(checkboxes).map(cb => cb.value);
+    const hiddenKit = document.getElementById('retKit');
+    const labelKit = document.getElementById('retKitLabel');
+
+    if (hiddenKit) hiddenKit.value = selectedValues.join(', ');
+    if (labelKit) {
+        labelKit.textContent = selectedValues.length > 0 ? selectedValues.join(', ') : 'Выберите комплектацию...';
+        labelKit.style.color = selectedValues.length > 0 ? 'var(--text-main, #fff)' : '';
+    }
+}
+
+
+// 4. СКАНЕР ШТРИХ-КОДОВ И МАК-АДРЕСОВ (ФОРМА ВОЗВРАТА)
+
+let activeReturnScanField = null;
+
+// Сканирование серийного номера
+function openReturnSerialScanner() {
+    activeReturnScanField = 'retSerial';
+    executeReturnScanner();
+}
+
+// Сканирование МАК-адреса
+function openReturnMacScanner() {
+    activeReturnScanField = 'retMac';
+    executeReturnScanner();
+}
+
+// Запуск сканера с подстановкой в нужное поле
+function executeReturnScanner() {
+    if (typeof startAppScanner === 'function') {
+        startAppScanner(function(decodedText) {
+            applyScannedReturnText(decodedText);
+        });
+    } else {
+        switchScreen('screen-scanner');
+        window.onScanSuccessCallback = function(decodedText) {
+            switchScreen('screen-return-equipment');
+            applyScannedReturnText(decodedText);
+        };
+    }
+}
+
+function applyScannedReturnText(decodedText) {
+    if (!activeReturnScanField) return;
+    const inputEl = document.getElementById(activeReturnScanField);
+    if (inputEl) {
+        inputEl.value = decodedText;
+        if (activeReturnScanField === 'retSerial') {
+            detectNomenclatureBySerial(decodedText);
+        }
+    }
+    activeReturnScanField = null;
+}
+
+
+// 5. ИНИЦИАЛИЗАЦИЯ И ОТКРЫТИЕ ФОРМЫ ВОЗВРАТА ОБОРУДОВАНИЯ
+
+function openReturnEquipmentForm() {
+    if (!currentUser) {
+        showBeelineModal("Ошибка", "Необходимо авторизоваться!", "❌");
+        return;
+    }
+    
+    // Автозаполнение скрытых системных полей для отправки (формат ДД.ММ.ГГГГ)
+    const dateInput = document.getElementById('retDate');
+    const whInput = document.getElementById('retWarehouse');
+    const respInput = document.getElementById('retResponsible');
+
+    if (dateInput) {
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        dateInput.value = `${day}.${month}.${year}`;
+    }
+    
+    if (whInput) whInput.value = `Региональный склад (${currentUser.city})`;
+    if (respInput) respInput.value = currentUser.fullName;
+
+    // Сброс видимых полей
+    const serialEl = document.getElementById('retSerial');
+    const macEl = document.getElementById('retMac');
+    const nomEl = document.getElementById('retNomenclature');
+    const nomLabel = document.getElementById('retNomenclatureLabel');
+    const kitEl = document.getElementById('retKit');
+    const kitLabel = document.getElementById('retKitLabel');
+    const reasonEl = document.getElementById('retReason');
+    const statusEl = document.getElementById('retStatus');
+    const statusLabel = document.getElementById('retStatusLabel');
+
+    if (serialEl) serialEl.value = '';
+    if (macEl) macEl.value = '';
+    if (nomEl) nomEl.value = '';
+    if (nomLabel) {
+        nomLabel.textContent = 'Выберите номенклатуру...';
+        nomLabel.style.color = '';
+    }
+    if (kitEl) kitEl.value = '';
+    if (kitLabel) {
+        kitLabel.textContent = 'Выберите комплектацию...';
+        kitLabel.style.color = '';
+    }
+    document.querySelectorAll('.kit-checkbox').forEach(cb => cb.checked = false);
+    if (reasonEl) reasonEl.value = '';
+    if (statusEl) statusEl.value = '';
+    if (statusLabel) {
+        statusLabel.textContent = 'Выберите статус...';
+        statusLabel.style.color = '';
+    }
+
+    if (typeof initNomenclatureDropdown === 'function') initNomenclatureDropdown();
+    switchScreen('screen-return-equipment');
+}
+
+// 6. ОТПРАВКА ДАННЫХ ВОЗВРАТА ОБОРУДОВАНИЯ В GOOGLE ТАБЛИЦУ (ЧЕРЕЗ reportsScriptUrl)
+
+async function handleReturnEquipment(e) {
+    e.preventDefault();
+    
+    const payload = {
+        action: 'recordReturn',
+        date: document.getElementById('retDate').value,
+        warehouse: document.getElementById('retWarehouse').value,
+        responsible: document.getElementById('retResponsible').value,
+        series: document.getElementById('retSerial').value.trim(),
+        mac: document.getElementById('retMac').value.trim(),
+        quantity: 1, 
+        price: 1,    
+        nomenclature: document.getElementById('retNomenclature').value,
+        kit: document.getElementById('retKit').value,
+        reason: document.getElementById('retReason').value.trim(),
+        status: document.getElementById('retStatus').value,
+        city: currentUser.city
+    };
+
+    // Жесткая привязка к вашему reportsScriptUrl для отчетов/возвратов
+    const cityConf = CITIES_CONFIG[currentUser.city] || {};
+    const targetUrl = cityConf.reportsScriptUrl || "https://script.google.com/macros/s/AKfycbw_yI2oF5zXSY4KJNJTcolrrVj9-b-CzUauQR_W9N6oLotyV6Nv5m3m7V1F-6RM0lQsgQ/exec";
+
+    showBeelineModal("Запись", "Сохранение возврата оборудования...", "⏳");
+
+    try {
+        const response = await fetch(targetUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        const res = await response.json();
+
+        if (res.status === 'success') {
+            showBeelineModal("Успешно", "Возврат оборудования успешно зарегистрирован!", "✅", 
+                `<button class="btn main-btn" onclick="closeBeelineModal(); switchScreen('screen-installer-menu');" style="margin-top:0;">Понятно</button>`
+            );
+        } else {
+            throw new Error(res.message || "Ошибка записи");
+        }
+    } catch (err) {
+        console.error("Ошибка при записи возврата:", err);
+        // Выводим текст ошибки на экран, чтобы в случае чего сразу видеть причину
+        showBeelineModal("Ошибка", "Не удалось записать: " + (err.message || err), "❌");
+    }
+}
+
+
+// 7. ПРОСМОТР / ПРОВЕРКА ВОЗВРАЩЕННОГО ОБОРУДОВАНИЯ ЗА ТЕКУЩИЙ МЕСЯЦ (ЧЕРЕЗ reportsScriptUrl)
+
+async function openCheckReturnScreen() {
+    if (!currentUser) return;
+    switchScreen('screen-check-return');
+    const container = document.getElementById('returnedEquipmentListContainer');
+    if (!container) return;
+
+    container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загрузка возвращенного оборудования... 🔄</div>`;
+
+    const cityConf = CITIES_CONFIG[currentUser.city] || {};
+    const targetUrl = cityConf.reportsScriptUrl || "https://script.google.com/macros/s/AKfycbw_yI2oF5zXSY4KJNJTcolrrVj9-b-CzUauQR_W9N6oLotyV6Nv5m3m7V1F-6RM0lQsgQ/exec";
+
+    // Вспомогательная функция для приведения любой даты к виду ДД.ММ.ГГГГ
+    function formatDateToRu(dateStr) {
+        if (!dateStr) return '—';
+        // Если дата уже приходит в формате ДД.ММ.ГГГГ
+        if (/^\d{2}\.\d{2}\.\d{4}$/.test(dateStr)) return dateStr;
+        
+        // Если дата приходит в формате YYYY-MM-DD или ISO (например, 2026-09-15T...)
+        try {
+            let cleanDate = dateStr.split('T')[0];
+            let parts = cleanDate.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}.${parts[1]}.${parts[0]}`;
+            }
+        } catch (e) {
+            console.error("Ошибка форматирования даты:", e);
+        }
+        return dateStr;
+    }
+
+    try {
+        const response = await fetch(`${targetUrl}?action=getReturns&responsible=${encodeURIComponent(currentUser.fullName)}`, {
+            method: 'GET'
+        });
+        const res = await response.json();
+
+        if (res.status === 'success' && res.data && res.data.length > 0) {
+            let html = '';
+            res.data.forEach(item => {
+                // Применяем красивое форматирование даты
+                let displayDate = formatDateToRu(item.date);
+
+                html += `
+                    <div class="card" style="background: #18181b; border: 1px solid #333; border-left: 4px solid var(--beeline-yellow); border-radius: 12px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--beeline-yellow); margin-bottom: 8px;">📦 ${item.nomenclature || 'Оборудование'}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 5px;">
+                            <div>Серийный номер: <span style="color: var(--text-main); font-family: monospace; font-weight: 600;">${item.series || '—'}</span></div>
+                            <div>МАК адрес: <span style="color: var(--text-main); font-family: monospace; font-weight: 600;">${item.mac || '—'}</span></div>
+                            <div>Дата возврата: <span style="color: var(--text-main);">${displayDate}</span></div>
+                            <div>Статус: <span style="color: var(--success); font-weight: 600;">${item.status || '—'}</span></div>
+                        </div>
+                        <details style="margin-top: 10px; border-top: 1px solid #2a2a2a; padding-top: 8px;">
+                            <summary style="cursor: pointer; font-size: 13px; color: var(--beeline-yellow); font-weight: 600; outline: none;">🔍 Подробнее</summary>
+                            <div style="margin-top: 8px; font-size: 12px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px; background: #121214; padding: 8px; border-radius: 8px;">
+                                <div><b>Комплектация:</b> <span style="color: var(--text-main);">${item.kit || 'Не указана'}</span></div>
+                                <div><b>Причина возврата:</b> <span style="color: var(--text-main);">${item.reason || 'Не указана'}</span></div>
+                            </div>
+                        </details>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 30px;">За текущий месяц возвращенного оборудования не найдено.</div>`;
+        }
+    } catch (e) {
+        console.error("Ошибка загрузки возвратов:", e);
+        container.innerHTML = `<div style="text-align: center; color: var(--danger); padding: 20px;">⚠️ Ошибка загрузки данных с сервера.</div>`;
+    }
+}
+
+// 8. ПРИВЯЗКА КНОПОК «ВОЗВРАТ» И «ПРОСМОТР ВОЗВРАТА» В МЕНЮ МОНТАЖНИКА
+
+document.addEventListener("DOMContentLoaded", () => {
+    const installerMenuBtns = document.querySelectorAll('#screen-installer-menu button');
+    if (installerMenuBtns.length >= 8) {
+        installerMenuBtns[6].setAttribute('onclick', 'openReturnEquipmentForm()');
+        installerMenuBtns[7].setAttribute('onclick', 'openCheckReturnScreen()');
+    }
+});
+
+// Список экранов, на которых должна работать умная кнопка прокрутки
+const allowedScrollScreens = [
+    'screen-admin',          // Админ панель (замените на ваш реальный ID экрана)
+    'screen-check-return',   // Проверить возврат
+    'screen-access-search',  // Поиск доступа (замените на ваш реальный ID)
+    // --- Место для будущих экранов (предиктив) ---
+    // 'screen-future-1',
+    // 'screen-future-2'
+];
+
+// 9. Функция проверки положения страницы и смены иконки СТРЕЛКА ВЕРСТКИ
+function updateSmartScrollButton() {
+    const btn = document.getElementById('smartScrollBtn');
+    if (!btn) return;
+
+    // Определяем, активен ли сейчас один из разрешенных экранов
+    const currentActiveScreen = document.querySelector('.app-screen.active, .screen.active') || 
+                                Array.from(document.querySelectorAll('.app-screen, .screen')).find(el => el.style.display === 'block');
+    
+    let isAllowedScreen = false;
+    if (currentActiveScreen) {
+        // Проверяем, есть ли текущий ID экрана в нашем списке разрешенных
+        isAllowedScreen = allowedScrollScreens.includes(currentActiveScreen.id);
+    }
+
+    // Если экран не входит в список разрешенных — скрываем кнопку полностью
+    if (!isAllowedScreen) {
+        btn.style.display = 'none';
+        return;
+    }
+
+    // Если экран разрешенный, показываем кнопку
+    btn.style.display = 'flex';
+
+    // Определяем позицию скролла
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    // Если страница длинная и мы находимся ближе к верху (< 300px) -> стрелка вниз
+    // Иначе -> стрелка вверх
+    if (scrollTop < 300) {
+        btn.innerHTML = '⬇️';
+        btn.title = 'Вниз';
+    } else {
+        btn.innerHTML = '⬆️';
+        btn.title = 'Наверх';
+    }
+}
+
+// Функция клика по умной кнопке
+function handleSmartScroll() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    if (scrollTop < 300) {
+        // Если вверху — скроллим вниз до упора
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else {
+        // Если внизу или посередине — скроллим на самый верх
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// Слушаем событие скролла страницы, чтобы динамически менять стрелку
+window.addEventListener('scroll', updateSmartScrollButton);
+
+// Также обновляем состояние при переключении экранов (вызывайте updateSmartScrollButton внутри вашей функции switchScreen)
 
 </script>
 

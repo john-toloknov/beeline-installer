@@ -1659,7 +1659,7 @@
 .software-app-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
 .software-app-card { min-width:0; padding:7px 4px; border:1px solid var(--card-border); border-radius:10px; background:#111; color:var(--text-main); text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center; box-sizing:border-box; transition:transform .15s ease,border-color .15s ease; }
 .software-app-card:hover { border-color:var(--beeline-yellow); transform:translateY(-1px); }
-.software-app-card img { width:58px; height:58px; object-fit:contain; border-radius:13px; display:block; margin:0 auto 5px; }
+.software-app-card img { width:90px; height:90px; object-fit:contain; border-radius:13px; display:block; margin:0 auto 5px; }
 .software-app-card span { font-size:10px; line-height:1.15; text-align:center; word-break:break-word; }
 .software-nav-row { margin-top:12px !important; }
 /* Общая адаптация экранов и полей */
@@ -6873,7 +6873,7 @@ const softwareRoutersData = [
     {
         title: "Приставка ZTE",
         icon: "fa-television",
-        img: "zte.jpg",
+        img: "zte.png",
         links: [
             { text: "Скачать прошивку", url: "https://john-toloknov.github.io/proshivok.net/app-atv-beeline_9.0.0_kz.apk", target: "_blank" },
             { text: "Открыть инструкцию", url: "Инструкия-STB-ZTE.pdf", target: "_blank" },
@@ -6949,10 +6949,11 @@ function renderSoftwareCatalog() {
         </div>`;
     }).join('');
 
+    // Текст убран, остаются только иконки
     const appCard = app => `<a class="software-app-card" href="${app.url}" target="_blank" rel="noopener noreferrer" title="${app.title}">
         <img src="${app.img}" alt="${app.title}" loading="lazy">
-        <span>${app.title}</span>
     </a>`;
+    
     androidGrid.innerHTML = softwareAndroidApps.map(appCard).join('');
     iosGrid.innerHTML = softwareIosApps.map(appCard).join('');
 

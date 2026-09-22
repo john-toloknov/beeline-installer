@@ -1686,6 +1686,39 @@ button, input, textarea, select { font:inherit; }
     .software-app-card img { width:46px; height:46px; }
     .software-app-card span { font-size:8px; }
 }
+
+.software-router-body { 
+    display: none; 
+    padding: 10px; 
+    text-align: center; 
+    border-top: 1px solid var(--card-border); 
+    background: #474646 !important; /* Белый фон под роутером */
+}
+
+.software-router-body.open { 
+    display: block; 
+}
+
+/* Анимация плавного прыжка */
+@keyframes routerBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px); /* Высота прыжка */
+    }
+}
+
+.software-router-image { 
+    width: 150px; 
+    height: 150px; 
+    object-fit: contain; 
+    max-width: 70%; 
+    margin: 2px auto 8px; 
+    display: block; 
+    animation: routerBounce 1.2s ease-in-out infinite; /* Бесконечный цикл анимации */
+}
+
 </style>
 </head>
 <!-- Библиотеки для сканирования -->

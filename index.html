@@ -1692,7 +1692,7 @@ button, input, textarea, select { font:inherit; }
     padding: 10px; 
     text-align: center; 
     border-top: 1px solid var(--card-border); 
-    background: #474646 !important; /* Белый фон под роутером */
+    background: #575555 !important; /* Белый фон под роутером */
 }
 
 .software-router-body.open { 
@@ -1719,6 +1719,104 @@ button, input, textarea, select { font:inherit; }
     animation: routerBounce 1.2s ease-in-out infinite; /* Бесконечный цикл анимации */
 }
 
+/* Редактирование сотрудника на узком экране. */
+#editUserModal .edit-user-fields > div { min-width: 0; }
+#editUserModal .edit-user-card input,
+#editUserModal .edit-user-card .dropdown-trigger { max-width: 100%; }
+@media (max-width: 520px) {
+    #editUserModal { padding: 0 !important; align-items: stretch !important; }
+    #editUserModal .edit-user-card {
+        max-width: none !important;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+        padding: max(16px, env(safe-area-inset-top)) 16px 0 !important;
+        box-sizing: border-box;
+        overscroll-behavior: contain;
+    }
+    #editUserModal .edit-user-fields { flex-direction: column; gap: 12px !important; margin-bottom: 12px !important; }
+    #editUserModal .edit-user-fields > div { width: 100%; flex: none !important; }
+    #editUserModal .edit-user-card input,
+    #editUserModal .edit-user-card .dropdown-trigger { font-size: 16px !important; min-height: 44px; }
+    #editUserModal .edit-user-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        background: var(--card-bg);
+        padding: 12px 0 max(12px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--card-border);
+    }
+    #editUserModal .edit-user-actions .btn { min-width: 0; min-height: 46px; }
+}
+/* Карточки долгов по актам в стиле интерфейса Beeline. */
+#screen-act-debts > .card { width:500px; max-width:100%; gap:16px; }
+.act-debts-hero { display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:17px 18px; border-radius:15px; background:#202020; border:1px solid #3c3c3c;
+    border-left:4px solid var(--beeline-yellow); }
+.act-debts-hero strong { display:block; color:var(--beeline-yellow); font-size:31px; line-height:1.1; }
+.act-debts-hero small { display:block; color:#bbb; margin-top:5px; font-size:13px; }
+.act-debts-icon { font-size:31px; }
+.act-debts-toolbar { display:flex; align-items:center; gap:10px; justify-content:space-between; }
+.act-debts-toolbar > span { min-width:0; overflow-wrap:anywhere; color:#bbb; font-size:12px; }
+.act-debts-toolbar .btn { width:auto; margin:0; padding:10px 13px; flex-shrink:0; }
+#actDebtsList { display:flex; flex-direction:column; gap:20px; min-width:0; }
+.act-debts-group { display:flex; flex-direction:column; gap:12px; min-width:0; }
+.act-debts-group-title { display:flex; justify-content:space-between; align-items:center;
+    color:var(--beeline-yellow); font-weight:800; font-size:15px; margin:0 2px; }
+.act-debts-group-title span { padding:3px 9px; background:rgba(255,204,0,.13); border-radius:20px; }
+.act-debts-entry { border:1px solid #383838; border-left:4px solid var(--beeline-yellow);
+    background:#1e1e1e; border-radius:14px; overflow:hidden; box-shadow:0 3px 12px rgba(0,0,0,.2); }
+.act-debts-entry[open] { border-color:#555; border-left-color:var(--beeline-yellow); }
+.act-debts-entry summary { display:block; padding:15px 15px 0; cursor:pointer; list-style:none; }
+.act-debts-entry summary::-webkit-details-marker { display:none; }
+.act-debts-entry summary:focus-visible { outline:2px solid var(--beeline-yellow); outline-offset:-2px; }
+.act-debts-address { display:block; color:var(--beeline-yellow); font-weight:800; font-size:15px;
+    overflow-wrap:anywhere; line-height:1.4; }
+.act-debts-meta { display:block; color:#c8c8c8; margin:12px 0 13px; font-size:13px; }
+.act-debts-date { color:#f5f5f5; font-weight:700; }
+.act-debts-status { display:inline-block; color:#ffb56b; margin-left:12px; }
+.act-debts-more { display:flex; align-items:center; gap:7px; min-height:41px;
+    border-top:1px solid #383838; color:var(--beeline-yellow); font-weight:700; font-size:13px; }
+.act-debts-arrow { display:inline-block; transition:transform .2s; }
+.act-debts-entry[open] .act-debts-arrow { transform:rotate(90deg); }
+.act-debts-details { margin:0; padding:5px 15px 13px; border-top:1px solid #383838; }
+.act-debts-field { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px;
+    padding:10px 0; border-bottom:1px solid #333; font-size:13px; }
+.act-debts-field:last-child { border-bottom:0; }
+.act-debts-field dt { color:#aaa; overflow-wrap:anywhere; }
+.act-debts-field dd { margin:0; text-align:right; font-weight:650; overflow-wrap:anywhere; }
+.act-debts-state { text-align:center; color:#bbb; padding:25px 15px; line-height:1.5; }
+.act-debts-state span { display:block; font-size:28px; margin-bottom:8px; }
+@media(max-width:440px) {
+    #screen-act-debts > .card { padding:13px; }
+    .act-debts-field { grid-template-columns:1fr; gap:4px; }
+    .act-debts-field dd { text-align:left; }
+    .act-debts-status { margin-left:5px; }
+}
+/* Выбор города владельца: единый стиль с карточками Beeline. */
+#screen-owner-city > .card { width:500px; max-width:100%; gap:15px; }
+.owner-city-intro { color:#bbb; font-size:13px; line-height:1.5; margin:0; }
+.owner-city-search { position:relative; }
+.owner-city-search input { font-size:16px; padding:14px 15px; border-color:#575036; }
+.owner-city-list { display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto;
+    padding:2px; overscroll-behavior:contain; }
+.owner-city-option { display:flex; align-items:center; text-align:left; gap:12px; padding:12px;
+    background:#222; color:#fff; border:1px solid #404040; border-radius:12px; cursor:pointer;
+    font:inherit; min-height:59px; }
+.owner-city-option span:first-child { font-size:20px; }
+.owner-city-option strong { flex:1; min-width:0; }
+.owner-city-option small { display:block; color:#aaa; font-size:11px; margin-top:2px; }
+.owner-city-option.is-selected { border-color:var(--beeline-yellow); background:#302b19; }
+.owner-city-option:disabled { opacity:.5; cursor:not-allowed; }
+.owner-city-option:focus-visible { outline:2px solid var(--beeline-yellow); outline-offset:2px; }
+.owner-city-remember { display:flex; align-items:center; gap:10px; color:#ddd; font-size:13px;
+    padding:2px; cursor:pointer; }
+.owner-city-remember input { width:19px; height:19px; accent-color:var(--beeline-yellow); }
+.owner-city-status { color:#bcbcbc; font-size:12px; line-height:1.5; }
+@media(max-width:440px) { #screen-owner-city > .card { padding:14px; }
+    .owner-city-list { max-height:43vh; } }
 </style>
 </head>
 <!-- Библиотеки для сканирования -->
@@ -1879,11 +1977,31 @@ button, input, textarea, select { font:inherit; }
         </div>
     </div>
 
+    <!-- Город владельца выбирается после каждого входа. -->
+    <div id="screen-owner-city" class="app-screen uniform-screen">
+        <h2>🏙️ Выберите город</h2>
+        <div class="card">
+            <p class="owner-city-intro">Выберите город, в котором хотите работать. Все функции откроются для выбранного города.</p>
+            <div class="owner-city-search">
+                <input id="ownerCitySearch" type="search" placeholder="🔍 Начните вводить название города" autocomplete="off"
+                    oninput="renderOwnerCityOptions()" aria-label="Поиск города">
+            </div>
+            <div id="ownerCityList" class="owner-city-list" role="listbox" aria-label="Города"></div>
+            <label class="owner-city-remember" for="ownerRememberCity">
+                <input id="ownerRememberCity" type="checkbox">Запомнить город для следующего входа
+            </label>
+            <div id="ownerCityStatus" class="owner-city-status" role="status" aria-live="polite"></div>
+            <button id="ownerCityContinue" class="btn main-btn" type="button" onclick="confirmOwnerCity()" disabled>Продолжить в выбранном городе</button>
+            <button class="btn danger-btn" type="button" onclick="logout()">🔚 Выйти</button>
+        </div>
+    </div>
+
     <!-- 4. ГЛАВНОЕ МЕНЮ ПОЛЬЗОВАТЕЛЯ -->
     <div id="screen-main" class="app-screen">
         <h2>Главное меню</h2>
         <div class="card" style="display: flex; flex-direction: column; gap: 4px;">
             <div id="userInfoHeader" style="font-size: 13px; color: var(--beeline-yellow); margin-bottom: 5px;"></div>
+            <button class="btn action-btn" id="ownerChangeCityBtn" type="button" style="display:none;" onclick="openOwnerCityPicker()">🏙️ Сменить город</button>
             
             <button class="btn main-btn" id="technicianReportsBtn" onclick="checkStagerAccess('Отчеты по заявкам', openTechnicianReports)">📝 Отчеты по заявкам</button>
             
@@ -2131,8 +2249,8 @@ button, input, textarea, select { font:inherit; }
                                 <div class="accordion-content">
                                     <label>Модель роутера 1</label>
                                     <div class="custom-dropdown">
-                                        <button type="button" class="dropdown-select-btn" id="tr-r1Model-btn" onclick="toggleDropdown(event, 'tr-r1Model-list')">TP-Link EX222 (AX-1800)</button>
-                                        <input type="hidden" id="tr-r1Model" value="TP-Link EX222 (AX-1800)">
+                                        <button type="button" class="dropdown-select-btn" id="tr-r1Model-btn" onclick="toggleDropdown(event, 'tr-r1Model-list')">Роутер абонента</button>
+                                        <input type="hidden" id="tr-r1Model" value="Роутер абонента">
                                         <div class="dropdown-list" id="tr-r1Model-list"></div>
                                     </div>
 
@@ -2155,8 +2273,8 @@ button, input, textarea, select { font:inherit; }
                                 <div class="accordion-content">
                                     <label>Модель роутера 2</label>
                                     <div class="custom-dropdown">
-                                        <button type="button" class="dropdown-select-btn" id="tr-r2Model-btn" onclick="toggleDropdown(event, 'tr-r2Model-list')">Роутер абонента</button>
-                                        <input type="hidden" id="tr-r2Model" value="Роутер абонента">
+                                        <button type="button" class="dropdown-select-btn" id="tr-r2Model-btn" onclick="toggleDropdown(event, 'tr-r2Model-list')"></button>
+                                        <input type="hidden" id="tr-r2Model" value="">
                                         <div class="dropdown-list" id="tr-r2Model-list"></div>
                                     </div>
 
@@ -2179,8 +2297,8 @@ button, input, textarea, select { font:inherit; }
                                 <div class="accordion-content">
                                     <label>Модель роутера 3</label>
                                     <div class="custom-dropdown">
-                                        <button type="button" class="dropdown-select-btn" id="tr-r3Model-btn" onclick="toggleDropdown(event, 'tr-r3Model-list')">Роутер абонента</button>
-                                        <input type="hidden" id="tr-r3Model" value="Роутер абонента">
+                                        <button type="button" class="dropdown-select-btn" id="tr-r3Model-btn" onclick="toggleDropdown(event, 'tr-r3Model-list')"></button>
+                                        <input type="hidden" id="tr-r3Model" value="">
                                         <div class="dropdown-list" id="tr-r3Model-list"></div>
                                     </div>
 
@@ -2227,8 +2345,8 @@ button, input, textarea, select { font:inherit; }
                                 <div class="accordion-content">
                                     <label>Модель приставки 2</label>
                                     <div class="custom-dropdown">
-                                        <button type="button" class="dropdown-select-btn" id="tr-tv2Model-btn" onclick="toggleDropdown(event, 'tr-tv2Model-list')">Без приставки</button>
-                                        <input type="hidden" id="tr-tv2Model" value="Без приставки">
+                                        <button type="button" class="dropdown-select-btn" id="tr-tv2Model-btn" onclick="toggleDropdown(event, 'tr-tv2Model-list')"></button>
+                                        <input type="hidden" id="tr-tv2Model" value="">
                                         <div class="dropdown-list" id="tr-tv2Model-list"></div>
                                     </div>
 
@@ -2251,8 +2369,8 @@ button, input, textarea, select { font:inherit; }
                                 <div class="accordion-content">
                                     <label>Модель приставки 3</label>
                                     <div class="custom-dropdown">
-                                        <button type="button" class="dropdown-select-btn" id="tr-tv3Model-btn" onclick="toggleDropdown(event, 'tr-tv3Model-list')">Без приставки</button>
-                                        <input type="hidden" id="tr-tv3Model" value="Без приставки">
+                                        <button type="button" class="dropdown-select-btn" id="tr-tv3Model-btn" onclick="toggleDropdown(event, 'tr-tv3Model-list')"></button>
+                                        <input type="hidden" id="tr-tv3Model" value="">
                                         <div class="dropdown-list" id="tr-tv3Model-list"></div>
                                     </div>
 
@@ -2405,6 +2523,10 @@ button, input, textarea, select { font:inherit; }
                                     <input type="number" id="tr-pprTapeQty" placeholder="1">
                                 </div>
                                 <div class="field-container">
+                                    <label>UY2</label>
+                                    <input type="number" id="tr-pprUy2" placeholder="Штук">
+                                </div>
+                                <div class="field-container">
                                     <label>Дюбель 6*40</label>
                                     <input type="number" id="tr-pprDowels" placeholder="Штук">
                                 </div>
@@ -2526,7 +2648,7 @@ button, input, textarea, select { font:inherit; }
                 <button class="btn action-btn" onclick="openMySchedule()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📅 Рабочий график</button>
                 <button class="btn action-btn" onclick="alert('Планы по ППР')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📈 Планы по ППР</button>
                 
-                <button class="btn action-btn" onclick="alert('Долги по Актам')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📑 Долги по Актам</button>
+                <button class="btn action-btn" onclick="openActDebts()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📑 Долги по Актам</button>
                 <button class="btn action-btn" onclick="alert('Моё оборудование и кабель')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">🔌 Оборудование и кабель</button>
                 
                 <button class="btn action-btn" onclick="openMySalary()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">💰 Моя Зарплата</button>
@@ -2537,6 +2659,23 @@ button, input, textarea, select { font:inherit; }
             </div>
             
             <button class="btn danger-btn" onclick="switchScreen('screen-main')" style="margin-top: 10px;">🔚 Главное меню</button>
+        </div>
+    </div>
+
+
+    <!-- Долги по актам авторизованного монтажника -->
+    <div id="screen-act-debts" class="app-screen uniform-screen">
+        <h2>📑 Долги по актам</h2>
+        <div class="card">
+            <div class="act-debts-hero">
+                <div><strong id="actDebtsCount">—</strong><small id="actDebtsSubtitle">Загружаем акты...</small></div>
+                <span class="act-debts-icon" aria-hidden="true">📋</span>
+            </div>
+            <div class="act-debts-toolbar"><span id="actDebtsUser"></span>
+                <button type="button" class="btn action-btn" onclick="loadActDebts()">🔄 Обновить</button>
+            </div>
+            <div id="actDebtsList" aria-live="polite"></div>
+            <button type="button" class="btn danger-btn" onclick="switchScreen('screen-installer-menu')">🔙 Меню монтажника</button>
         </div>
     </div>
 
@@ -2917,9 +3056,9 @@ button, input, textarea, select { font:inherit; }
 </div>
 
 <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ -->
-<div id="editUserModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
-    <div class="card" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 20px;">
-        <h3 style="margin-top: 0; margin-bottom: 12px; text-align: center;">Редактирование учетной записи</h3>
+<div id="editUserModal" role="dialog" aria-modal="true" aria-labelledby="editUserTitle" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
+    <div class="card edit-user-card" style="width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 20px;">
+        <h3 id="editUserTitle" style="margin-top: 0; margin-bottom: 12px; text-align: center;">Редактирование учетной записи</h3>
         <input type="hidden" id="editUserId">
         
         <!-- Первая строчка: ФИО -->
@@ -2929,7 +3068,7 @@ button, input, textarea, select { font:inherit; }
         </div>
 
         <!-- Вторая строчка: Город, Роль, Номер склада -->
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <div class="edit-user-fields" style="display: flex; gap: 8px; margin-bottom: 8px;">
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 2px; font-size: 12px;">Город</label>
                 <input type="text" id="editCityDisplay" disabled style="color: var(--text-secondary); background: #0c0c0c; width: 100%; box-sizing: border-box;">
@@ -2960,7 +3099,7 @@ button, input, textarea, select { font:inherit; }
         </div>
 
         <!-- Третья строчка: Рабочий номер телефона, Пароль -->
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <div class="edit-user-fields" style="display: flex; gap: 8px; margin-bottom: 8px;">
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 2px; font-size: 12px;">Рабочий номер телефона</label>
                 <input type="text" id="editWorkPhone" placeholder="+7 (700)-000-00-00" oninput="applyPhoneMask(this)" onkeydown="handlePhoneKeydown(event)" onpaste="setTimeout(() => applyPhoneMask(this), 0)" style="width: 100%; box-sizing: border-box;">
@@ -2968,7 +3107,7 @@ button, input, textarea, select { font:inherit; }
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 2px; font-size: 12px;">Пароль</label>
                 <div class="password-wrapper" style="position: relative; width: 100%;">
-                    <input type="password" id="editPassword" style="width: 100%; box-sizing: border-box;">
+                    <input type="text" id="editPassword" autocomplete="off" style="width: 100%; box-sizing: border-box;">
                     <span class="toggle-password" onclick="togglePasswordVisibility('editPassword', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
                         <svg viewBox="0 0 24 24" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     </span>
@@ -2977,7 +3116,7 @@ button, input, textarea, select { font:inherit; }
         </div>
 
         <!-- Четвертая строчка: Ваш ID в Telegram, Рабочей группы ID в Telegram -->
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <div class="edit-user-fields" style="display: flex; gap: 8px; margin-bottom: 8px;">
             <div style="flex: 1;">
                 <label style="display: block; margin-bottom: 2px; font-size: 12px;">Ваш ID в Telegram</label>
                 <input type="text" id="editTgId" style="width: 100%; box-sizing: border-box;">
@@ -2995,7 +3134,7 @@ button, input, textarea, select { font:inherit; }
         </div>
 
         <!-- Кнопки управления (Отмена слева, Сохранить справа) -->
-        <div style="display: flex; gap: 8px;">
+        <div class="edit-user-actions" style="display: flex; gap: 8px;">
             <button class="btn danger-btn" onclick="closeEditModal()" style="flex: 1; margin-top: 0;">🔚 Отмена</button>
             <button class="btn main-btn" onclick="saveEditedUser()" style="flex: 1; margin-top: 0;">💾 Сохранить</button>
         </div>
@@ -3095,6 +3234,10 @@ button, input, textarea, select { font:inherit; }
         }
     };
 
+    function isConfiguredCityUrl(url) {
+        return typeof url === 'string' && /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(url);
+    }
+
     const CITIES_LIST = [
         "Сатпаев", "Щучинск", "Хромтау", "Кызылорда", "Рудный", "Балхаш", "Абай", 
         "Лисаковск", "Алматы", "Караганда", "Астана", "Жезказган", "Кокшетау", "Тараз", 
@@ -3146,6 +3289,9 @@ button, input, textarea, select { font:inherit; }
     ];
 
     let currentUser = JSON.parse(localStorage.getItem('beeline_current_user')) || null;
+    let ownerCityChoiceRequired = currentUser?.role === 'Владелец';
+    let ownerCitySelected = '';
+    let ownerCityBusy = false;
     let recoveryEmailTarget = '';
     let generatedRecoveryCode = '';
 
@@ -3301,7 +3447,8 @@ button, input, textarea, select { font:inherit; }
 
     function checkAuthSession() {
         if (currentUser) {
-            const freshUser = usersDb.find(u => u.id === currentUser.id);
+            const freshUser = usersDb.find(u => currentUser.dwLogin && u.dwLogin === currentUser.dwLogin)
+                || usersDb.find(u => u.id === currentUser.id);
             if (freshUser) {
                 currentUser = freshUser;
                 localStorage.setItem('beeline_current_user', JSON.stringify(currentUser));
@@ -3309,13 +3456,10 @@ button, input, textarea, select { font:inherit; }
 
             document.getElementById('userInfoHeader').innerHTML = `👤 <b>${currentUser.fullName}</b> (${currentUser.role}) | 🏢 ${currentUser.city}`;
             
-            const cityConf = CITIES_CONFIG[currentUser.city] || { 
-                scriptUrl: GLOBAL_AUTH_SALARY_URL,
-                reportsUrl: "https://john-toloknov.github.io/scaner-beeline/", 
-                tmcUrl: "https://john-toloknov.github.io/qr-cod-html/" 
-            };
+            const cityConf = CITIES_CONFIG[currentUser.city] || {};
+            document.getElementById('ownerChangeCityBtn').style.display = currentUser.role === 'Владелец' ? 'flex' : 'none';
             
-            document.getElementById('scannerAppBtn').href = cityConf.tmcUrl;
+            document.getElementById('scannerAppBtn').href = cityConf.tmcUrl || '#';
 
             // Получаем все кнопки главного меню
             const adminBtn = document.getElementById('adminPanelBtn');
@@ -3337,9 +3481,125 @@ button, input, textarea, select { font:inherit; }
                 adminBtn.style.display = 'none';
             }
 
-            switchScreen('screen-main');
+            if (currentUser.role === 'Владелец' && ownerCityChoiceRequired) {
+                showOwnerCityPicker();
+            } else {
+                switchScreen('screen-main');
+            }
         } else {
             switchScreen('screen-login');
+        }
+    }
+
+    function ownerCityPreferenceKey() {
+        return 'beeline_owner_city_' + String(currentUser?.dwLogin || '').toLowerCase();
+    }
+
+    function ownerCityIsConfigured(city) {
+        const config = CITIES_CONFIG[city];
+        return !!config && isConfiguredCityUrl(config.scriptUrl) && isConfiguredCityUrl(config.reportsScriptUrl);
+    }
+
+    function showOwnerCityPicker() {
+        if (currentUser?.role !== 'Владелец') return;
+        const savedCity = localStorage.getItem(ownerCityPreferenceKey());
+        ownerCitySelected = CITIES_LIST.includes(savedCity) && ownerCityIsConfigured(savedCity) ? savedCity : '';
+        document.getElementById('ownerRememberCity').checked = !!savedCity && !!ownerCitySelected;
+        document.getElementById('ownerCitySearch').value = '';
+        document.getElementById('ownerCityStatus').textContent = 'Город в учётной записи изменится после подтверждения.';
+        renderOwnerCityOptions();
+        switchScreen('screen-owner-city');
+    }
+
+    function openOwnerCityPicker() {
+        if (currentUser?.role !== 'Владелец') return;
+        ownerCityChoiceRequired = true;
+        showOwnerCityPicker();
+    }
+
+    function renderOwnerCityOptions() {
+        const search = document.getElementById('ownerCitySearch').value.trim().toLocaleLowerCase('ru-RU');
+        const list = document.getElementById('ownerCityList');
+        list.replaceChildren();
+        const matches = CITIES_LIST.filter(city => city.toLocaleLowerCase('ru-RU').startsWith(search));
+        if (!matches.length) {
+            const empty = document.createElement('div');
+            empty.className = 'owner-city-status';
+            empty.textContent = 'Город не найден';
+            list.appendChild(empty);
+        }
+        for (const city of matches) {
+            const configured = ownerCityIsConfigured(city);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'owner-city-option' + (ownerCitySelected === city ? ' is-selected' : '');
+            button.disabled = !configured || ownerCityBusy;
+            button.setAttribute('role', 'option');
+            button.setAttribute('aria-selected', String(ownerCitySelected === city));
+            const icon = document.createElement('span');
+            icon.textContent = configured ? '🏙️' : '🔒';
+            const label = document.createElement('strong');
+            label.textContent = city;
+            const sub = document.createElement('small');
+            sub.textContent = configured ? 'Скрипты города подключены' : 'Нужны адреса скриптов города';
+            label.appendChild(sub);
+            button.append(icon,label);
+            button.onclick = () => {
+                ownerCitySelected = city;
+                renderOwnerCityOptions();
+            };
+            list.appendChild(button);
+        }
+        const continueButton = document.getElementById('ownerCityContinue');
+        continueButton.disabled = !ownerCitySelected || !ownerCityIsConfigured(ownerCitySelected) || ownerCityBusy;
+        continueButton.textContent = ownerCityBusy ? '⏳ Сохраняем город...' :
+            (ownerCitySelected ? 'Продолжить: ' + ownerCitySelected : 'Выберите город');
+    }
+
+    async function confirmOwnerCity() {
+        if (ownerCityBusy || currentUser?.role !== 'Владелец' || !ownerCityIsConfigured(ownerCitySelected)) return;
+        const selected = ownerCitySelected;
+        const owner = currentUser;
+        ownerCityBusy = true;
+        const status = document.getElementById('ownerCityStatus');
+        status.textContent = 'Сохраняем город в Списке сотрудников...';
+        renderOwnerCityOptions();
+        try {
+            // POST в Apps Script не даёт надёжного читаемого ответа из браузера.
+            // Подтверждаем запись отдельным чтением общей таблицы до смены текущего города.
+            await fetch(GLOBAL_AUTH_SALARY_URL, {
+                method:'POST', mode:'no-cors',
+                headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify({action:'ownerSwitchCity',city:selected,
+                    dwLogin:owner.dwLogin,password:owner.password})
+            });
+            let confirmed = false;
+            for (let attempt = 0; attempt < 5 && !confirmed; attempt++) {
+                const reply = await fetch(GLOBAL_AUTH_SALARY_URL + '?action=getUsers&_=' + Date.now(), {cache:'no-store'});
+                if (!reply.ok) throw new Error('Не удалось проверить запись в Списке сотрудников.');
+                const result = await reply.json();
+                if (result.status !== 'ok') throw new Error(result.message || 'Ошибка проверки города.');
+                confirmed = result.users?.some(u => u.role === 'Владелец' && u.dwLogin === owner.dwLogin &&
+                    u.password === owner.password && u.city === selected);
+                if (!confirmed && attempt < 4) await new Promise(resolve => setTimeout(resolve,750));
+            }
+            if (!confirmed) throw new Error('Город не подтверждён в таблице. Проверьте центральный скрипт и повторите попытку.');
+            if (document.getElementById('ownerRememberCity').checked)
+                localStorage.setItem(ownerCityPreferenceKey(), selected);
+            else localStorage.removeItem(ownerCityPreferenceKey());
+            currentUser = {...owner, city:selected};
+            const index = usersDb.findIndex(u => u.dwLogin === owner.dwLogin);
+            if (index >= 0) usersDb[index] = {...usersDb[index],city:selected};
+            localStorage.setItem('beeline_central_user',JSON.stringify(usersDb));
+            localStorage.setItem('beeline_current_user',JSON.stringify(currentUser));
+            ownerCityChoiceRequired = false;
+            status.textContent = '';
+            checkAuthSession();
+        } catch (error) {
+            status.textContent = error.message || 'Не удалось сохранить город.';
+        } finally {
+            ownerCityBusy = false;
+            renderOwnerCityOptions();
         }
     }
 
@@ -3484,6 +3744,7 @@ button, input, textarea, select { font:inherit; }
         
         if (found) {
             currentUser = found;
+            ownerCityChoiceRequired = found.role === 'Владелец';
             localStorage.setItem('beeline_current_user', JSON.stringify(currentUser));
 
             if (rememberMe) {
@@ -3502,6 +3763,8 @@ button, input, textarea, select { font:inherit; }
 
     function logout() {
         currentUser = null;
+        ownerCityChoiceRequired = false;
+        ownerCitySelected = '';
         localStorage.removeItem('beeline_current_user');
         document.getElementById('loginPass').value = '';
         checkAuthSession();
@@ -3848,7 +4111,8 @@ button, input, textarea, select { font:inherit; }
         container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загружаем ваш график из таблицы... 🔄</div>`;
 
         try {
-            const cityConfig = CITIES_CONFIG[currentUser.city] || CITIES_CONFIG["Темиртау"];
+            const cityConfig = CITIES_CONFIG[currentUser.city] || {};
+            if (!isConfiguredCityUrl(cityConfig.scriptUrl)) throw new Error("График для вашего города не настроен");
             const url = `${cityConfig.scriptUrl}?action=getSchedule&fullName=${encodeURIComponent(currentUser.fullName)}&tgId=${encodeURIComponent(currentUser.tgId || '')}`;
             
             const response = await fetch(url, { method: 'GET' });
@@ -3962,7 +4226,8 @@ button, input, textarea, select { font:inherit; }
     async function handleDayClick(dateStr) {
         showBeelineModal("Загрузка...", `Получаем данные по сотрудникам на ${dateStr}...`, "⏳");
         try {
-            const cityConfig = CITIES_CONFIG[currentUser.city] || CITIES_CONFIG["Темиртау"];
+            const cityConfig = CITIES_CONFIG[currentUser.city] || {};
+            if (!isConfiguredCityUrl(cityConfig.scriptUrl)) throw new Error("График для вашего города не настроен");
             const url = `${cityConfig.scriptUrl}?action=getDayDetails&date=${encodeURIComponent(dateStr)}`;
             const response = await fetch(url, { method: 'GET' });
             const res = await response.json();
@@ -4149,10 +4414,10 @@ async function handleSaveAccess(e) {
         return;
     }
 
-    const cityConf = CITIES_CONFIG[currentUser ? currentUser.city : "Темиртау"] || CITIES_CONFIG["Темиртау"];
+    const cityConf = CITIES_CONFIG[currentUser?.city] || {};
     const scriptUrl = cityConf ? cityConf.reportsScriptUrl : null;
     
-    if (!scriptUrl) {
+    if (!isConfiguredCityUrl(scriptUrl)) {
         showBeelineModal("Ошибка", "Не найдена ссылка скрипта для вашего города!", "❌");
         return;
     }
@@ -4179,7 +4444,7 @@ async function handleSaveAccess(e) {
 
         accessDb.push({ 
             id: 'acc_' + Date.now(), 
-            city: currentUser ? currentUser.city : "Темиртау",
+            city: currentUser?.city || '',
             address: payload.address,
             phone1: payload.phone1,
             phone2: payload.phone2,
@@ -4209,7 +4474,7 @@ async function handleSaveAccess(e) {
 async function handleSearchAccess() {
     const query = document.getElementById('searchAddressInput').value.toLowerCase().trim();
     const container = document.getElementById('accessSearchResultsContainer');
-    const userCity = currentUser ? currentUser.city : 'Темиртау';
+    const userCity = currentUser?.city || '';
     const cityConf = CITIES_CONFIG[userCity];
     const scriptUrl = cityConf ? cityConf.reportsScriptUrl : null;
 
@@ -4222,7 +4487,7 @@ async function handleSearchAccess() {
 
     let serverResults = [];
 
-    if (scriptUrl) {
+    if (isConfiguredCityUrl(scriptUrl)) {
         try {
             const response = await fetch(`${scriptUrl}?mode=equipment_search&query=${encodeURIComponent(query)}`);
             const res = await response.json();
@@ -4596,16 +4861,17 @@ async function handleSearchAccess() {
         } else {
             list.forEach(employee => {
                 const name = employee.fullName || employee.name || "Сотрудник";
-                const role = employee.role || employee.warehouse || "";
-                const displayName = name + (role ? " (" + role + ")" : "");
+                const warehouse = employee.warehouse || "";
+                const city = employee.city || (currentUser?.city || '');
             
-                // Экранирование для безопасной передачи в onclick
-                const safeName = name.replace(/'/g, "\\'");
-                const safeDisplayName = displayName.replace(/'/g, "\\'");
+                // Формируем итоговый формат: Фамилия Имя Отчество, Бригада №5 (Темиртау)
+                const warehousePart = warehouse ? `, ${warehouse} (${city})` : ` (${city})`;
+                const fullValue = `${name}${warehousePart}`;
 
                 html += `
-                    <div class="dropdown-item" onclick="selectDropdownOption('installerDropdown', 'installer', 'installer-selected', '${safeName}', '${safeDisplayName}')" style="padding: 10px 12px; cursor: pointer; color: #fff; border-bottom: 1px solid #252525;">
-                        <b>${name}</b> ${role ? '<span style="font-size: 11px; color: var(--text-secondary);">(' + role + ')</span>' : ''}
+                    <div class="dropdown-item" style="padding: 12px; cursor: pointer; border-bottom: 1px solid #222; color: #fff;" 
+                         onclick="selectDropdownOption('installer-list', 'installer', 'installer-selected', '${escapeHtml(fullValue)}', '${escapeHtml(name)}')">
+                        <b>${name}</b> <span style="font-size: 11px; color: var(--text-secondary);">(${warehouse || 'Сотрудник'})</span>
                     </div>
                 `;
             });
@@ -5114,9 +5380,9 @@ function populateInstallersDropdown() {
     const userCity = (currentUser && currentUser.city) ? currentUser.city.trim().toLowerCase() : "";
     let cityUsers = allUsers.filter(u => {
         const uCity = (u.city || "").trim().toLowerCase();
-        return !userCity || uCity === userCity || !uCity;
+        return !!userCity && uCity === userCity;
     });
-    if (!cityUsers.length) cityUsers = allUsers;
+    
 
     allInstallersData = cityUsers.map(u => ({
         fullName: u.fullName || u.name || "Сотрудник",
@@ -5248,8 +5514,9 @@ function showFormStep() {
         const installerEl = document.getElementById('installer');
         const installer = installerEl ? installerEl.value : "";
 
-        const currentCity = currentUser ? currentUser.city : "Темиртау"; 
-        const targetUrl = CITIES_CONFIG[currentCity] ? CITIES_CONFIG[currentCity].reportsScriptUrl : GLOBAL_AUTH_SALARY_URL;
+        const currentCity = currentUser?.city || ''; 
+        const targetUrl = CITIES_CONFIG[currentCity]?.reportsScriptUrl;
+        if (!isConfiguredCityUrl(targetUrl)) { showBeelineModal("Ошибка", "Скрипт города не настроен", "❌"); return; }
 
         const submitBtn = document.getElementById('submit-btn');
         const loader = document.getElementById('loader-text');
@@ -5482,7 +5749,7 @@ document.addEventListener('blur', (e) => {
     ];
 
     const themesDemontazh = [
-        "STB демонтирован", "Роутер демонтирован", "STB+Wi-Fi роутер демонтированы", "Отказ от демонтажа/возврата"
+        "STB демонтирован", "Роутер демонтирован", "STB+Wi-Fi роутер демонтированы", "Отказ от демонтажа/возврата", "Демонтаж ONT", "Демонтаж Wi-Fi роутера в ОПИО", "Демонтаж Wi-Fi + STB в ОПИО", "Демонтаж STB в ОПИО"
     ];
 
     const themesPereezd = [
@@ -5568,10 +5835,10 @@ document.addEventListener('blur', (e) => {
 
         let cityUsers = allUsers.filter(u => {
             const uCity = String(u.city || '').trim().toLowerCase();
-            return !userCity || uCity === userCity || !uCity;
+            return !!userCity && uCity === userCity;
         });
 
-        if (!cityUsers.length) cityUsers = allUsers;
+        
 
         return cityUsers.map(u => ({
             id: u.id || u.dwLogin || u.fullName,
@@ -5669,11 +5936,11 @@ document.addEventListener('blur', (e) => {
             listContainer.innerHTML = html;
 
             if (prefix === 'r1') {
-                document.getElementById(`tr-${prefix}Model`).value = "TP-Link EX222 (AX-1800)";
-                document.getElementById(`tr-${prefix}Model-btn`).textContent = "TP-Link EX222 (AX-1800)";
-            } else {
                 document.getElementById(`tr-${prefix}Model`).value = "Роутер абонента";
                 document.getElementById(`tr-${prefix}Model-btn`).textContent = "Роутер абонента";
+            } else {
+                document.getElementById(`tr-${prefix}Model`).value = "";
+                document.getElementById(`tr-${prefix}Model-btn`).textContent = "";
             }
         });
 
@@ -5687,8 +5954,9 @@ document.addEventListener('blur', (e) => {
             });
             listContainer.innerHTML = html;
 
-            document.getElementById(`tr-${prefix}Model`).value = "Без приставки";
-            document.getElementById(`tr-${prefix}Model-btn`).textContent = "Без приставки";
+            const initialModel = prefix === 'tv1' ? 'Без приставки' : '';
+            document.getElementById(`tr-${prefix}Model`).value = initialModel;
+            document.getElementById(`tr-${prefix}Model-btn`).textContent = initialModel;
         });
     }
     function toggleAccordion(headerElement) {
@@ -6081,11 +6349,11 @@ document.addEventListener('blur', (e) => {
             act: v('tr-actStatus'), installer: v('tr-installerName'),
             result: v('tr-completionTheme'), comment: v('tr-comment'),
             r1m: v('tr-r1Model'), r1s: v('tr-r1Sn'), r1mac: v('tr-r1Mac'),
-            r2m: v('tr-r2Model'), r2s: v('tr-r2Sn'), r2mac: v('tr-r2Mac'),
-            r3m: v('tr-r3Model'), r3s: v('tr-r3Sn'), r3mac: v('tr-r3Mac'),
+            r2m: v('tr-r2Sn') ? v('tr-r2Model') : '', r2s: v('tr-r2Sn'), r2mac: v('tr-r2Mac'),
+            r3m: v('tr-r3Sn') ? v('tr-r3Model') : '', r3s: v('tr-r3Sn'), r3mac: v('tr-r3Mac'),
             tv1m: v('tr-tv1Model'), tv1s: v('tr-tv1Sn'), tv1mac: v('tr-tv1Mac'),
-            tv2m: v('tr-tv2Model'), tv2s: v('tr-tv2Sn'), tv2mac: v('tr-tv2Mac'),
-            tv3m: v('tr-tv3Model'), tv3s: v('tr-tv3Sn'), tv3mac: v('tr-tv3Mac'),
+            tv2m: v('tr-tv2Sn') ? v('tr-tv2Model') : '', tv2s: v('tr-tv2Sn'), tv2mac: v('tr-tv2Mac'),
+            tv3m: v('tr-tv3Sn') ? v('tr-tv3Model') : '', tv3s: v('tr-tv3Sn'), tv3mac: v('tr-tv3Mac'),
             cc2010: v('tr-cc2010'), cc1015: v('tr-cc1015'),
             extCorner: v('tr-extCorner'), intCorner: v('tr-intCorner'),
             turnCorner: v('tr-ftthTurnCorner'), tail: v('tr-ftthTail'),
@@ -6121,7 +6389,7 @@ document.addEventListener('blur', (e) => {
                 Object.assign(values, {
                     R:v.cc2010, S:v.cc1015, T:v.extCorner, U:v.intCorner, V:v.turnCorner, W:v.tail,
                     X:v.dowels, Y:v.ftthClip, Z:v.wallIn, AA:v.optMeters, AB:v.optCount,
-                    AC:v.soc, AD:v.fast, AE:v.kdzs, AF:v.adapter, AI:v.result, AH:v.comment
+                    AC:v.soc, AD:v.fast, AE:v.kdzs, AF:v.adapter, AG:v.comment, AI:v.result
                 });
                 return { row:makeRow(35, values), maxCol:35 };
             }
@@ -6136,7 +6404,7 @@ document.addEventListener('blur', (e) => {
                 AD:v.tv2m, AE:v.tv2s, AF:v.tv2mac, AG:v.tv3m, AH:v.tv3s, AI:v.tv3mac,
                 AJ:v.cc2010, AK:v.cc1015, AL:v.extCorner, AM:v.intCorner, AN:v.turnCorner,
                 AO:v.tail, AP:v.dowels, AQ:v.ftthClip, AR:v.wallIn, AS:v.optMeters,
-                AT:v.optCount, AU:v.soc, AV:v.fast, AW:v.kdzs, AX:v.adapter, AY:v.result, BA:v.comment
+                AT:v.optCount, AU:v.soc, AV:v.fast, AW:v.kdzs, AX:v.adapter, AY:v.comment, BA:v.result
             });
             return { row:makeRow(53, values), maxCol:53 };
         }
@@ -6156,11 +6424,182 @@ document.addEventListener('blur', (e) => {
             A:v('tr-pprAddress'), B:v('tr-pprPlace'), C:v('tr-pprWorkType'), D:v('tr-pprEntrance'),
             E:v('tr-pprLogin'), F:v('tr-reportDate'), G:v('tr-pprCableNum'), H:v('tr-pprCableQty'),
             I:v('tr-pprClipsQty'), J:v('tr-pprConnectorsQty'), K:v('tr-pprClampsQty'),
-            L:v('tr-pprTapeQty'), M:v('tr-pprCc4025'), N:v('tr-pprCc6040'), O:v('tr-pprDowels'),
-            P:v('tr-pprInstaller1'), Q:v('tr-pprInstaller2'), R:v('tr-pprComment'),
-            S:v('tr-pprRate1'), T:v('tr-pprRate2')
+            L:v('tr-pprTapeQty'), M:v('tr-pprUy2'), N:v('tr-pprCc4025'), O:v('tr-pprCc6040'), P:v('tr-pprDowels'),
+            Q:v('tr-pprInstaller1'), R:v('tr-pprInstaller2'), S:v('tr-pprComment'),
+            T:v('tr-pprRate1'), U:v('tr-pprRate2')
         };
-        return { row:makeRow(20, values), maxCol:20 };
+        return { row:makeRow(21, values), maxCol:21 };
+    }
+
+
+    // Долги по актам: GET через JSONP, потому что городские Apps Script отвечают с другого домена.
+    let actDebtsRequest = 0;
+    function requestActDebts(url, fullName, city) {
+        return new Promise((resolve, reject) => {
+            const callback = '__beelineActDebtsCallback_' + Math.random().toString(36).slice(2);
+            const script = document.createElement('script');
+            let finished = false;
+            const finish = (error, data) => {
+                if (finished) return;
+                finished = true;
+                clearTimeout(timer);
+                script.remove();
+                delete window[callback];
+                if (error) reject(error); else resolve(data);
+            };
+            const timer = setTimeout(() => finish(new Error('Сервер города не ответил. Попробуйте обновить список.')), 20000);
+            window[callback] = data => finish(null, data);
+            script.onerror = () => finish(new Error('Не удалось подключиться к скрипту вашего города.'));
+            script.src = url + '?action=getActDebts&fullName=' + encodeURIComponent(fullName)
+                + '&city=' + encodeURIComponent(city) + '&callback=' + encodeURIComponent(callback);
+            document.head.appendChild(script);
+        });
+    }
+    function actDebtsNode(tag, className, value) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (value !== undefined) node.textContent = String(value);
+        return node;
+    }
+    function actDebtsState(icon, message) {
+        const list = document.getElementById('actDebtsList');
+        list.replaceChildren();
+        const state = actDebtsNode('div', 'act-debts-state', message);
+        state.prepend(actDebtsNode('span', '', icon));
+        list.appendChild(state);
+    }
+    function formatActDebtDate(value) {
+        const date = String(value || '').trim();
+        const iso = date.match(/^(\d{4})-(\d{2})-(\d{2})(?:T|\s|$)/);
+        return iso ? `${iso[3]}.${iso[2]}.${iso[1]}` : date;
+    }
+    function renderActDebts(items) {
+        const list = document.getElementById('actDebtsList');
+        list.replaceChildren();
+        const groups = new Map();
+        for (const item of items) {
+            if (!groups.has(item.type)) groups.set(item.type, []);
+            groups.get(item.type).push(item);
+        }
+        for (const [type, entries] of groups) {
+            const group = actDebtsNode('section', 'act-debts-group');
+            const title = actDebtsNode('div', 'act-debts-group-title', type);
+            title.appendChild(actDebtsNode('span', '', entries.length));
+            group.appendChild(title);
+            for (const entry of entries) {
+                const card = actDebtsNode('details', 'act-debts-entry');
+                const summary = actDebtsNode('summary');
+                summary.appendChild(actDebtsNode('span', 'act-debts-address', '📍 ' + (entry.address || 'Адрес не указан')));
+                const meta = actDebtsNode('span', 'act-debts-meta');
+                meta.appendChild(actDebtsNode('time', 'act-debts-date', '📅 ' + (formatActDebtDate(entry.date) || 'Дата не указана')));
+                meta.appendChild(actDebtsNode('span', 'act-debts-status', '● Акт не сдан'));
+                summary.appendChild(meta);
+                const more = actDebtsNode('span', 'act-debts-more');
+                more.appendChild(actDebtsNode('span', 'act-debts-arrow', '▸'));
+                more.appendChild(actDebtsNode('span', '', '🔍 Подробнее'));
+                summary.appendChild(more);
+                card.appendChild(summary);
+                const details = actDebtsNode('dl', 'act-debts-details');
+                for (const field of entry.details || []) {
+                    const row = actDebtsNode('div', 'act-debts-field');
+                    row.appendChild(actDebtsNode('dt', '', field.label));
+                    row.appendChild(actDebtsNode('dd', '', field.value));
+                    details.appendChild(row);
+                }
+                if (!details.childElementCount) details.appendChild(actDebtsNode('div', 'act-debts-state', 'Дополнительных данных нет'));
+                card.appendChild(details);
+                group.appendChild(card);
+            }
+            list.appendChild(group);
+        }
+    }
+    function openActDebts() {
+        if (!currentUser || !currentUser.fullName || !currentUser.city) {
+            showBeelineModal('Требуется вход', 'Авторизуйтесь для просмотра своих актов.', '🔒');
+            return;
+        }
+        switchScreen('screen-act-debts');
+        loadActDebts();
+    }
+    async function loadActDebts() {
+        const request = ++actDebtsRequest;
+        const user = currentUser;
+        const name = user?.fullName;
+        const city = user?.city;
+        const url = CITIES_CONFIG[city]?.reportsScriptUrl;
+        document.getElementById('actDebtsCount').textContent = '—';
+        document.getElementById('actDebtsSubtitle').textContent = 'Ищем ваши акты';
+        document.getElementById('actDebtsUser').textContent = name && city ? name + ' · ' + city : '';
+        actDebtsState('⏳', 'Загружаем данные из таблицы города...');
+        try {
+            if (!name || !city || !isConfiguredCityUrl(url)) throw new Error('Нет данных пользователя или ссылки скрипта его города.');
+            const response = await requestActDebts(url, name, city);
+            if (request !== actDebtsRequest || currentUser?.fullName !== name || currentUser?.city !== city) return;
+            if (response?.status !== 'success' || !Array.isArray(response.items) || response.city !== city)
+                throw new Error(response?.message || 'Не удалось прочитать данные актов.');
+            document.getElementById('actDebtsCount').textContent = response.items.length;
+            document.getElementById('actDebtsSubtitle').textContent = response.items.length ? 'Актов ожидают сдачи' : 'Все акты сданы';
+            if (response.items.length) renderActDebts(response.items);
+            else actDebtsState('✨', 'Долгов по актам нет. Отличная работа!');
+        } catch (error) {
+            if (request !== actDebtsRequest) return;
+            document.getElementById('actDebtsSubtitle').textContent = 'Не удалось загрузить';
+            actDebtsState('⚠️', error.message || 'Ошибка загрузки. Нажмите «Обновить».');
+        }
+    }
+
+    function getReportStatusOnce(url, requestId) {
+        return new Promise((resolve, reject) => {
+            const callbackName = '__beelineReportCallback_' + Math.random().toString(36).slice(2);
+            const script = document.createElement('script');
+            let done = false;
+            const finish = (error, value) => {
+                if (done) return;
+                done = true;
+                clearTimeout(timer);
+                script.remove();
+                delete window[callbackName];
+                if (error) reject(error); else resolve(value);
+            };
+            const timer = setTimeout(() => finish(new Error('Ответ о записи не получен')), 6000);
+            window[callbackName] = value => finish(null, value);
+            script.onerror = () => finish(new Error('Сервер статуса недоступен'));
+            script.src = `${url}?action=getReportStatus&requestId=${encodeURIComponent(requestId)}&callback=${callbackName}`;
+            document.head.appendChild(script);
+        });
+    }
+
+    async function waitForReportReceipt(url, requestId) {
+        const deadline = Date.now() + 45000;
+        while (Date.now() < deadline) {
+            try {
+                const result = await getReportStatusOnce(url, requestId);
+                if (result.status === 'success') return result;
+                if (result.status === 'error') throw new Error(result.message || 'Ошибка записи в таблицу');
+            } catch (error) {
+                if (error.message !== 'Ответ о записи не получен' && error.message !== 'Сервер статуса недоступен') throw error;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1200));
+        }
+        throw new Error('Не удалось подтвердить запись. Проверьте таблицу города перед повторной отправкой, чтобы не создать дубликат.');
+    }
+
+    function finishReportAndStartNext() {
+        closeBeelineModal();
+        resetTechnicianReportState();
+        switchScreen('screen-technician-reports');
+        window.scrollTo(0, 0);
+    }
+
+    function showVerifiedReportResult(type, city, receipt) {
+        const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[ch]));
+        const rowNumber = Number(receipt.rowNumber);
+        const sheetName = safe(receipt.spreadsheetName || '');
+        const reportName = safe(receipt.reportType || type);
+        const cityName = safe(city);
+        const message = `Отчёт <b>${reportName}</b> записан в таблицу <b>${sheetName}</b> (г. ${cityName}), строка <b>${rowNumber}</b>.`;
+        const buttons = '<button type="button" class="btn main-btn" onclick="finishReportAndStartNext()">📝 Следующий отчёт</button>';
+        showBeelineModal('Отчёт сохранён', message, '✅', buttons);
     }
 
     async function submitReport(e) {
@@ -6172,20 +6611,20 @@ document.addEventListener('blur', (e) => {
 
         if (type.includes("ППР")) {
             if (!document.getElementById('tr-pprInstaller1').value) {
-                alert("Не удалось определить авторизованного монтажника!");
+                showBeelineModal('Проверьте отчёт', 'Не удалось определить авторизованного монтажника!', '⚠️');
                 return;
             }
             if (!document.getElementById('tr-pprInstaller2').value) {
-                alert("Пожалуйста, выберите второго монтажника для ППР!");
+                showBeelineModal('Проверьте отчёт', 'Пожалуйста, выберите второго монтажника для ППР!', '⚠️');
                 return;
             }
         } else {
             if (!document.getElementById('tr-installerName').value) {
-                alert("Не удалось определить авторизованного монтажника!");
+                showBeelineModal('Проверьте отчёт', 'Не удалось определить авторизованного монтажника!', '⚠️');
                 return;
             }
             if (!document.getElementById('tr-completionTheme').value) {
-                alert("Пожалуйста, укажите или выберите результат решения!");
+                showBeelineModal('Проверьте отчёт', 'Пожалуйста, укажите или выберите результат решения!', '⚠️');
                 return;
             }
         }
@@ -6198,14 +6637,16 @@ document.addEventListener('blur', (e) => {
 
         try {
             const cityConf = CITIES_CONFIG[currentUser?.city] || {};
-            const targetUrl = cityConf.reportsScriptUrl || SCRIPT_URL;
-            if (!targetUrl) throw new Error("Не настроен URL скрипта отчетов для города.");
+            const targetUrl = cityConf.reportsScriptUrl;
+            if (!isConfiguredCityUrl(targetUrl)) throw new Error("Не настроен URL скрипта отчетов для города.");
+            const requestId = 'report_' + (window.crypto?.randomUUID?.() || (Date.now() + '_' + Math.random().toString(36).slice(2)));
 
             let payload;
             if (type.includes("ППР")) {
                 const built = buildPprReportRow();
                 payload = {
                     action:"report", reportType:type, rowValues:built.row, maxCol:built.maxCol,
+                    city:currentUser.city, requestId:requestId,
                     authorizedUser:document.getElementById('tr-pprInstaller1').value,
                     secondInstaller:document.getElementById('tr-pprInstaller2').value,
                     photosBefore:await filesToTelegramPhotos(pprPhotosBefore,20),
@@ -6216,6 +6657,7 @@ document.addEventListener('blur', (e) => {
                 const built = buildStandardReportRow(type,v);
                 payload = {
                     action:"report", reportType:type, rowValues:built.row, maxCol:built.maxCol,
+                    city:currentUser.city, requestId:requestId,
                     authorizedUser:v.installer, photos:await filesToTelegramPhotos(photosList,10)
                 };
             }
@@ -6226,11 +6668,15 @@ document.addEventListener('blur', (e) => {
                 body:JSON.stringify(payload)
             });
 
-            alert("✅ Отчет успешно отправлен в Google Таблицу и рабочий чат Telegram!");
-            if (reportTg && reportTg.close) reportTg.close();
+            const receipt = await waitForReportReceipt(targetUrl, requestId);
+            if (receipt.reportType !== type || !Number.isInteger(Number(receipt.rowNumber))) {
+                throw new Error('Сервер вернул некорректное подтверждение отчёта.');
+            }
+            showVerifiedReportResult(type, currentUser.city, receipt);
         } catch(error) {
             console.error(error);
-            alert("❌ Ошибка при отправке отчета: " + error.message);
+            const safeMessage = String(error.message || error).replace(/[&<>"']/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[ch]));
+            showBeelineModal('Не удалось подтвердить отчёт', safeMessage, '❌');
         } finally {
             isSubmitting=false;
             submitBtn.textContent=originalText;
@@ -6567,7 +7013,8 @@ async function handleReturnEquipment(e) {
 
     // Жесткая привязка к вашему reportsScriptUrl для отчетов/возвратов
     const cityConf = CITIES_CONFIG[currentUser.city] || {};
-    const targetUrl = cityConf.reportsScriptUrl || "https://script.google.com/macros/s/AKfycbw_yI2oF5zXSY4KJNJTcolrrVj9-b-CzUauQR_W9N6oLotyV6Nv5m3m7V1F-6RM0lQsgQ/exec";
+    const targetUrl = cityConf.reportsScriptUrl;
+    if (!isConfiguredCityUrl(targetUrl)) { showBeelineModal("Ошибка", "Скрипт вашего города не настроен", "❌"); return; }
 
     showBeelineModal("Запись", "Сохранение возврата оборудования...", "⏳");
 
@@ -6605,7 +7052,8 @@ async function openCheckReturnScreen() {
     container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Загрузка возвращенного оборудования... 🔄</div>`;
 
     const cityConf = CITIES_CONFIG[currentUser.city] || {};
-    const targetUrl = cityConf.reportsScriptUrl || "https://script.google.com/macros/s/AKfycbw_yI2oF5zXSY4KJNJTcolrrVj9-b-CzUauQR_W9N6oLotyV6Nv5m3m7V1F-6RM0lQsgQ/exec";
+    const targetUrl = cityConf.reportsScriptUrl;
+    if (!isConfiguredCityUrl(targetUrl)) { container.textContent = "Скрипт вашего города не настроен"; return; }
 
     // Вспомогательная функция для приведения любой даты к виду ДД.ММ.ГГГГ
     function formatDateToRu(dateStr) {

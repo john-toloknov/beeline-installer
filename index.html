@@ -1968,6 +1968,9 @@ button, input, textarea, select { font:inherit; }
                 <label>Рабочей группы ID в Telegram</label>
                 <input type="text" id="regTgGroup" required placeholder="-100xxxxxxx">
 
+                <label>ID второй рабочей группы Telegram (ППР)</label>
+                <input type="text" id="regTgGroupPpr" required value="-1003542427176" placeholder="-1003542427176">
+
                 <label>Рабочая почта (для восстановления пароля)</label>
                 <input type="email" id="regEmail" required placeholder="example@gmail.com">
 
@@ -2003,10 +2006,10 @@ button, input, textarea, select { font:inherit; }
             <div id="userInfoHeader" style="font-size: 13px; color: var(--beeline-yellow); margin-bottom: 5px;"></div>
             <button class="btn action-btn" id="ownerChangeCityBtn" type="button" style="display:none;" onclick="openOwnerCityPicker()">🏙️ Сменить город</button>
             
-            <button class="btn main-btn" id="technicianReportsBtn" onclick="checkStagerAccess('Отчеты по заявкам', openTechnicianReports)">📝 Отчеты по заявкам</button>
+            <button class="btn main-btn" id="technicianReportsBtn" onclick="openTechnicianReports()">📝 Отчеты по заявкам</button>
             
             <!-- Меню монтажника -->
-            <button class="btn main-btn" id="installerMenuBtn" style="display: none;" onclick="checkStagerAccess('Меню монтажника', 'screen-installer-menu')">👷 Меню монтажника</button>
+            <button class="btn main-btn" id="installerMenuBtn" style="display: none;" onclick="switchScreen('screen-installer-menu')">👷 Меню монтажника</button>
             
             <!-- Доступ к оборудованию -->
             <button class="btn main-btn" id="equipmentAccessBtn" style="display: none;" onclick="checkStagerAccess('Доступ к оборудованию', 'screen-equipment-access')">🔑 Доступ к оборудованию</button>
@@ -2015,8 +2018,8 @@ button, input, textarea, select { font:inherit; }
             <button class="btn main-btn" id="softwareBtn" type="button" onclick="openSoftwareScreen()">🛠️ Программное обеспечение</button>
             
             <!-- Кнопки ТМЦ и Админ-панель -->
-            <button class="btn main-btn" id="scannerAppBtn" style="display: none;" onclick="checkStagerAccess('Записать ТМЦ', openScannerScreen)">📦 Записать ТМЦ</button>
-            <button class="btn main-btn" id="adminPanelBtn" style="display: none;" onclick="checkStagerAccess('Админ-панель', openAdminPanel)">⚙️ Админ-панель</button>
+            <button class="btn main-btn" id="scannerAppBtn" style="display: none;" onclick="openScannerScreen()">📦 Записать ТМЦ</button>
+            <button class="btn main-btn" id="adminPanelBtn" style="display: none;" onclick="openAdminPanel()">⚙️ Админ-панель</button>
             
             <button class="btn danger-btn" onclick="logout()" style="margin-top: 20px;">🔚 Выйти</button>
         </div>
@@ -3127,6 +3130,7 @@ button, input, textarea, select { font:inherit; }
             </div>
         </div>
 
+        <div style="margin-bottom: 12px;"><label>ID группы Telegram для ППР</label><input type="text" id="editTgGroupPpr" style="width:100%;box-sizing:border-box;"></div>
         <!-- Пятая строчка: Рабочая почта (для восстановления) -->
         <div style="margin-bottom: 12px;">
             <label style="display: block; margin-bottom: 2px; font-size: 12px;">Рабочая почта (для восстановления)</label>
@@ -3246,34 +3250,7 @@ button, input, textarea, select { font:inherit; }
         "Костанай", "Конаев", "Жанаозен", "Риддер", "Житикара", "Шахтинск", "Кандыагаш"
     ].sort((a, b) => a.localeCompare(b));
 
-    let usersDb = JSON.parse(localStorage.getItem('beeline_central_user')) || [
-       {
-            id: 'owner_1',
-            fullName: 'J.T.',
-            city: 'Темиртау',
-            warehouse: 'Главный склад',
-            role: 'Владелец',
-            workPhone: '+7 (776)-533-98-88',
-            dwLogin: 'J.T.@beeline.kz',
-            email: 'johntoloknov@gmail.com',
-            password: 'Fuckoff932784!',
-            tgId: '1160882045',
-            tgGroup: '-1001383444721'
-        },
-        {
-            id: 'user_4',
-            fullName: 'Толокнов Евгений Алексеевич',
-            city: 'Темиртау',
-            warehouse: 'Бригада №15',
-            role: 'Старший Техник',
-            workPhone: '+7 (705)-840-89-99',
-            dwLogin: 'YToloknov@beeline.kz',
-            email: 'john-most-wanted@list.ru',
-            password: '11233',
-            tgId: '1160882045',
-            tgGroup: '-1001383444721'
-        }
-    ];
+    let usersDb = []; // Учётные записи загружаются только из листа сотрудников.
 
     let accessDb = JSON.parse(localStorage.getItem('beeline_access_db')) || [
         {
@@ -3319,8 +3296,7 @@ button, input, textarea, select { font:inherit; }
         try {
             const response = await fetch(`${GLOBAL_AUTH_SALARY_URL}?action=getUsers`);
             const res = await response.json();
-            if (res.status === 'ok' && res.users && res.users.length > 0) {
-                const owner = usersDb.find(u => u.role === 'Владелец');
+            if (res.status === 'ok' && Array.isArray(res.users)) {
                 let sheetUsers = res.users.map((u, index) => ({
                     id: u.id || ('user_' + index),
                     city: u.city,
@@ -3332,11 +3308,9 @@ button, input, textarea, select { font:inherit; }
                     password: u.password,
                     tgId: u.tgId,
                     tgGroup: u.tgGroup,
+                    tgGroupPpr: u.tgGroupPpr,
                     email: u.email
                 }));
-                if (owner && !sheetUsers.some(u => u.email === owner.email || u.dwLogin === owner.dwLogin)) {
-                    sheetUsers.unshift(owner);
-                }
                 usersDb = sheetUsers;
                 localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
             }
@@ -3449,10 +3423,9 @@ button, input, textarea, select { font:inherit; }
         if (currentUser) {
             const freshUser = usersDb.find(u => currentUser.dwLogin && u.dwLogin === currentUser.dwLogin)
                 || usersDb.find(u => u.id === currentUser.id);
-            if (freshUser) {
-                currentUser = freshUser;
-                localStorage.setItem('beeline_current_user', JSON.stringify(currentUser));
-            }
+            if (!freshUser) { currentUser = null; localStorage.removeItem('beeline_current_user'); switchScreen('screen-login'); return; }
+            currentUser = freshUser;
+            localStorage.setItem('beeline_current_user', JSON.stringify(currentUser));
 
             document.getElementById('userInfoHeader').innerHTML = `👤 <b>${currentUser.fullName}</b> (${currentUser.role}) | 🏢 ${currentUser.city}`;
             
@@ -3468,18 +3441,20 @@ button, input, textarea, select { font:inherit; }
             const equipmentAccessBtn = document.getElementById('equipmentAccessBtn');
             const technicianReportsBtn = document.getElementById('technicianReportsBtn');
             
-            // ДЕЛАЕМ ВСЕ КНОПКИ ВИДИМЫМИ ДЛЯ ВСЕХ РОЛЕЙ (ограничения будут срабатывать при клике)
-            if (technicianReportsBtn) technicianReportsBtn.style.display = 'flex';
-            if (installerMenuBtn) installerMenuBtn.style.display = 'flex';
-            if (equipmentAccessBtn) equipmentAccessBtn.style.display = 'flex';
-            if (scannerBtn) scannerBtn.style.display = 'flex';
-
-            // Админ-панель оставляем доступной только административным ролям
-            if (currentUser.role === 'Владелец' || currentUser.role === 'Администратор' || currentUser.role === 'Старший Техник') {
-                adminBtn.style.display = 'flex';
-            } else {
-                adminBtn.style.display = 'none';
-            }
+            const role = currentUser.role;
+            const trainee = role === 'Стажер';
+            const manager = ['Старший Техник', 'Администратор', 'Владелец'].includes(role);
+            technicianReportsBtn.style.display = 'flex';
+            installerMenuBtn.style.display = 'flex';
+            equipmentAccessBtn.style.display = trainee ? 'none' : 'flex';
+            scannerBtn.style.display = manager ? 'flex' : 'none';
+            adminBtn.style.display = manager ? 'flex' : 'none';
+            document.querySelectorAll('#screen-installer-menu .card button').forEach(btn => {
+                btn.style.display = trainee && !btn.textContent.includes('Рабочий график') ? 'none' : '';
+            });
+            document.querySelectorAll('.report-finish-btn').forEach(btn => {
+                btn.style.display = trainee ? 'none' : '';
+            });
 
             if (currentUser.role === 'Владелец' && ownerCityChoiceRequired) {
                 showOwnerCityPicker();
@@ -3780,7 +3755,7 @@ button, input, textarea, select { font:inherit; }
 
     // Функция-обработчик для проверки роли стажера при клике на функционал
     function checkStagerAccess(featureName, callbackUrlOrScreenId) {
-    if (currentUser && currentUser.role === "Стажер") {
+    if (currentUser && currentUser.role === "Стажер" && featureName !== 'Отчеты по заявкам' && featureName !== 'Меню монтажника' && featureName !== 'Рабочий график') {
         handleStagerRestrictionClick(featureName);
         return; // Блокируем дальнейшее выполнение и переход
     }
@@ -3890,6 +3865,7 @@ button, input, textarea, select { font:inherit; }
     }
 
     async function openMySalary() {
+        if (currentUser?.role === 'Стажер') return;
         if (!currentUser) {
             showBeelineModal("Ошибка", "Необходимо авторизоваться в системе!", "❌");
             return;
@@ -4306,11 +4282,12 @@ button, input, textarea, select { font:inherit; }
         const p2 = document.getElementById('regPasswordConfirm').value;
         const tgIdInput = document.getElementById('regTgId');
         const tgGroupInput = document.getElementById('regTgGroup');
+        const tgGroupPprInput = document.getElementById('regTgGroupPpr');
         const emailInput = document.getElementById('regEmail');
 
         if (!fullNameInput.value.trim() || !warehouseInput.value.trim() || !roleInput.value || 
             !workPhoneInput.value.trim() || !dwLoginInput.value.trim() || !p1 || !p2 || 
-            !tgIdInput.value.trim() || !tgGroupInput.value.trim() || !emailInput.value.trim()) {
+            !tgIdInput.value.trim() || !tgGroupInput.value.trim() || !tgGroupPprInput.value.trim() || !emailInput.value.trim()) {
             showBeelineModal("Ошибка", "Все поля в форме регистрации должны быть заполнены!", "❌");
             return;
         }
@@ -4356,6 +4333,7 @@ button, input, textarea, select { font:inherit; }
             password: p1,
             tgId: tgIdInput.value.trim(),
             tgGroup: tgGroupInput.value.trim(),
+            tgGroupPpr: tgGroupPprInput.value.trim(),
             email: emailVal
         };
 
@@ -4541,6 +4519,7 @@ async function handleSearchAccess() {
 }
 
     async function openAdminPanel() {
+        if (!['Старший Техник','Администратор','Владелец'].includes(currentUser?.role)) return;
         await loadUsersFromSheet();
         renderUsersList();
         switchScreen('screen-admin');
@@ -4557,7 +4536,7 @@ async function handleSearchAccess() {
             u.role.toLowerCase().includes(search)
         );
 
-        if (currentUser.role === 'Старший Техник') {
+        if (currentUser.role === 'Старший Техник' || currentUser.role === 'Администратор') {
             filtered = filtered.filter(u => u.city === currentUser.city);
         }
 
@@ -4565,17 +4544,11 @@ async function handleSearchAccess() {
 
         let html = '';
         filtered.forEach(u => {
-            let canModify = false;
-            if (currentUser.role === 'Владелец' || currentUser.role === 'Администратор') {
-                canModify = true;
-            } else if (currentUser.role === 'Старший Техник') {
-                if ((u.role === 'Техник-Универсал' || u.role === 'Бригадир') && u.city === currentUser.city) {
-                    canModify = true;
-                }
-            }
-
-            const isOwnerUser = (u.role === 'Владелец');
-            const canDelete = currentUser.role === 'Владелец' && !isOwnerUser && currentUser.id !== u.id;
+            const canModify = currentUser.role === 'Владелец' ||
+                (currentUser.role === 'Администратор' && u.city === currentUser.city && u.role !== 'Владелец') ||
+                (currentUser.role === 'Старший Техник' && u.city === currentUser.city && ['Стажер','Техник-Универсал','Бригадир'].includes(u.role));
+            const canDelete = currentUser.role === 'Владелец' ||
+                (currentUser.role === 'Администратор' && u.city === currentUser.city && u.role !== 'Владелец');
 
             html += `
                 <div class="user-row">
@@ -4584,7 +4557,7 @@ async function handleSearchAccess() {
                     <div class="user-info">Рабочий номер: <span>${u.workPhone || 'Не указан'}</span></div>
                     <div class="user-info">Почта: ${u.email}</div>
                     <div class="user-info">Логин DW: ${u.dwLogin} | Пароль: ••••••••</div>
-                    <div class="user-info">Telegram ID: ${u.tgId} | Группа ID: ${u.tgGroup}</div>
+                    <div class="user-info">Telegram ID: ${u.tgId} | Группа ID: ${u.tgGroup} | ППР ID: ${u.tgGroupPpr || "—"}</div>
                     ${(canModify || currentUser.id === u.id) ? `
                         <div class="user-actions">
                             <button class="btn action-btn" onclick="openEditModal('${u.id}')">✏️ Редактировать</button>
@@ -4602,12 +4575,12 @@ async function handleSearchAccess() {
         const u = usersDb.find(item => item.id === userId);
         if (!u) return;
 
-        if (currentUser.role === 'Администратор' && (u.role === 'Администратор' || u.role === 'Владелец')) {
+        if (currentUser.role === 'Администратор' && (u.city !== currentUser.city || u.role === 'Владелец')) {
             showBeelineModal("Доступ ограничен", "У вас нет прав на редактирование администраторов или владельца.", "⚠️");
             return;
         }
         if (currentUser.role === 'Старший Техник') {
-            if (u.role !== 'Техник-Универсал' && u.role !== 'Бригадир') {
+            if (u.city !== currentUser.city || !['Стажер','Техник-Универсал','Бригадир'].includes(u.role)) {
                 showBeelineModal("Доступ ограничен", "Старший техник может редактировать только Техников-Универсалов и Бригадиров.", "⚠️");
                 return;
             }
@@ -4625,7 +4598,8 @@ async function handleSearchAccess() {
         document.getElementById('editWorkPhone').value = u.workPhone || '';
         document.getElementById('editPassword').value = u.password;
         document.getElementById('editTgId').value = u.tgId;
-        document.getElementById('editTgGroup').value = u.tgGroup;
+        document.getElementById('editTgGroup').value = u.tgGroup || '';
+        document.getElementById('editTgGroupPpr').value = u.tgGroupPpr || '-1003542427176';
         document.getElementById('editEmail').value = u.email;
 
         const roleInput = document.getElementById('editRole');
@@ -4639,7 +4613,7 @@ async function handleSearchAccess() {
         roleLabel.textContent = u.role;
 
         if (u.role === 'Владелец') {
-            optOwner.style.display = 'block';
+            optOwner.style.display = currentUser.role === 'Владелец' ? 'block' : 'none';
             optAdmin.style.display = 'block';
             optSenior.style.display = 'block';
             roleDropdown.style.pointerEvents = 'none';
@@ -4649,7 +4623,7 @@ async function handleSearchAccess() {
             optOwner.style.display = 'none';
             roleDropdown.style.pointerEvents = 'auto';
         } else if (currentUser.role === 'Администратор') {
-            optAdmin.style.display = 'none';
+            optAdmin.style.display = 'block';
             optSenior.style.display = 'block';
             optOwner.style.display = 'none';
             roleDropdown.style.pointerEvents = 'auto';
@@ -4660,6 +4634,13 @@ async function handleSearchAccess() {
             optSenior.style.display = 'block';
         }
 
+        const senior = currentUser.role === 'Старший Техник';
+        const owner = currentUser.role === 'Владелец';
+        ['editTgId', 'editTgGroup', 'editTgGroupPpr'].forEach(id => {
+            document.getElementById(id).disabled = senior;
+        });
+        document.getElementById('editCityDisplay').disabled = !owner;
+        document.getElementById('editCityDisplay').onchange = owner ? function() { document.getElementById('editCity').value = this.value; } : null;
         document.getElementById('editUserModal').style.display = 'flex';
     }
 
@@ -4674,12 +4655,13 @@ async function handleSearchAccess() {
         const passwordInput = document.getElementById('editPassword');
         const tgIdInput = document.getElementById('editTgId');
         const tgGroupInput = document.getElementById('editTgGroup');
+        const tgGroupPprInput = document.getElementById('editTgGroupPpr');
         const emailInput = document.getElementById('editEmail');
         const cityInput = document.getElementById('editCity');
 
         if (!fullNameInput.value.trim() || !warehouseInput.value.trim() || 
             !workPhoneInput.value.trim() || !passwordInput.value || 
-            !tgIdInput.value.trim() || !tgGroupInput.value.trim() || !emailInput.value.trim()) {
+            !tgIdInput.value.trim() || !tgGroupInput.value.trim() || !tgGroupPprInput.value.trim() || !emailInput.value.trim()) {
             showBeelineModal("Ошибка", "Все поля в форме редактирования должны быть заполнены!", "❌");
             return;
         }
@@ -4717,22 +4699,23 @@ async function handleSearchAccess() {
                 newRole = 'Владелец';
             }
             if (currentUser.role === 'Старший Техник') {
-                if (newRole !== 'Техник-Универсал' && newRole !== 'Бригадир') {
+                if (!['Стажер','Техник-Универсал','Бригадир'].includes(newRole)) {
                     newRole = usersDb[index].role;
                 }
             }
 
             const updatedUser = {
                 action: 'update',
-                city: cityInput.value,
+                city: currentUser.role === 'Владелец' ? cityInput.value : usersDb[index].city,
                 fullName: formattedFullName,
                 warehouse: warehouseVal,
                 role: newRole,
                 workPhone: phoneInput,
                 dwLogin: usersDb[index].dwLogin,
                 password: passwordInput.value,
-                tgId: tgIdInput.value.trim(),
-                tgGroup: tgGroupInput.value.trim(),
+                tgId: currentUser.role === 'Старший Техник' ? usersDb[index].tgId : tgIdInput.value.trim(),
+                tgGroup: currentUser.role === 'Старший Техник' ? usersDb[index].tgGroup : tgGroupInput.value.trim(),
+                tgGroupPpr: currentUser.role === 'Старший Техник' ? usersDb[index].tgGroupPpr : tgGroupPprInput.value.trim(),
                 email: emailVal
             };
 
@@ -4753,6 +4736,7 @@ async function handleSearchAccess() {
             usersDb[index].password = updatedUser.password;
             usersDb[index].tgId = updatedUser.tgId;
             usersDb[index].tgGroup = updatedUser.tgGroup;
+            usersDb[index].tgGroupPpr = updatedUser.tgGroupPpr;
             usersDb[index].email = updatedUser.email;
 
             localStorage.setItem('beeline_central_user', JSON.stringify(usersDb));
@@ -4782,7 +4766,7 @@ async function handleSearchAccess() {
     async function deleteUser(userId) {
         // Находим пользователя в базе по его ID перед удалением
         const userToDelete = usersDb.find(item => item.id === userId);
-        if (!userToDelete) return;
+        if (!userToDelete || !['Владелец','Администратор'].includes(currentUser?.role) || (currentUser.role === 'Администратор' && (userToDelete.city !== currentUser.city || userToDelete.role === 'Владелец'))) return;
 
         const deletePayload = {
             action: 'delete',
@@ -4827,6 +4811,7 @@ async function handleSearchAccess() {
     const SCAN_COOLDOWN = 3000; 
 
     function openScannerScreen() {
+        if (!['Старший Техник','Администратор','Владелец'].includes(currentUser?.role)) return;
         switchScreen('screen-scanner');
         initScannerDefaults();
         loadInstallersDropdown();
@@ -6478,8 +6463,10 @@ document.addEventListener('blur', (e) => {
         list.replaceChildren();
         const groups = new Map();
         for (const item of items) {
-            if (!groups.has(item.type)) groups.set(item.type, []);
-            groups.get(item.type).push(item);
+            const groupName = /^(Включение|Переезд|Демонтаж) (FTTB|GPON)$/.test(item.type)
+                ? item.type.split(' ')[0] + ' FTTB/GPON' : 'Роутеры/Приставки';
+            if (!groups.has(groupName)) groups.set(groupName, []);
+            groups.get(groupName).push(item);
         }
         for (const [type, entries] of groups) {
             const group = actDebtsNode('section', 'act-debts-group');
@@ -6489,7 +6476,7 @@ document.addEventListener('blur', (e) => {
             for (const entry of entries) {
                 const card = actDebtsNode('details', 'act-debts-entry');
                 const summary = actDebtsNode('summary');
-                summary.appendChild(actDebtsNode('span', 'act-debts-address', '📍 ' + (entry.address || 'Адрес не указан')));
+                summary.appendChild(actDebtsNode('span', 'act-debts-address', '📍 ' + (entry.address || 'Адрес не указан') + (entries.length > 1 && type.endsWith('FTTB/GPON') ? ' · ' + entry.type : (type === 'Роутеры/Приставки' ? ' · ' + entry.type : ''))));
                 const meta = actDebtsNode('span', 'act-debts-meta');
                 meta.appendChild(actDebtsNode('time', 'act-debts-date', '📅 ' + (formatActDebtDate(entry.date) || 'Дата не указана')));
                 meta.appendChild(actDebtsNode('span', 'act-debts-status', '● Акт не сдан'));
@@ -6514,6 +6501,7 @@ document.addEventListener('blur', (e) => {
         }
     }
     function openActDebts() {
+        if (currentUser?.role === 'Стажер') return;
         if (!currentUser || !currentUser.fullName || !currentUser.city) {
             showBeelineModal('Требуется вход', 'Авторизуйтесь для просмотра своих актов.', '🔒');
             return;
@@ -6607,6 +6595,7 @@ document.addEventListener('blur', (e) => {
         if (isSubmitting) return;
 
         const type = document.getElementById('tr-reportType').value;
+        if (currentUser?.role === 'Стажер') { showBeelineModal('Доступ ограничен', 'Стажер не может завершить отчёт.', '🔒'); return; }
         setReportAuthorizedUser();
 
         if (type.includes("ППР")) {
@@ -6647,6 +6636,7 @@ document.addEventListener('blur', (e) => {
                 payload = {
                     action:"report", reportType:type, rowValues:built.row, maxCol:built.maxCol,
                     city:currentUser.city, requestId:requestId,
+                    tgGroupId: currentUser.tgGroupPpr || "-1003542427176",
                     authorizedUser:document.getElementById('tr-pprInstaller1').value,
                     secondInstaller:document.getElementById('tr-pprInstaller2').value,
                     photosBefore:await filesToTelegramPhotos(pprPhotosBefore,20),
@@ -6658,6 +6648,7 @@ document.addEventListener('blur', (e) => {
                 payload = {
                     action:"report", reportType:type, rowValues:built.row, maxCol:built.maxCol,
                     city:currentUser.city, requestId:requestId,
+                    tgGroupId: currentUser.tgGroup,
                     authorizedUser:v.installer, photos:await filesToTelegramPhotos(photosList,10)
                 };
             }
@@ -6934,6 +6925,7 @@ function applyScannedReturnText(decodedText) {
 // 5. ИНИЦИАЛИЗАЦИЯ И ОТКРЫТИЕ ФОРМЫ ВОЗВРАТА ОБОРУДОВАНИЯ
 
 function openReturnEquipmentForm() {
+    if (currentUser?.role === 'Стажер') return;
     if (!currentUser) {
         showBeelineModal("Ошибка", "Необходимо авторизоваться!", "❌");
         return;
@@ -6993,6 +6985,7 @@ function openReturnEquipmentForm() {
 // 6. ОТПРАВКА ДАННЫХ ВОЗВРАТА ОБОРУДОВАНИЯ В GOOGLE ТАБЛИЦУ (ЧЕРЕЗ reportsScriptUrl)
 
 async function handleReturnEquipment(e) {
+    if (currentUser?.role === 'Стажер') return;
     e.preventDefault();
     
     const payload = {
@@ -7044,6 +7037,7 @@ async function handleReturnEquipment(e) {
 // 7. ПРОСМОТР / ПРОВЕРКА ВОЗВРАЩЕННОГО ОБОРУДОВАНИЯ ЗА ТЕКУЩИЙ МЕСЯЦ (ЧЕРЕЗ reportsScriptUrl)
 
 async function openCheckReturnScreen() {
+    if (currentUser?.role === 'Стажер') return;
     if (!currentUser) return;
     switchScreen('screen-check-return');
     const container = document.getElementById('returnedEquipmentListContainer');

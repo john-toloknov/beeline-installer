@@ -1795,6 +1795,10 @@ button, input, textarea, select { font:inherit; }
     .act-debts-field dd { text-align:left; }
     .act-debts-status { margin-left:5px; }
 }
+/* Карточки личных остатков используют оформление долгов по актам. */
+#screen-my-equipment > .card { width:500px; max-width:100%; gap:16px; }
+#myEquipmentList { display:flex; flex-direction:column; gap:20px; min-width:0; }
+@media(max-width:440px) { #screen-my-equipment > .card { padding:13px; } }
 /* Выбор города владельца: единый стиль с карточками Beeline. */
 #screen-owner-city > .card { width:500px; max-width:100%; gap:15px; }
 .owner-city-intro { color:#bbb; font-size:13px; line-height:1.5; margin:0; }
@@ -2652,7 +2656,7 @@ button, input, textarea, select { font:inherit; }
                 <button class="btn action-btn" onclick="alert('Планы по ППР')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📈 Планы по ППР</button>
                 
                 <button class="btn action-btn" onclick="openActDebts()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">📑 Долги по Актам</button>
-                <button class="btn action-btn" onclick="alert('Моё оборудование и кабель')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">🔌 Оборудование и кабель</button>
+                <button class="btn action-btn" onclick="openMyEquipment()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">🔌 Оборудование и кабель</button>
                 
                 <button class="btn action-btn" onclick="openMySalary()" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">💰 Моя Зарплата</button>
                 <button class="btn action-btn" onclick="alert('Мои часы и дни')" style="margin-top: 0; font-size: 13px; padding: 12px 6px;">⏱ Часы и дни</button>
@@ -2678,6 +2682,22 @@ button, input, textarea, select { font:inherit; }
                 <button type="button" class="btn action-btn" onclick="loadActDebts()">🔄 Обновить</button>
             </div>
             <div id="actDebtsList" aria-live="polite"></div>
+            <button type="button" class="btn danger-btn" onclick="switchScreen('screen-installer-menu')">🔙 Меню монтажника</button>
+        </div>
+    </div>
+
+    <!-- Оборудование и кабель авторизованного монтажника -->
+    <div id="screen-my-equipment" class="app-screen uniform-screen">
+        <h2>🔌 Оборудование и кабель</h2>
+        <div class="card">
+            <div class="act-debts-hero">
+                <div><strong id="myEquipmentCount">—</strong><small id="myEquipmentSubtitle">Загружаем остатки...</small></div>
+                <span class="act-debts-icon" aria-hidden="true">📦</span>
+            </div>
+            <div class="act-debts-toolbar"><span id="myEquipmentUser"></span>
+                <button type="button" class="btn action-btn" onclick="loadMyEquipment()">🔄 Обновить</button>
+            </div>
+            <div id="myEquipmentList" aria-live="polite"></div>
             <button type="button" class="btn danger-btn" onclick="switchScreen('screen-installer-menu')">🔙 Меню монтажника</button>
         </div>
     </div>
@@ -6533,6 +6553,108 @@ document.addEventListener('blur', (e) => {
             if (request !== actDebtsRequest) return;
             document.getElementById('actDebtsSubtitle').textContent = 'Не удалось загрузить';
             actDebtsState('⚠️', error.message || 'Ошибка загрузки. Нажмите «Обновить».');
+        }
+    }
+
+    // Остатки оборудования из скрипта города; запрос каждый раз читает актуальные строки.
+    let myEquipmentRequest = 0;
+    function requestMyEquipment(url, fullName, city) {
+        return new Promise((resolve, reject) => {
+            const callback = '__beelineMyEquipmentCallback_' + Math.random().toString(36).slice(2);
+            const script = document.createElement('script');
+            let finished = false;
+            const finish = (error, data) => {
+                if (finished) return;
+                finished = true;
+                clearTimeout(timer);
+                script.remove();
+                delete window[callback];
+                if (error) reject(error); else resolve(data);
+            };
+            const timer = setTimeout(() => finish(new Error('Сервер города не ответил. Попробуйте обновить список.')), 20000);
+            window[callback] = data => finish(null, data);
+            script.onerror = () => finish(new Error('Не удалось подключиться к скрипту вашего города.'));
+            script.src = url + '?action=getMyEquipment&fullName=' + encodeURIComponent(fullName)
+                + '&city=' + encodeURIComponent(city) + '&callback=' + encodeURIComponent(callback);
+            document.head.appendChild(script);
+        });
+    }
+    function myEquipmentState(icon, message) {
+        const list = document.getElementById('myEquipmentList');
+        list.replaceChildren();
+        const state = actDebtsNode('div', 'act-debts-state', message);
+        state.prepend(actDebtsNode('span', '', icon));
+        list.appendChild(state);
+    }
+    function renderMyEquipment(items) {
+        const list = document.getElementById('myEquipmentList');
+        list.replaceChildren();
+        for (const type of ['Кабель', 'Роутеры', 'Приставки']) {
+            const entries = items.filter(item => item.type === type);
+            if (!entries.length) continue;
+            const group = actDebtsNode('section', 'act-debts-group');
+            const title = actDebtsNode('div', 'act-debts-group-title', type);
+            title.appendChild(actDebtsNode('span', '', entries.length));
+            group.appendChild(title);
+            for (const entry of entries) {
+                const card = actDebtsNode('details', 'act-debts-entry');
+                const summary = actDebtsNode('summary');
+                summary.appendChild(actDebtsNode('span', 'act-debts-address', (type === 'Кабель' ? '🔌 ' : type === 'Роутеры' ? '🛜 ' : '📺 ') + (entry.name || 'Без наименования')));
+                const meta = actDebtsNode('span', 'act-debts-meta');
+                meta.appendChild(actDebtsNode('span', 'act-debts-date', (type === 'Приставки' ? 'STB: ' : 'Серийный номер: ') + (entry.serial || 'Не указан')));
+                if (type === 'Кабель') meta.appendChild(actDebtsNode('span', 'act-debts-status', '● ' + entry.meters + ' м'));
+                summary.appendChild(meta);
+                const more = actDebtsNode('span', 'act-debts-more');
+                more.appendChild(actDebtsNode('span', 'act-debts-arrow', '▸'));
+                more.appendChild(actDebtsNode('span', '', '🔍 Подробнее'));
+                summary.appendChild(more);
+                card.appendChild(summary);
+                const details = actDebtsNode('dl', 'act-debts-details');
+                for (const [label, value] of [['Дата выдачи', formatActDebtDate(entry.date) || 'Не указана'], ['Кем выдан', entry.issuedBy || 'Не указано']]) {
+                    const row = actDebtsNode('div', 'act-debts-field');
+                    row.appendChild(actDebtsNode('dt', '', label));
+                    row.appendChild(actDebtsNode('dd', '', value));
+                    details.appendChild(row);
+                }
+                card.appendChild(details);
+                group.appendChild(card);
+            }
+            list.appendChild(group);
+        }
+    }
+    function openMyEquipment() {
+        if (currentUser?.role === 'Стажер') return;
+        if (!currentUser || !currentUser.fullName || !currentUser.city) {
+            showBeelineModal('Требуется вход', 'Авторизуйтесь для просмотра своего оборудования.', '🔒');
+            return;
+        }
+        switchScreen('screen-my-equipment');
+        loadMyEquipment();
+    }
+    async function loadMyEquipment() {
+        const request = ++myEquipmentRequest;
+        const user = currentUser;
+        const name = user?.fullName;
+        const city = user?.city;
+        const url = CITIES_CONFIG[city]?.reportsScriptUrl;
+        document.getElementById('myEquipmentCount').textContent = '—';
+        document.getElementById('myEquipmentSubtitle').textContent = 'Ищем ваши остатки';
+        document.getElementById('myEquipmentUser').textContent = name && city ? name + ' · ' + city : '';
+        myEquipmentState('⏳', 'Загружаем данные из таблицы города...');
+        try {
+            if (!name || !city || !isConfiguredCityUrl(url)) throw new Error('Нет данных пользователя или ссылки скрипта его города.');
+            const response = await requestMyEquipment(url, name, city);
+            if (request !== myEquipmentRequest || currentUser?.fullName !== name || currentUser?.city !== city) return;
+            if (response?.status !== 'success' || !Array.isArray(response.items) || response.city !== city)
+                throw new Error(response?.message || 'Не удалось прочитать остатки оборудования.');
+            document.getElementById('myEquipmentCount').textContent = response.items.length;
+            document.getElementById('myEquipmentSubtitle').textContent = response.items.length ? 'Позиций в наличии' : 'Остатков нет';
+            if (response.items.length) renderMyEquipment(response.items);
+            else myEquipmentState('📦', 'Оборудование и кабель в наличии не найдены.');
+        } catch (error) {
+            if (request !== myEquipmentRequest) return;
+            document.getElementById('myEquipmentSubtitle').textContent = 'Не удалось загрузить';
+            myEquipmentState('⚠️', error.message || 'Ошибка загрузки. Нажмите «Обновить».');
         }
     }
 
